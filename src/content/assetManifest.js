@@ -1,0 +1,17 @@
+export const MODEL_ASSETS = {
+    cottageHouse: new URL('../../assets/models/cottage-house.glb', import.meta.url).href,
+    supermarketStore: new URL('../../assets/models/supermarket-store.glb', import.meta.url).href,
+    schoolClocktower: new URL('../../assets/models/school-clocktower.glb', import.meta.url).href,
+    marketStall: new URL('../../assets/models/market-stall.glb', import.meta.url).href,
+    cornerCafe: new URL('../../assets/models/corner-cafe.glb', import.meta.url).href,
+    farmBarn: new URL('../../assets/models/farm-barn.glb', import.meta.url).href,
+    taxiCab: new URL('../../assets/models/taxi-cab.glb', import.meta.url).href,
+    townsperson: new URL('../../assets/models/townsperson.glb', import.meta.url).href,
+    treeOak: new URL('../../assets/models/tree-oak.glb', import.meta.url).href,
+    treePine: new URL('../../assets/models/tree-pine.glb', import.meta.url).href,
+    bench: new URL('../../assets/models/bench.glb', import.meta.url).href,
+    planter: new URL('../../assets/models/planter.glb', import.meta.url).href,
+    waterTower: new URL('../../assets/models/water-tower.glb', import.meta.url).href,
+    cloudPuff: new URL('../../assets/models/cloud-puff.glb', import.meta.url).href,
+    mountainLakeSlice: new URL('../../assets/models/mountain-lake-slice.glb', import.meta.url).href,
+};

@@ -1,0 +1,284 @@
+{
+  "pass": false,
+  "checks": [
+    {
+      "name": "assets loaded",
+      "pass": true,
+      "details": {
+        "loaded": 38,
+        "failed": 0,
+        "runtimeGroups": 38
+      }
+    },
+    {
+      "name": "home interaction updates task",
+      "pass": true,
+      "details": {
+        "activeTask": "🏡 在家里美美睡了一大觉，饱食度与体力恢复到了 100%！"
+      }
+    },
+    {
+      "name": "supermarket modal opens",
+      "pass": true,
+      "details": {}
+    },
+    {
+      "name": "supermarket purchase changes coins",
+      "pass": true,
+      "details": {
+        "coins": 95,
+        "inventory": {
+          "carrot_seed": 4,
+          "cabbage_seed": 2,
+          "pumpkin_seed": 1,
+          "carrot": 0,
+          "cabbage": 0,
+          "pumpkin": 0,
+          "bread": 1,
+          "soda": 1
+        }
+      }
+    },
+    {
+      "name": "market modal opens",
+      "pass": true,
+      "details": {}
+    },
+    {
+      "name": "school modal opens",
+      "pass": true,
+      "details": {}
+    },
+    {
+      "name": "school quiz starts",
+      "pass": true,
+      "details": {}
+    },
+    {
+      "name": "farm modal opens at relocated plot",
+      "pass": true,
+      "details": {
+        "trigger": {
+          "id": "farm_plot_0",
+          "type": "farm_plot",
+          "label": "农田地块 #1 (闲置，按 E 播种)"
+        }
+      }
+    },
+    {
+      "name": "farm plant state",
+      "pass": true,
+      "details": {
+        "farm": {
+          "index": 0,
+          "state": "PLANTED",
+          "seedType": "carrot_seed",
+          "growTime": 15
+        }
+      }
+    },
+    {
+      "name": "farm water state",
+      "pass": true,
+      "details": {
+        "farm": {
+          "index": 0,
+          "state": "GROWING",
+          "seedType": "carrot_seed",
+          "growTime": 14.85
+        }
+      }
+    },
+    {
+      "name": "farm mature state",
+      "pass": true,
+      "details": {
+        "farm": {
+          "index": 0,
+          "state": "MATURE",
+          "seedType": "carrot_seed",
+          "growTime": 0
+        }
+      }
+    },
+    {
+      "name": "farm harvest inventory",
+      "pass": true,
+      "details": {
+        "inventory": {
+          "carrot_seed": 3,
+          "cabbage_seed": 2,
+          "pumpkin_seed": 1,
+          "carrot": 1,
+          "cabbage": 0,
+          "pumpkin": 0,
+          "bread": 1,
+          "soda": 1
+        },
+        "farm": {
+          "index": 0,
+          "state": "EMPTY",
+          "seedType": null,
+          "growTime": 0
+        }
+      }
+    },
+    {
+      "name": "taxi modal opens",
+      "pass": true,
+      "details": {}
+    },
+    {
+      "name": "taxi farm order starts from town center",
+      "pass": true,
+      "details": {
+        "taxi": {
+          "state": "FETCHING",
+          "destination": "farm",
+          "x": 0,
+          "z": 15.25
+        },
+        "player": {
+          "x": 0,
+          "y": 0,
+          "z": -5,
+          "visible": true
+        }
+      }
+    }
+  ],
+  "logs": [
+    {
+      "type": "error",
+      "text": "Failed to load resource: net::ERR_CONNECTION_CLOSED"
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: net::ERR_CONNECTION_CLOSED"
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: net::ERR_CONNECTION_CLOSED"
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: net::ERR_CONNECTION_CLOSED"
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: net::ERR_CONNECTION_CLOSED"
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: net::ERR_CONNECTION_CLOSED"
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: net::ERR_CONNECTION_CLOSED"
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: net::ERR_CONNECTION_CLOSED"
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: net::ERR_CONNECTION_CLOSED"
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: net::ERR_CONNECTION_CLOSED"
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: net::ERR_CONNECTION_CLOSED"
+    },
+    {
+      "type": "warning",
+      "text": "[.WebGL-0x12400523600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels"
+    },
+    {
+      "type": "warning",
+      "text": "[.WebGL-0x12400523600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels"
+    },
+    {
+      "type": "warning",
+      "text": "[.WebGL-0x12400523600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels"
+    },
+    {
+      "type": "warning",
+      "text": "[.WebGL-0x12400523600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+    }
+  ],
+  "finalState": {
+    "mode": "playing",
+    "coordinateSystem": "Three.js world coordinates, X east-west, Z north-south, Y up.",
+    "player": {
+      "x": 0,
+      "y": 0,
+      "z": -5,
+      "visible": true
+    },
+    "camera": {
+      "x": -13.81,
+      "y": 15.83,
+      "z": 7.77,
+      "radius": 24
+    },
+    "activeTrigger": null,
+    "visualAssets": {
+      "loaded": 38,
+      "failed": 0,
+      "runtimeGroups": 38
+    },
+    "state": {
+      "day": 1,
+      "hour": 10.1,
+      "coins": 95,
+      "satiety": 94,
+      "knowledge": 0,
+      "activeTask": "🚕 已呼叫滴滴出行！出租车正在向您驶来，请在原地等待。"
+    },
+    "taxi": {
+      "state": "FETCHING",
+      "destination": "farm",
+      "x": 0,
+      "z": 8.5
+    },
+    "farm": [
+      {
+        "index": 0,
+        "state": "EMPTY",
+        "seedType": null,
+        "growTime": 0
+      },
+      {
+        "index": 1,
+        "state": "EMPTY",
+        "seedType": null,
+        "growTime": 0
+      },
+      {
+        "index": 2,
+        "state": "EMPTY",
+        "seedType": null,
+        "growTime": 0
+      },
+      {
+        "index": 3,
+        "state": "EMPTY",
+        "seedType": null,
+        "growTime": 0
+      }
+    ],
+    "inventory": {
+      "carrot_seed": 3,
+      "cabbage_seed": 2,
+      "pumpkin_seed": 1,
+      "carrot": 1,
+      "cabbage": 0,
+      "pumpkin": 0,
+      "bread": 1,
+      "soda": 1
+    }
+  }
+}

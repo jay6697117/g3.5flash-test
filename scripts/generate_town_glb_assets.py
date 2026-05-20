@@ -1,0 +1,409 @@
+import math
+import os
+from pathlib import Path
+
+import bpy
+
+
+ROOT = Path(__file__).resolve().parents[1]
+OUT_DIR = ROOT / "assets" / "models"
+
+
+def reset_scene():
+    bpy.ops.object.select_all(action="SELECT")
+    bpy.ops.object.delete()
+
+
+def mat(name, color, roughness=0.75, metallic=0.0):
+    material = bpy.data.materials.new(name)
+    material.diffuse_color = color
+    material.use_nodes = True
+    bsdf = next(
+        (
+            node
+            for node in material.node_tree.nodes
+            if node.bl_idname == "ShaderNodeBsdfPrincipled"
+        ),
+        None,
+    )
+    if bsdf:
+        if "Base Color" in bsdf.inputs:
+            bsdf.inputs["Base Color"].default_value = color
+        if "Roughness" in bsdf.inputs:
+            bsdf.inputs["Roughness"].default_value = roughness
+        if "Metallic" in bsdf.inputs:
+            bsdf.inputs["Metallic"].default_value = metallic
+        if "Alpha" in bsdf.inputs:
+            bsdf.inputs["Alpha"].default_value = color[3]
+            material.blend_method = "BLEND" if color[3] < 1 else "OPAQUE"
+    return material
+
+
+def cube(name, loc, scale, material):
+    bpy.ops.mesh.primitive_cube_add(size=1, location=loc)
+    obj = bpy.context.object
+    obj.name = name
+    obj.dimensions = scale
+    bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
+    if material:
+        obj.data.materials.append(material)
+    return obj
+
+
+def cylinder(name, loc, radius, depth, material, vertices=12):
+    bpy.ops.mesh.primitive_cylinder_add(vertices=vertices, radius=radius, depth=depth, location=loc)
+    obj = bpy.context.object
+    obj.name = name
+    if material:
+        obj.data.materials.append(material)
+    return obj
+
+
+def cone(name, loc, radius1, radius2, depth, material, vertices=8, rotation=(0, 0, 0)):
+    bpy.ops.mesh.primitive_cone_add(
+        vertices=vertices,
+        radius1=radius1,
+        radius2=radius2,
+        depth=depth,
+        location=loc,
+        rotation=rotation,
+    )
+    obj = bpy.context.object
+    obj.name = name
+    if material:
+        obj.data.materials.append(material)
+    return obj
+
+
+def sphere(name, loc, radius, material, segments=12):
+    bpy.ops.mesh.primitive_uv_sphere_add(segments=segments, ring_count=6, radius=radius, location=loc)
+    obj = bpy.context.object
+    obj.name = name
+    if material:
+        obj.data.materials.append(material)
+    return obj
+
+
+def gable_roof(name, width, depth, height, z_base, material):
+    w = width / 2
+    d = depth / 2
+    vertices = [
+        (-w, -d, z_base), (w, -d, z_base), (0, -d, z_base + height),
+        (-w, d, z_base), (w, d, z_base), (0, d, z_base + height),
+    ]
+    faces = [
+        (0, 1, 2),
+        (3, 5, 4),
+        (0, 3, 4, 1),
+        (1, 4, 5, 2),
+        (2, 5, 3, 0),
+    ]
+    mesh = bpy.data.meshes.new(f"{name}Mesh")
+    mesh.from_pydata(vertices, [], faces)
+    mesh.update()
+    obj = bpy.data.objects.new(name, mesh)
+    bpy.context.collection.objects.link(obj)
+    obj.data.materials.append(material)
+    return obj
+
+
+def awning(name, x, y, z, width, material_a, material_b):
+    group = []
+    stripe_count = 7
+    stripe_width = width / stripe_count
+    for i in range(stripe_count):
+        material = material_a if i % 2 == 0 else material_b
+        stripe = cube(
+            f"{name}_stripe_{i}",
+            (x - width / 2 + stripe_width * i + stripe_width / 2, y, z),
+            (stripe_width, 0.14, 1.1),
+            material,
+        )
+        stripe.rotation_euler[0] = math.radians(8)
+        group.append(stripe)
+    return group
+
+
+def set_origin_floor_center():
+    for obj in bpy.context.scene.objects:
+        obj.select_set(True)
+    bpy.ops.object.origin_set(type="ORIGIN_CURSOR", center="MEDIAN")
+
+
+def export_asset(filename):
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    bpy.ops.export_scene.gltf(
+        filepath=str(OUT_DIR / filename),
+        export_format="GLB",
+        export_apply=True,
+        export_yup=True,
+        use_selection=False,
+    )
+
+
+def base_materials():
+    return {
+        "cream": mat("Warm Cream", (0.82, 0.75, 0.62, 1)),
+        "white": mat("Soft White", (0.93, 0.90, 0.82, 1)),
+        "roof_red": mat("Roof Red", (0.55, 0.12, 0.10, 1)),
+        "roof_blue": mat("Roof Blue", (0.10, 0.23, 0.34, 1)),
+        "brick": mat("Brick", (0.62, 0.23, 0.16, 1)),
+        "wood": mat("Warm Wood", (0.50, 0.28, 0.13, 1)),
+        "dark_wood": mat("Dark Wood", (0.24, 0.13, 0.07, 1)),
+        "glass": mat("Glass Blue", (0.42, 0.72, 0.88, 0.72), roughness=0.2, metallic=0.0),
+        "road": mat("Soft Asphalt", (0.20, 0.21, 0.22, 1)),
+        "stone": mat("Warm Stone", (0.64, 0.59, 0.50, 1)),
+        "green": mat("Leaf Green", (0.20, 0.45, 0.18, 1)),
+        "green_light": mat("Leaf Light", (0.44, 0.66, 0.26, 1)),
+        "yellow": mat("Taxi Yellow", (1.0, 0.70, 0.05, 1)),
+        "gold": mat("Soft Gold", (0.92, 0.62, 0.18, 1)),
+        "red": mat("Produce Red", (0.75, 0.14, 0.10, 1)),
+        "blue": mat("Store Blue", (0.18, 0.40, 0.60, 1)),
+        "stripe": mat("Canvas Stripe", (0.92, 0.86, 0.72, 1)),
+        "water": mat("Lake Blue", (0.28, 0.56, 0.82, 1), roughness=0.35),
+        "cloud": mat("Warm Cloud", (0.96, 0.86, 0.72, 1)),
+        "mountain": mat("Soft Mountain", (0.42, 0.51, 0.46, 1)),
+    }
+
+
+def create_cottage():
+    reset_scene()
+    m = base_materials()
+    cube("Cottage_Walls", (0, 0, 1.7), (6.2, 5.2, 3.4), m["cream"])
+    gable_roof("Cottage_Gable_Roof", 7.2, 6.3, 2.4, 3.4, m["roof_red"])
+    cube("Cottage_Door", (0, -2.64, 1.1), (1.0, 0.16, 2.0), m["dark_wood"])
+    for x in (-2.1, 2.1):
+        cube(f"Cottage_Window_{x}", (x, -2.66, 2.0), (1.1, 0.14, 1.0), m["glass"])
+        cube(f"Cottage_Window_Frame_{x}", (x, -2.74, 2.0), (1.34, 0.08, 1.22), m["white"])
+    cube("Cottage_Porch", (0, -3.4, 0.18), (4.8, 1.8, 0.36), m["stone"])
+    for x in (-1.8, 1.8):
+        cylinder(f"Cottage_Porch_Post_{x}", (x, -3.55, 1.45), 0.09, 2.5, m["white"], vertices=8)
+    gable_roof("Cottage_Porch_Roof", 5.1, 2.0, 0.9, 2.45, m["roof_red"]).location.y = -3.55
+    cube("Cottage_Chimney", (2.0, 1.3, 4.35), (0.65, 0.65, 1.7), m["brick"])
+    for x in (-3.7, 3.7):
+        for i in range(5):
+            cube(f"Cottage_Fence_{x}_{i}", (x, -2.6 + i * 1.05, 0.45), (0.16, 0.12, 0.9), m["white"])
+    export_asset("cottage-house.glb")
+
+
+def create_supermarket():
+    reset_scene()
+    m = base_materials()
+    cube("Supermarket_Main", (0, 0, 2.3), (9.5, 5.2, 4.6), m["blue"])
+    cube("Supermarket_Flat_Roof", (0, 0, 4.85), (10.3, 5.8, 0.5), m["stone"])
+    cube("Supermarket_Glass_Front", (0, -2.66, 2.25), (7.2, 0.16, 2.9), m["glass"])
+    cube("Supermarket_Door", (0, -2.78, 1.3), (1.35, 0.14, 2.3), m["dark_wood"])
+    cube("Supermarket_Sign", (0, -2.94, 4.2), (7.8, 0.18, 0.72), m["gold"])
+    awning("Supermarket_Awning", 0, -3.15, 3.28, 7.8, m["stripe"], m["gold"])
+    cube("Supermarket_Back_Window_A", (-2.4, 2.66, 2.75), (1.5, 0.14, 1.2), m["glass"])
+    cube("Supermarket_Back_Window_B", (2.4, 2.66, 2.75), (1.5, 0.14, 1.2), m["glass"])
+    cube("Supermarket_Back_Sign", (0, 2.78, 4.05), (5.8, 0.16, 0.58), m["gold"])
+    for x in (-4.84, 4.84):
+        cube(f"Supermarket_Side_Window_{x}_A", (x, -0.9, 2.65), (0.14, 1.35, 1.2), m["glass"])
+        cube(f"Supermarket_Side_Window_{x}_B", (x, 0.95, 2.65), (0.14, 1.35, 1.2), m["glass"])
+        cube(f"Supermarket_Side_Trim_{x}", (x, 0.0, 4.08), (0.16, 3.8, 0.42), m["gold"])
+    for i, x in enumerate((-3.4, -2.2, 2.2, 3.4)):
+        cube(f"Supermarket_Crate_{i}", (x, -3.65, 0.48), (0.9, 0.7, 0.55), m["wood"])
+        sphere(f"Supermarket_Produce_{i}", (x, -3.65, 0.9), 0.22, m["red" if i % 2 else "green_light"], segments=8)
+    for i, y in enumerate((-1.6, -0.5, 0.6, 1.7)):
+        cube(f"Supermarket_Side_Crate_{i}", (-5.15, y, 0.44), (0.52, 0.78, 0.5), m["wood"])
+        sphere(f"Supermarket_Side_Produce_{i}", (-5.18, y, 0.82), 0.18, m["gold" if i % 2 else "red"], segments=8)
+    export_asset("supermarket-store.glb")
+
+
+def create_school():
+    reset_scene()
+    m = base_materials()
+    cube("School_Main", (0, 0, 3.0), (11.5, 6.8, 6.0), m["brick"])
+    gable_roof("School_Main_Roof", 12.2, 7.4, 2.0, 6.0, m["roof_red"])
+    cube("School_Entry", (0, -3.65, 2.3), (4.4, 1.2, 4.6), m["stone"])
+    cube("School_Door", (0, -4.25, 1.45), (1.5, 0.16, 2.7), m["dark_wood"])
+    for x in (-4.2, -2.1, 2.1, 4.2):
+        cube(f"School_Window_{x}", (x, -3.48, 3.4), (1.0, 0.12, 1.3), m["glass"])
+    cube("School_Tower", (0, -0.3, 8.0), (3.2, 3.2, 4.0), m["brick"])
+    cone("School_Tower_Roof", (0, -0.3, 10.7), 2.3, 0.0, 1.8, m["roof_red"], vertices=4, rotation=(0, 0, math.radians(45)))
+    cylinder("School_Clock_Face", (0, -1.94, 8.35), 0.72, 0.1, m["white"], vertices=24)
+    export_asset("school-clocktower.glb")
+
+
+def create_market_stall():
+    reset_scene()
+    m = base_materials()
+    for x in (-2.2, 2.2):
+        for y in (-1.4, 1.4):
+            cylinder(f"Stall_Post_{x}_{y}", (x, y, 1.7), 0.08, 3.4, m["wood"], vertices=8)
+    cube("Stall_Table", (0, 0, 0.82), (4.9, 2.4, 0.42), m["wood"])
+    awning("Stall_Roof", 0, 0, 3.45, 5.2, m["stripe"], m["green"])
+    for i, x in enumerate((-1.7, -0.55, 0.55, 1.7)):
+        cube(f"Stall_Crate_{i}", (x, -0.15, 1.2), (0.9, 0.9, 0.45), m["dark_wood"])
+        for j in range(4):
+            sphere(f"Stall_Produce_{i}_{j}", (x - 0.25 + j * 0.17, -0.2, 1.55), 0.13, m["red" if (i + j) % 2 else "green_light"], segments=8)
+    export_asset("market-stall.glb")
+
+
+def create_corner_cafe():
+    reset_scene()
+    m = base_materials()
+    cube("Cafe_Main", (0, 0, 2.45), (7.4, 5.0, 4.9), m["green"])
+    cube("Cafe_Roof_Slab", (0, 0, 5.08), (8.2, 5.8, 0.42), m["stone"])
+    cube("Cafe_Front_Glass_Left", (-2.05, -2.56, 2.35), (1.7, 0.14, 2.5), m["glass"])
+    cube("Cafe_Front_Glass_Right", (2.05, -2.56, 2.35), (1.7, 0.14, 2.5), m["glass"])
+    cube("Cafe_Door", (0, -2.66, 1.45), (1.25, 0.14, 2.65), m["dark_wood"])
+    cube("Cafe_Sign", (0, -2.82, 4.28), (5.7, 0.18, 0.68), m["gold"])
+    awning("Cafe_Awning", 0, -3.06, 3.28, 6.7, m["stripe"], m["green_light"])
+    for x in (-3.82, 3.82):
+        cube(f"Cafe_Side_Window_{x}_A", (x, -0.8, 2.7), (0.14, 1.35, 1.2), m["glass"])
+        cube(f"Cafe_Side_Window_{x}_B", (x, 1.0, 2.7), (0.14, 1.35, 1.2), m["glass"])
+    for i, x in enumerate((-2.7, -1.45, 1.45, 2.7)):
+        cube(f"Cafe_Crate_{i}", (x, -3.56, 0.42), (0.82, 0.62, 0.48), m["wood"])
+        sphere(f"Cafe_Flower_{i}", (x, -3.58, 0.86), 0.18, m["red" if i % 2 else "gold"], segments=8)
+    cylinder("Cafe_Table", (-2.6, -4.15, 0.64), 0.45, 0.14, m["wood"], vertices=12)
+    cylinder("Cafe_Table_Post", (-2.6, -4.15, 0.35), 0.07, 0.7, m["dark_wood"], vertices=8)
+    for i, x in enumerate((-3.25, -1.95)):
+        cube(f"Cafe_Chair_{i}", (x, -4.16, 0.42), (0.45, 0.45, 0.28), m["wood"])
+    cone("Cafe_Umbrella", (2.55, -4.05, 2.0), 1.05, 0.12, 0.55, m["gold"], vertices=12)
+    cylinder("Cafe_Umbrella_Post", (2.55, -4.05, 1.0), 0.06, 2.0, m["wood"], vertices=8)
+    export_asset("corner-cafe.glb")
+
+
+def create_townsperson():
+    reset_scene()
+    m = base_materials()
+    cylinder("Townsperson_Legs", (0, 0, 0.52), 0.18, 1.04, m["road"], vertices=8)
+    cube("Townsperson_Body", (0, 0, 1.28), (0.58, 0.42, 0.92), m["blue"])
+    sphere("Townsperson_Head", (0, -0.02, 1.98), 0.33, m["cream"], segments=12)
+    cube("Townsperson_Hair", (0, -0.04, 2.26), (0.58, 0.48, 0.18), m["dark_wood"])
+    for x in (-0.42, 0.42):
+        cylinder(f"Townsperson_Arm_{x}", (x, 0, 1.25), 0.07, 0.72, m["cream"], vertices=8).rotation_euler[1] = math.radians(8 if x < 0 else -8)
+    export_asset("townsperson.glb")
+
+
+def create_farm_barn():
+    reset_scene()
+    m = base_materials()
+    cube("Barn_Main", (0, 0, 2.1), (6.2, 5.5, 4.2), m["brick"])
+    gable_roof("Barn_Roof", 7.2, 6.4, 2.3, 4.2, m["roof_red"])
+    cube("Barn_Door", (0, -2.84, 1.7), (2.2, 0.16, 3.0), m["dark_wood"])
+    cube("Barn_Cross_A", (0, -2.94, 1.7), (2.45, 0.12, 0.16), m["white"]).rotation_euler[1] = math.radians(35)
+    cube("Barn_Cross_B", (0, -2.94, 1.7), (2.45, 0.12, 0.16), m["white"]).rotation_euler[1] = math.radians(-35)
+    cylinder("Barn_Silo", (4.4, 0.4, 2.7), 0.9, 5.4, m["stone"], vertices=16)
+    cone("Barn_Silo_Roof", (4.4, 0.4, 5.75), 1.05, 0, 0.9, m["roof_blue"], vertices=16)
+    export_asset("farm-barn.glb")
+
+
+def create_taxi():
+    reset_scene()
+    m = base_materials()
+    cube("Taxi_Body", (0, 0, 0.55), (1.9, 4.0, 0.72), m["yellow"])
+    cube("Taxi_Cabin", (0, -0.35, 1.12), (1.65, 2.0, 0.95), m["yellow"])
+    cube("Taxi_Front_Glass", (0, -1.42, 1.18), (1.35, 0.08, 0.62), m["glass"])
+    cube("Taxi_Back_Glass", (0, 0.72, 1.18), (1.35, 0.08, 0.62), m["glass"])
+    cube("Taxi_Checker", (0, -0.95, 0.95), (1.96, 0.18, 0.18), m["road"])
+    cube("Taxi_Sign", (0, -0.35, 1.72), (0.82, 0.34, 0.24), m["gold"])
+    for x in (-1.08, 1.08):
+        for y in (-1.38, 1.38):
+            cylinder(f"Taxi_Wheel_{x}_{y}", (x, y, 0.35), 0.34, 0.28, m["road"], vertices=16).rotation_euler[1] = math.radians(90)
+    export_asset("taxi-cab.glb")
+
+
+def create_tree_oak():
+    reset_scene()
+    m = base_materials()
+    cylinder("Oak_Trunk", (0, 0, 1.25), 0.28, 2.5, m["wood"], vertices=7)
+    sphere("Oak_Crown_A", (0, 0, 3.0), 1.25, m["green"], segments=10)
+    sphere("Oak_Crown_B", (-0.55, 0.25, 2.75), 0.8, m["green_light"], segments=10)
+    sphere("Oak_Crown_C", (0.6, -0.18, 2.85), 0.75, m["green"], segments=10)
+    export_asset("tree-oak.glb")
+
+
+def create_tree_pine():
+    reset_scene()
+    m = base_materials()
+    cylinder("Pine_Trunk", (0, 0, 1.05), 0.2, 2.1, m["wood"], vertices=7)
+    cone("Pine_Crown_Low", (0, 0, 2.2), 1.25, 0, 1.8, m["green"], vertices=7)
+    cone("Pine_Crown_Mid", (0, 0, 3.0), 1.0, 0, 1.7, m["green_light"], vertices=7)
+    cone("Pine_Crown_Top", (0, 0, 3.75), 0.75, 0, 1.5, m["green"], vertices=7)
+    export_asset("tree-pine.glb")
+
+
+def create_bench():
+    reset_scene()
+    m = base_materials()
+    cube("Bench_Seat", (0, 0, 0.58), (2.4, 0.55, 0.22), m["wood"])
+    cube("Bench_Back", (0, 0.33, 1.0), (2.4, 0.22, 0.8), m["dark_wood"])
+    for x in (-0.85, 0.85):
+        cube(f"Bench_Leg_{x}_A", (x, -0.16, 0.28), (0.18, 0.18, 0.56), m["road"])
+        cube(f"Bench_Leg_{x}_B", (x, 0.22, 0.28), (0.18, 0.18, 0.56), m["road"])
+    export_asset("bench.glb")
+
+
+def create_planter():
+    reset_scene()
+    m = base_materials()
+    cube("Planter_Box", (0, 0, 0.35), (1.5, 1.0, 0.7), m["stone"])
+    cube("Planter_Soil", (0, 0, 0.74), (1.16, 0.7, 0.12), m["dark_wood"])
+    for i, x in enumerate((-0.38, 0, 0.38)):
+        sphere(f"Planter_Flower_{i}", (x, 0.02 * i, 1.02), 0.16, m["red" if i % 2 else "gold"], segments=8)
+        cylinder(f"Planter_Stem_{i}", (x, 0.02 * i, 0.9), 0.025, 0.35, m["green"], vertices=6)
+    export_asset("planter.glb")
+
+
+def create_water_tower():
+    reset_scene()
+    m = base_materials()
+    for x in (-1.0, 1.0):
+        for y in (-1.0, 1.0):
+            post = cylinder(f"WaterTower_Leg_{x}_{y}", (x, y, 3.0), 0.08, 6.0, m["wood"], vertices=6)
+            post.rotation_euler[0] = math.radians(4 if x * y > 0 else -4)
+    cylinder("WaterTower_Tank", (0, 0, 6.4), 1.35, 2.1, m["wood"], vertices=16)
+    cone("WaterTower_Roof", (0, 0, 7.75), 1.5, 0, 0.7, m["roof_blue"], vertices=16)
+    cube("WaterTower_Deck", (0, 0, 5.25), (3.2, 3.2, 0.18), m["dark_wood"])
+    export_asset("water-tower.glb")
+
+
+def create_cloud():
+    reset_scene()
+    m = base_materials()
+    sphere("Cloud_A", (-0.9, 0, 0), 0.7, m["cloud"], segments=10)
+    sphere("Cloud_B", (0, 0, 0.18), 1.0, m["cloud"], segments=10)
+    sphere("Cloud_C", (0.95, 0, 0.05), 0.75, m["cloud"], segments=10)
+    sphere("Cloud_D", (0.35, 0, 0.55), 0.62, m["cloud"], segments=10)
+    export_asset("cloud-puff.glb")
+
+
+def create_mountain_slice():
+    reset_scene()
+    m = base_materials()
+    for i, x in enumerate((-5.2, -2.4, 0.4, 3.2, 5.8)):
+        cone(f"Mountain_{i}", (x, 0, 2.3 + i * 0.12), 2.8 + (i % 2) * 0.8, 0, 4.6 + (i % 2) * 1.1, m["mountain"], vertices=5)
+    cube("Lake_Strip", (0, -1.9, 0.05), (14.0, 2.0, 0.1), m["water"])
+    export_asset("mountain-lake-slice.glb")
+
+
+def main():
+    creators = [
+        create_cottage,
+        create_supermarket,
+        create_school,
+        create_market_stall,
+        create_corner_cafe,
+        create_townsperson,
+        create_farm_barn,
+        create_taxi,
+        create_tree_oak,
+        create_tree_pine,
+        create_bench,
+        create_planter,
+        create_water_tower,
+        create_cloud,
+        create_mountain_slice,
+    ]
+
+    for create in creators:
+        create()
+
+    print(f"Generated {len(creators)} GLB assets in {OUT_DIR}")
+
+
+if __name__ == "__main__":
+    main()

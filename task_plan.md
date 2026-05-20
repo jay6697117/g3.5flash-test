@@ -28,3 +28,21 @@ Original prompt: 我想写一个3D模拟小镇，模拟真实世界的小镇，�
 - 390x844 移动截图中顶部状态条不横向溢出，任务、背包、交互提示和打车按钮不重叠。
 - `render_game_to_text` 输出可解析 JSON，并包含玩家、相机、触发器、状态、出租车和农田摘要。
 - 概念图保存到 `assets/concepts/`。
+
+## Current Goal Extension
+把当前低模 demo 继续推进到接近 `assets/concepts` 两张概念图的 MVP 观感：
+- 使用本机 Blender 批量生成 runtime GLB 资产，保存到 `assets/models/`。
+- 通过 manifest 和 GLTFLoader 接入，不把文件名散落在场景代码里。
+- 用 GLB 替换或覆盖关键地标：住宅、超市、学校、菜市场摊位、出租车、背景水塔/山体/云、树木与街道家具。
+- 保留当前碰撞、触发器、状态系统和 DOM UI，不重写玩法系统。
+- 验证仍以 `npm run build`、Playwright 截图、`render_game_to_text` 和关键玩法回归为准。
+- 每轮美术资产或 GLB 效果改动后，必须查看 `assets/concepts/town-art-direction.png`、`assets/concepts/ui-style-board.png` 与最新游戏截图，并记录差距后继续优化。
+
+## Extension Phases
+| Phase | Status | Notes |
+| --- | --- | --- |
+| 8. Blender GLB asset generation | complete | 已生成并校验 13 个 `assets/models/*.glb`。 |
+| 9. Runtime asset loader integration | complete | 已新增 manifest/loader，GLTFLoader 懒加载并克隆 GLB。 |
+| 10. Concept scene composition pass | complete | 已加入关键地标 GLB、背景住宅、街角商铺、远景山水、水塔、云、树木和街具。 |
+| 11. Concept UI pass | complete | 已改为深绿/金色 HUD、资源条、背包抽屉和出租车按钮视觉。 |
+| 12. Final verification loop | in_progress | 构建已通过；待桌面、移动、玩法回归和截图验收。 |

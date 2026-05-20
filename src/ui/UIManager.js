@@ -53,17 +53,24 @@ export class UIManager {
         
         // 初始化绑定 DOM 事件
         this.initEvents();
+        if (new URLSearchParams(window.location.search).get('autostart') === '1') {
+            window.setTimeout(() => this.startGame(), 0);
+        }
         
         // 初始化一次 HUD 界面
         this.renderHUD('all', this.gameState);
     }
+
+    startGame() {
+        const welcome = document.getElementById('welcome-screen');
+        welcome.style.opacity = '0';
+        window.setTimeout(() => welcome.classList.add('hidden'), 300);
+    }
     
     initEvents() {
         // 1. 开始游戏按钮
-        const welcome = document.getElementById('welcome-screen');
         document.getElementById('btn-start-game').addEventListener('click', () => {
-            welcome.style.opacity = '0';
-            setTimeout(() => welcome.classList.add('hidden'), 300);
+            this.startGame();
         });
         
         // 2. 全局弹窗通用关闭按钮

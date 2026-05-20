@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { MATERIAL_TOKENS, STREET_FURNITURE } from '../content/townContent.js';
+import { AssetLoader } from '../render/loaders/AssetLoader.js';
 
 export class Town {
     constructor(scene, physics) {
@@ -11,6 +12,11 @@ export class Town {
         
         // 存储材质引用以切换发光
         this.windowMaterials = [];
+        this.landmarkGroups = {};
+        this.runtimeAssetGroups = [];
+        this.loadedAssetCount = 0;
+        this.failedAssetCount = 0;
+        this.assetLoader = new AssetLoader();
         
         // 初始化材料库，采用暖色和柔和低饱和度的色彩，确保高级感
         this.materials = {
@@ -44,6 +50,7 @@ export class Town {
             signBoard: new THREE.MeshStandardMaterial({ color: MATERIAL_TOKENS.warmWhite, roughness: 0.6 }),
             accentYellow: new THREE.MeshStandardMaterial({ color: MATERIAL_TOKENS.accentYellow, roughness: 0.5 }),
             accentBlue: new THREE.MeshStandardMaterial({ color: MATERIAL_TOKENS.accentBlue, roughness: 0.55 }),
+            water: new THREE.MeshStandardMaterial({ color: MATERIAL_TOKENS.water, roughness: 0.34, metalness: 0.08 }),
             lampOff: new THREE.MeshStandardMaterial({ color: 0xdddddd }),
             lampOn: new THREE.MeshBasicMaterial({ color: 0xffe677 }), // 晚上发光
             windowOff: new THREE.MeshStandardMaterial({ color: 0x334455, roughness: 0.3 }),
@@ -53,6 +60,7 @@ export class Town {
         // 构建大世界
         this.buildGround();
         this.buildRoads();
+        this.buildDistantLandscape();
         this.buildForest();
         this.buildPlayerHome();
         this.buildSupermarket();
@@ -61,6 +69,7 @@ export class Town {
         this.buildFarm();
         this.buildStreetLights();
         this.buildTownDetails();
+        this.buildGltfScenePass();
     }
     
     // 1. 构建小镇地基
@@ -108,6 +117,26 @@ export class Town {
             markEW.position.set(i, 0.02, 0);
             this.scene.add(markEW);
         }
+    }
+
+    buildDistantLandscape() {
+        const group = new THREE.Group();
+
+        const lake = new THREE.Mesh(new THREE.PlaneGeometry(106, 18), this.materials.water);
+        lake.rotation.x = -Math.PI / 2;
+        lake.position.set(0, 0.025, -80);
+        lake.receiveShadow = true;
+        group.add(lake);
+
+        const nearShore = new THREE.Mesh(new THREE.BoxGeometry(108, 0.08, 1.4), this.materials.sidewalk);
+        nearShore.position.set(0, 0.08, -70.6);
+        group.add(nearShore);
+
+        const farShore = new THREE.Mesh(new THREE.BoxGeometry(108, 0.08, 1.8), this.materials.grassLight);
+        farShore.position.set(0, 0.07, -89.4);
+        group.add(farShore);
+
+        this.scene.add(group);
     }
 
     addBox(group, width, height, depth, material, x, y, z) {
@@ -250,6 +279,105 @@ export class Town {
 
         this.scene.add(group);
     }
+
+    async buildGltfScenePass() {
+        const mainModels = [
+            ['cottageHouse', { position: [-25, 0, -25], scale: 1.05, rotationY: 0, fallbackKey: 'home' }],
+            ['supermarketStore', { position: [25, 0, -25], scale: 1.05, rotationY: Math.PI, fallbackKey: 'supermarket' }],
+            ['schoolClocktower', { position: [25, 0, 25], scale: 1.0, rotationY: Math.PI, fallbackKey: 'school' }],
+            ['marketStall', { position: [-28, 0, 25], scale: 0.92, rotationY: Math.PI, fallbackKey: 'market' }],
+            ['marketStall', { position: [-22, 0, 25], scale: 0.92, rotationY: Math.PI, fallbackKey: null }],
+            ['farmBarn', { position: [13.5, 0, 12.5], scale: 0.88, rotationY: -Math.PI / 3, fallbackKey: null }],
+            ['waterTower', { position: [-42, 0, -35], scale: 1.35, rotationY: Math.PI / 8, fallbackKey: null }],
+            ['mountainLakeSlice', { position: [0, -0.45, -105], scale: 1.28, rotationY: 0, fallbackKey: null }],
+            ['cottageHouse', { position: [-43, 0, -20], scale: 0.68, rotationY: Math.PI / 2, collider: [5.0, 4.2, '街区住宅'] }],
+            ['cottageHouse', { position: [-42, 0, 12], scale: 0.62, rotationY: Math.PI / 2, collider: [4.8, 4.0, '街区住宅'] }],
+            ['cottageHouse', { position: [42, 0, -18], scale: 0.64, rotationY: -Math.PI / 2, collider: [4.8, 4.0, '街区住宅'] }],
+            ['cottageHouse', { position: [43, 0, 13], scale: 0.7, rotationY: -Math.PI / 2, collider: [5.0, 4.2, '街区住宅'] }],
+            ['supermarketStore', { position: [44, 0, -43], scale: 0.56, rotationY: Math.PI / 2, collider: [5.8, 4.2, '街角商铺'] }],
+            ['marketStall', { position: [-37, 0, 25], scale: 0.62, rotationY: Math.PI / 2, collider: [3.2, 2.2, '路边摊位'] }],
+            ['marketStall', { position: [-14, 0, 25], scale: 0.62, rotationY: -Math.PI / 2, collider: [3.2, 2.2, '路边摊位'] }],
+            ['marketStall', { position: [-12, 0, -12], scale: 0.54, rotationY: Math.PI, collider: [3.0, 2.0, '中心摊位'] }],
+            ['marketStall', { position: [0, 0, -12], scale: 0.54, rotationY: Math.PI, collider: [3.0, 2.0, '中心摊位'] }],
+            ['marketStall', { position: [12, 0, -12], scale: 0.54, rotationY: Math.PI, collider: [3.0, 2.0, '中心摊位'] }],
+            ['cornerCafe', { position: [18, 0, -16], scale: 0.54, rotationY: Math.PI, collider: [4.8, 3.4, '街角咖啡店'] }],
+            ['cornerCafe', { position: [-17, 0, -18], scale: 0.5, rotationY: Math.PI / 2, collider: [3.8, 4.6, '街角咖啡店'] }],
+            ['cornerCafe', { position: [16, 0, 13], scale: 0.48, rotationY: -Math.PI / 2, collider: [3.8, 4.4, '街角咖啡店'] }],
+        ];
+
+        await Promise.all(mainModels.map(([key, config]) => this.placeModel(key, config)));
+        this.populateGltfProps();
+    }
+
+    async placeModel(key, config) {
+        try {
+            const model = await this.assetLoader.clone(key);
+            const [x, y, z] = config.position;
+            model.position.set(x, y, z);
+            if (Array.isArray(config.scale)) {
+                model.scale.set(config.scale[0], config.scale[1], config.scale[2]);
+            } else {
+                model.scale.setScalar(config.scale ?? 1);
+            }
+            model.rotation.y = config.rotationY ?? 0;
+            this.scene.add(model);
+            this.runtimeAssetGroups.push(model);
+            this.loadedAssetCount += 1;
+
+            if (config.fallbackKey && this.landmarkGroups[config.fallbackKey]) {
+                this.landmarkGroups[config.fallbackKey].visible = false;
+            }
+
+            if (config.collider) {
+                const [width, depth, label] = config.collider;
+                this.physics.addCollider({ x, z, width, depth, label });
+            }
+
+            return model;
+        } catch (error) {
+            this.failedAssetCount += 1;
+            console.warn(`Failed to load model asset "${key}".`, error);
+            return null;
+        }
+    }
+
+    populateGltfProps() {
+        const placements = [
+            ['treeOak', [-31, 0, -34], 1.1, 0],
+            ['treeOak', [-18, 0, -34], 0.9, Math.PI / 6],
+            ['treePine', [33, 0, -34], 1.0, Math.PI / 8],
+            ['treeOak', [18, 0, -34], 0.95, -Math.PI / 5],
+            ['treePine', [-36, 0, 33], 1.05, Math.PI / 5],
+            ['treeOak', [-14, 0, 34], 0.9, -Math.PI / 9],
+            ['treeOak', [16, 0, 36], 1.0, Math.PI / 7],
+            ['treePine', [37, 0, 32], 1.1, -Math.PI / 7],
+            ['bench', [-17, 0, -7], 1.0, Math.PI / 2],
+            ['bench', [17, 0, -7], 1.0, Math.PI / 2],
+            ['bench', [-17, 0, 7], 1.0, Math.PI / 2],
+            ['bench', [17, 0, 7], 1.0, Math.PI / 2],
+            ['planter', [-12, 0, -4], 1.0, 0],
+            ['planter', [12, 0, -4], 1.0, Math.PI / 5],
+            ['planter', [-12, 0, 4], 1.0, -Math.PI / 5],
+            ['planter', [12, 0, 4], 1.0, Math.PI / 9],
+            ['planter', [-7, 0, -15], 0.86, Math.PI / 9],
+            ['planter', [7, 0, -15], 0.86, -Math.PI / 9],
+            ['bench', [-7, 0, -7], 0.9, Math.PI / 2],
+            ['bench', [7, 0, -7], 0.9, Math.PI / 2],
+            ['townsperson', [-8.5, 0, -9.5], 0.9, Math.PI / 5],
+            ['townsperson', [-2.4, 0, -9.2], 0.86, -Math.PI / 9],
+            ['townsperson', [5.8, 0, -10.2], 0.88, -Math.PI / 5],
+            ['townsperson', [10.8, 0, -8.8], 0.84, Math.PI / 3],
+            ['townsperson', [-20.5, 0, -11.5], 0.82, Math.PI / 2],
+            ['townsperson', [17.5, 0, -7.8], 0.82, -Math.PI / 2],
+            ['cloudPuff', [-26, 15, -42], 2.2, Math.PI / 10],
+            ['cloudPuff', [18, 17, -48], 1.8, -Math.PI / 8],
+            ['cloudPuff', [38, 14, 20], 1.5, Math.PI / 5],
+        ];
+
+        placements.forEach(([key, position, scale, rotationY]) => {
+            this.placeModel(key, { position, scale, rotationY });
+        });
+    }
     
     // 3. 构建玩家住宅 (坐标: -25, -25)
     buildPlayerHome() {
@@ -296,6 +424,7 @@ export class Town {
         group.add(chimney);
         
         this.scene.add(group);
+        this.landmarkGroups.home = group;
         
         // 物理碰撞与交互触发
         this.physics.addCollider({ x, z, width: 7.2, depth: 7.2, label: '玩家住宅' });
@@ -350,6 +479,7 @@ export class Town {
         group.add(backWin);
         
         this.scene.add(group);
+        this.landmarkGroups.supermarket = group;
         
         // 物理碰撞与交互触发
         this.physics.addCollider({ x, z, width: 13, depth: 9, label: '罗森超市' });
@@ -408,6 +538,7 @@ export class Town {
         group.add(roofGroup);
         
         this.scene.add(group);
+        this.landmarkGroups.market = group;
         
         // 物理碰撞与交互触发
         this.physics.addCollider({ x, z, width: 10, depth: 8, label: '菜市场' });
@@ -487,6 +618,7 @@ export class Town {
         });
         
         this.scene.add(group);
+        this.landmarkGroups.school = group;
         
         // 物理碰撞与交互触发
         this.physics.addCollider({ x, z, width: 15, depth: 11, label: '阳光学院' });
@@ -502,7 +634,7 @@ export class Town {
     
     // 7. 构建绿色农田 (坐标: 0, 0)
     buildFarm() {
-        const x = 0, z = 0;
+        const x = -42, z = 34;
         const group = new THREE.Group();
         group.position.set(x, 0, z);
         

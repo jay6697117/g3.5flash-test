@@ -9,13 +9,27 @@
     -webkit-user-drag: none;
 }
 
+:root {
+    --town-ink: #fff8df;
+    --town-muted: rgba(255, 248, 223, 0.72);
+    --town-panel: rgba(22, 45, 32, 0.78);
+    --town-panel-strong: rgba(18, 39, 28, 0.9);
+    --town-border: rgba(238, 196, 103, 0.42);
+    --town-gold: #f2c45c;
+    --town-gold-strong: #ffd166;
+    --town-green: #6fa867;
+    --town-blue: #78b8cf;
+    --town-danger: #e67661;
+    --town-shadow: 0 14px 34px rgba(5, 16, 10, 0.36);
+}
+
 body, html {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background-color: #050510;
-    font-family: 'Outfit', 'Noto Sans SC', sans-serif;
-    color: #ffffff;
+    background-color: #07120c;
+    font-family: Inter, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    color: var(--town-ink);
 }
 
 /* 3D 渲染画布 */
@@ -33,18 +47,22 @@ body, html {
    高级毛玻璃玻璃态 (Glassmorphism)
    ========================================================================== */
 .glass-panel {
-    background: rgba(20, 25, 45, 0.45);
-    backdrop-filter: blur(14px) saturate(160%);
-    -webkit-backdrop-filter: blur(14px) saturate(160%);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 16px;
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0)),
+        var(--town-panel);
+    backdrop-filter: blur(12px) saturate(142%);
+    -webkit-backdrop-filter: blur(12px) saturate(142%);
+    border: 1px solid var(--town-border);
+    border-radius: 10px;
+    box-shadow: var(--town-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
 }
 
 .glass-panel:hover {
-    border-color: rgba(255, 255, 255, 0.2);
-    background: rgba(20, 25, 45, 0.55);
+    border-color: rgba(255, 218, 134, 0.64);
+    background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0)),
+        var(--town-panel-strong);
 }
 
 /* ==========================================================================
@@ -70,8 +88,8 @@ body, html {
     transform: translateX(-50%);
     display: flex;
     max-width: calc(100vw - 32px);
-    gap: 14px;
-    padding: 10px 20px;
+    gap: 10px;
+    padding: 8px 14px;
     align-items: center;
     justify-content: center;
     white-space: nowrap;
@@ -80,15 +98,16 @@ body, html {
 .hud-item {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 7px;
     min-width: 0;
-    font-size: 15px;
-    font-weight: 600;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--town-ink);
 }
 
 .hud-item .icon {
-    font-size: 20px;
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+    font-size: 18px;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.35));
 }
 
 .hud-item .value {
@@ -98,27 +117,88 @@ body, html {
 
 .hud-item .sub-value {
     font-size: 11px;
-    opacity: 0.7;
+    color: var(--town-gold-strong);
+    opacity: 0.86;
     margin-left: 4px;
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(242, 196, 92, 0.14);
     padding: 2px 6px;
-    border-radius: 4px;
+    border: 1px solid rgba(242, 196, 92, 0.22);
+    border-radius: 6px;
+}
+
+.resident-card {
+    pointer-events: auto;
+    position: absolute;
+    top: 16px;
+    left: 18px;
+    width: 292px;
+    min-height: 104px;
+    display: grid;
+    grid-template-columns: 82px 1fr;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 16px 12px 12px;
+}
+
+.resident-avatar {
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 42px;
+    background:
+        radial-gradient(circle at 38% 28%, rgba(255, 248, 223, 0.28), rgba(255, 248, 223, 0.04) 46%),
+        linear-gradient(145deg, #345a3a, #162c20);
+    border: 3px solid rgba(242, 196, 92, 0.62);
+    box-shadow: inset 0 0 0 3px rgba(10, 26, 16, 0.48), 0 8px 18px rgba(0, 0, 0, 0.24);
+}
+
+.resident-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.resident-row {
+    display: grid;
+    grid-template-columns: 24px 1fr;
+    align-items: center;
+    gap: 8px;
+    color: var(--town-gold-strong);
+    font-size: 18px;
+}
+
+.mini-meter {
+    height: 10px;
+    overflow: hidden;
+    border-radius: 99px;
+    background: rgba(8, 22, 13, 0.55);
+    border: 1px solid rgba(255, 248, 223, 0.12);
+    box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.26);
+}
+
+.mini-meter span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #73b666, #f2c45c);
 }
 
 /* 饱食度条 */
 .bar-container {
     width: 96px;
-    height: 8px;
-    background: rgba(255, 255, 255, 0.15);
+    height: 9px;
+    background: rgba(8, 22, 13, 0.52);
     border-radius: 99px;
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 248, 223, 0.18);
     box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
 }
 
 .bar-fill {
     height: 100%;
-    background: linear-gradient(90deg, #ff7a00, #ffba00);
+    background: linear-gradient(90deg, #69b66a, #f2c45c);
     border-radius: 99px;
     transition: width 0.4s ease-out;
 }
@@ -127,9 +207,9 @@ body, html {
 .task-hud {
     pointer-events: auto;
     position: absolute;
-    top: 96px;
+    top: 152px;
     left: 18px;
-    padding: 10px 16px;
+    padding: 9px 14px;
     max-width: min(340px, calc(100vw - 36px));
     display: flex;
     gap: 8px;
@@ -139,7 +219,7 @@ body, html {
 
 .task-title {
     font-weight: 800;
-    color: #ffd859;
+    color: var(--town-gold-strong);
     white-space: nowrap;
 }
 
@@ -156,14 +236,14 @@ body, html {
     bottom: 108px;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: rgba(10, 15, 30, 0.85);
-    border: 1.5px solid #ffcc00;
-    color: #ffcc00;
-    padding: 10px 20px;
-    border-radius: 22px;
+    background: rgba(20, 45, 31, 0.9);
+    border: 1.5px solid var(--town-gold);
+    color: var(--town-gold-strong);
+    padding: 10px 18px;
+    border-radius: 18px;
     font-weight: 700;
     font-size: 15px;
-    box-shadow: 0 4px 20px rgba(255, 204, 0, 0.25);
+    box-shadow: 0 8px 24px rgba(5, 16, 10, 0.38), 0 0 0 3px rgba(242, 196, 92, 0.08);
     z-index: 100;
     pointer-events: none;
     transition: opacity 0.2s ease;
@@ -171,26 +251,26 @@ body, html {
 }
 
 .action-prompt kbd {
-    background: #ffcc00;
-    color: #000;
+    background: var(--town-gold-strong);
+    color: #172315;
     padding: 2px 8px;
     border-radius: 4px;
     margin: 0 4px;
     font-family: inherit;
     font-weight: 800;
-    box-shadow: 0 2px 0 #b38f00;
+    box-shadow: 0 2px 0 #a7781e;
 }
 
 /* 键盘键帽统一风格 */
 .key-cap {
-    background: rgba(255,255,255,0.2);
-    border: 1px solid rgba(255,255,255,0.4);
-    border-bottom: 3px solid rgba(255,255,255,0.3);
+    background: rgba(255, 248, 223, 0.16);
+    border: 1px solid rgba(255, 248, 223, 0.36);
+    border-bottom: 3px solid rgba(255, 248, 223, 0.22);
     border-radius: 6px;
     padding: 2px 8px;
     margin: 0 3px;
     font-weight: 800;
-    color: #fff;
+    color: var(--town-ink);
     display: inline-block;
 }
 
@@ -200,13 +280,14 @@ body, html {
     position: absolute;
     bottom: 24px;
     right: 24px;
-    width: 58px;
-    height: 58px;
+    width: 60px;
+    height: 60px;
     font-size: 28px;
     cursor: pointer;
-    background: linear-gradient(135deg, #ffd000, #ff9000);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 8px 24px rgba(255, 144, 0, 0.4);
+    background:
+        radial-gradient(circle at 35% 28%, #fff1a8 0, #ffd166 34%, #d88d26 100%);
+    border: 2px solid rgba(255, 248, 223, 0.65);
+    box-shadow: 0 10px 24px rgba(5, 16, 10, 0.45), 0 0 0 5px rgba(242, 196, 92, 0.12);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -217,7 +298,7 @@ body, html {
 
 #btn-call-taxi:hover {
     transform: scale(1.1) rotate(5deg);
-    box-shadow: 0 12px 28px rgba(255, 144, 0, 0.6);
+    box-shadow: 0 12px 28px rgba(5, 16, 10, 0.52), 0 0 0 6px rgba(242, 196, 92, 0.18);
 }
 
 #btn-call-taxi:active {
@@ -230,21 +311,21 @@ body, html {
     position: absolute;
     bottom: 24px;
     left: 24px;
-    padding: 12px;
-    width: 256px;
+    padding: 11px;
+    width: 252px;
 }
 
 .inventory-title {
     width: 100%;
     border: 0;
     background: transparent;
-    color: #fff;
+    color: var(--town-ink);
     cursor: pointer;
     font-weight: 700;
     font-size: 14px;
     margin-bottom: 12px;
     letter-spacing: 0.5px;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+    border-bottom: 1px solid rgba(242, 196, 92, 0.22);
     padding-bottom: 6px;
     display: flex;
     align-items: center;
@@ -259,8 +340,8 @@ body, html {
 }
 
 .inventory-slot {
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(8, 22, 13, 0.34);
+    border: 1px solid rgba(255, 248, 223, 0.14);
     border-radius: 8px;
     aspect-ratio: 1;
     display: flex;
@@ -273,7 +354,7 @@ body, html {
 }
 
 .inventory-slot:hover {
-    background: rgba(255, 255, 255, 0.12);
+    background: rgba(255, 248, 223, 0.1);
 }
 
 .inventory-slot .slot-icon {
@@ -286,10 +367,10 @@ body, html {
     right: 4px;
     font-size: 11px;
     font-weight: 700;
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(13, 29, 19, 0.82);
     padding: 1px 4px;
     border-radius: 4px;
-    color: #ffdd66;
+    color: var(--town-gold-strong);
 }
 
 /* ==========================================================================
@@ -302,7 +383,7 @@ body, html {
     width: 100%;
     height: 100%;
     z-index: 1000;
-    background: rgba(3, 4, 12, 0.65);
+    background: rgba(3, 12, 7, 0.62);
     backdrop-filter: blur(10px);
     display: flex;
     align-items: center;
@@ -333,7 +414,7 @@ body, html {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 16px;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+    border-bottom: 1px solid rgba(242, 196, 92, 0.22);
     padding-bottom: 12px;
 }
 
@@ -345,7 +426,7 @@ body, html {
 .close-btn {
     background: none;
     border: none;
-    color: rgba(255,255,255,0.6);
+    color: rgba(255, 248, 223, 0.62);
     font-size: 28px;
     cursor: pointer;
     line-height: 1;
@@ -353,7 +434,7 @@ body, html {
 }
 
 .close-btn:hover {
-    color: #ffd859;
+    color: var(--town-gold-strong);
 }
 
 .store-tip {
@@ -378,14 +459,14 @@ body, html {
     width: 6px;
 }
 .shop-list::-webkit-scrollbar-thumb {
-    background: rgba(255,255,255,0.15);
+    background: rgba(242, 196, 92, 0.24);
     border-radius: 99px;
 }
 
 .shop-item {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
+    background: rgba(8, 22, 13, 0.26);
+    border: 1px solid rgba(255, 248, 223, 0.12);
+    border-radius: 8px;
     padding: 12px 16px;
     display: flex;
     justify-content: space-between;
@@ -394,7 +475,7 @@ body, html {
 }
 
 .shop-item:hover {
-    background: rgba(255, 255, 255, 0.09);
+    background: rgba(255, 248, 223, 0.08);
     transform: translateX(3px);
 }
 
@@ -416,7 +497,7 @@ body, html {
 
 .item-desc {
     font-size: 11px;
-    opacity: 0.6;
+    color: var(--town-muted);
 }
 
 .item-price {
@@ -429,7 +510,7 @@ body, html {
 .price-text {
     font-size: 14px;
     font-weight: 700;
-    color: #ffcc00;
+    color: var(--town-gold-strong);
 }
 
 .buy-btn, .sell-btn {
@@ -443,15 +524,15 @@ body, html {
 }
 
 .buy-btn {
-    background: linear-gradient(135deg, #00c6ff, #0072ff);
-    color: #fff;
-    box-shadow: 0 4px 10px rgba(0, 114, 255, 0.3);
+    background: linear-gradient(135deg, #78b8cf, #3d7a92);
+    color: #fffdf2;
+    box-shadow: 0 4px 10px rgba(30, 85, 102, 0.26);
 }
 
 .sell-btn {
-    background: linear-gradient(135deg, #00f260, #0575e6);
-    color: #fff;
-    box-shadow: 0 4px 10px rgba(0, 242, 96, 0.3);
+    background: linear-gradient(135deg, #83bd6f, #4b8551);
+    color: #fffdf2;
+    box-shadow: 0 4px 10px rgba(75, 133, 81, 0.26);
 }
 
 .buy-btn:hover, .sell-btn:hover {
@@ -484,7 +565,7 @@ body, html {
 }
 
 #farm-progress-bar {
-    background: linear-gradient(90deg, #4ef037, #b2f53d);
+    background: linear-gradient(90deg, #73b666, #f2c45c);
 }
 
 .seed-list {
@@ -495,9 +576,9 @@ body, html {
 }
 
 .seed-option {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1.5px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
+    background: rgba(8, 22, 13, 0.3);
+    border: 1.5px solid rgba(255, 248, 223, 0.12);
+    border-radius: 8px;
     padding: 12px 6px;
     text-align: center;
     cursor: pointer;
@@ -505,8 +586,8 @@ body, html {
 }
 
 .seed-option:hover:not(.disabled) {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: #ffd859;
+    background: rgba(255, 248, 223, 0.08);
+    border-color: var(--town-gold-strong);
     transform: translateY(-2px);
 }
 
@@ -535,19 +616,19 @@ body, html {
     width: 100%;
     border: none;
     padding: 12px;
-    border-radius: 12px;
+    border-radius: 8px;
     font-weight: 700;
     font-size: 15px;
     cursor: pointer;
-    background: linear-gradient(135deg, #ffd000, #ff9000);
-    color: #000;
-    box-shadow: 0 4px 15px rgba(255, 144, 0, 0.3);
-    transition: all 0.2s;
+    background: linear-gradient(135deg, #ffd166, #c98a2c);
+    color: #172315;
+    box-shadow: 0 4px 15px rgba(201, 138, 44, 0.28);
+    transition: filter 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
 .action-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(255, 144, 0, 0.4);
+    filter: brightness(1.06);
+    box-shadow: 0 6px 20px rgba(201, 138, 44, 0.36);
 }
 
 /* 学校答题 */
@@ -566,7 +647,7 @@ body, html {
     font-weight: 700;
     line-height: 1.5;
     margin-bottom: 20px;
-    color: #ffeb99;
+    color: #ffe7a8;
 }
 
 .quiz-options {
@@ -576,9 +657,9 @@ body, html {
 }
 
 .quiz-opt-btn {
-    border: 1px solid rgba(255,255,255,0.15);
-    background: rgba(255,255,255,0.06);
-    color: #fff;
+    border: 1px solid rgba(255, 248, 223, 0.15);
+    background: rgba(8, 22, 13, 0.3);
+    color: var(--town-ink);
     padding: 12px 16px;
     border-radius: 10px;
     text-align: left;
@@ -588,18 +669,18 @@ body, html {
 }
 
 .quiz-opt-btn:hover {
-    background: rgba(255,255,255,0.12);
-    border-color: #ffd859;
+    background: rgba(255, 248, 223, 0.1);
+    border-color: var(--town-gold-strong);
 }
 
 .quiz-opt-btn.correct {
-    background: rgba(78, 240, 55, 0.2) !important;
-    border-color: #4ef037 !important;
+    background: rgba(115, 182, 102, 0.28) !important;
+    border-color: #73b666 !important;
 }
 
 .quiz-opt-btn.wrong {
-    background: rgba(240, 78, 55, 0.2) !important;
-    border-color: #f04e37 !important;
+    background: rgba(230, 118, 97, 0.24) !important;
+    border-color: var(--town-danger) !important;
 }
 
 /* 打车选择 */
@@ -611,9 +692,9 @@ body, html {
 }
 
 .dest-btn {
-    border: 1px solid rgba(255,255,255,0.15);
-    background: rgba(255,255,255,0.06);
-    color: #fff;
+    border: 1px solid rgba(255, 248, 223, 0.15);
+    background: rgba(8, 22, 13, 0.3);
+    color: var(--town-ink);
     padding: 16px 8px;
     border-radius: 12px;
     font-size: 14px;
@@ -627,8 +708,8 @@ body, html {
 }
 
 .dest-btn:hover {
-    background: rgba(255,255,255,0.12);
-    border-color: #ffd859;
+    background: rgba(255, 248, 223, 0.1);
+    border-color: var(--town-gold-strong);
     transform: translateY(-2px);
 }
 
@@ -671,7 +752,7 @@ body, html {
 #taxi-ride-text {
     font-size: 18px;
     font-weight: 700;
-    color: #ffd859;
+    color: var(--town-gold-strong);
     margin-top: 20px;
     letter-spacing: 1px;
 }
@@ -686,7 +767,7 @@ body, html {
 .welcome-panel h1 {
     font-size: 24px;
     margin-bottom: 12px;
-    color: #ffd859;
+    color: var(--town-gold-strong);
     font-weight: 800;
 }
 
@@ -699,17 +780,17 @@ body, html {
 
 .instructions-panel {
     text-align: left;
-    background: rgba(255,255,255,0.04);
-    border-radius: 12px;
+    background: rgba(8, 22, 13, 0.3);
+    border-radius: 8px;
     padding: 16px;
-    border: 1px solid rgba(255,255,255,0.08);
+    border: 1px solid rgba(255, 248, 223, 0.12);
     margin-bottom: 24px;
 }
 
 .instructions-panel h3 {
     font-size: 14px;
     margin-bottom: 8px;
-    color: #ffd859;
+    color: var(--town-gold-strong);
 }
 
 .instructions-panel ul {
@@ -737,15 +818,15 @@ body, html {
 }
 
 @keyframes pulseGlow {
-    0% { box-shadow: 0 4px 20px rgba(255, 204, 0, 0.25); }
-    50% { box-shadow: 0 4px 30px rgba(255, 204, 0, 0.55); }
-    100% { box-shadow: 0 4px 20px rgba(255, 204, 0, 0.25); }
+    0% { box-shadow: 0 8px 24px rgba(5, 16, 10, 0.38), 0 0 0 3px rgba(242, 196, 92, 0.08); }
+    50% { box-shadow: 0 10px 30px rgba(5, 16, 10, 0.42), 0 0 0 4px rgba(242, 196, 92, 0.18); }
+    100% { box-shadow: 0 8px 24px rgba(5, 16, 10, 0.38), 0 0 0 3px rgba(242, 196, 92, 0.08); }
 }
 
 @keyframes taxiPulse {
-    0% { box-shadow: 0 8px 24px rgba(255, 144, 0, 0.4); }
-    50% { box-shadow: 0 8px 36px rgba(255, 144, 0, 0.6); }
-    100% { box-shadow: 0 8px 24px rgba(255, 144, 0, 0.4); }
+    0% { box-shadow: 0 10px 24px rgba(5, 16, 10, 0.45), 0 0 0 5px rgba(242, 196, 92, 0.12); }
+    50% { box-shadow: 0 12px 34px rgba(5, 16, 10, 0.5), 0 0 0 7px rgba(242, 196, 92, 0.2); }
+    100% { box-shadow: 0 10px 24px rgba(5, 16, 10, 0.45), 0 0 0 5px rgba(242, 196, 92, 0.12); }
 }
 
 @keyframes bounceCar {
@@ -774,6 +855,10 @@ body, html {
         gap: 6px;
         padding: 8px;
         white-space: normal;
+    }
+
+    .resident-card {
+        display: none;
     }
 
     .hud-item {

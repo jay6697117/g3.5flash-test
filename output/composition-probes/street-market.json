@@ -1,0 +1,72 @@
+{
+  "mode": "playing",
+  "coordinateSystem": "Three.js world coordinates, X east-west, Z north-south, Y up.",
+  "player": {
+    "x": -12,
+    "y": 0,
+    "z": -16,
+    "visible": true
+  },
+  "camera": {
+    "x": -24.58,
+    "y": 15.83,
+    "z": -3.69,
+    "radius": 24
+  },
+  "activeTrigger": null,
+  "visualAssets": {
+    "loaded": 38,
+    "failed": 0,
+    "runtimeGroups": 38
+  },
+  "state": {
+    "day": 1,
+    "hour": 8.35,
+    "coins": 100,
+    "satiety": 99,
+    "knowledge": 0,
+    "activeTask": "在小镇里熟悉一下环境吧，或者尝试去农地种菜！"
+  },
+  "taxi": {
+    "state": "IDLE",
+    "destination": null,
+    "x": -3.25,
+    "z": 0
+  },
+  "farm": [
+    {
+      "index": 0,
+      "state": "EMPTY",
+      "seedType": null,
+      "growTime": 0
+    },
+    {
+      "index": 1,
+      "state": "EMPTY",
+      "seedType": null,
+      "growTime": 0
+    },
+    {
+      "index": 2,
+      "state": "EMPTY",
+      "seedType": null,
+      "growTime": 0
+    },
+    {
+      "index": 3,
+      "state": "EMPTY",
+      "seedType": null,
+      "growTime": 0
+    }
+  ],
+  "inventory": {
+    "carrot_seed": 3,
+    "cabbage_seed": 2,
+    "pumpkin_seed": 1,
+    "carrot": 0,
+    "cabbage": 0,
+    "pumpkin": 0,
+    "bread": 1,
+    "soda": 1
+  }
+}

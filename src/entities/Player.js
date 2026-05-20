@@ -15,9 +15,9 @@ export class Player {
         this.isMoving = false;
         
         // 相机控制状态
-        this.cameraYaw = 0; // 水平角度
-        this.cameraPitch = 0.4; // 垂直弧度 (约 23 度)
-        this.cameraRadius = 12.0; // 离玩家距离
+        this.cameraYaw = -0.82; // 水平角度
+        this.cameraPitch = 0.72; // 垂直弧度
+        this.cameraRadius = 24.0; // 离玩家距离
         this.isMouseDown = false;
         this.prevMousePosition = { x: 0, y: 0 };
         
@@ -30,7 +30,7 @@ export class Player {
     
     buildMesh() {
         this.mesh = new THREE.Group();
-        this.mesh.position.set(-25, 0, -20); // 初始位置在家门附近
+        this.mesh.position.set(-6, 0, -12);
         
         // 材质库
         const bodyMat = new THREE.MeshStandardMaterial({ color: 0x3d7cc9, roughness: 0.5 }); // 蓝色夹克
@@ -140,7 +140,7 @@ export class Player {
         
         // 滚轮缩放距离
         window.addEventListener('wheel', (e) => {
-            this.cameraRadius = Math.max(5.0, Math.min(25.0, this.cameraRadius + e.deltaY * 0.01));
+            this.cameraRadius = Math.max(7.0, Math.min(30.0, this.cameraRadius + e.deltaY * 0.01));
         }, { passive: true });
     }
     

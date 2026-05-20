@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { AssetLoader } from '../render/loaders/AssetLoader.js';
 
 export class Taxi {
     constructor(scene, physics) {
@@ -14,6 +15,7 @@ export class Taxi {
         
         this.passenger = null;  // 当前载着的玩家对象
         this.targetDest = null; // 目的地 ID
+        this.assetLoader = new AssetLoader();
         
         // 各地标在马路上的上下车路点 (保证车停在马路中心，且靠近建筑)
         this.roadWaypoints = {
@@ -21,14 +23,15 @@ export class Taxi {
             supermarket: new THREE.Vector3(25, 0, 0),
             market: new THREE.Vector3(-25, 0, 0),
             school: new THREE.Vector3(25, 0, 0),
-            farm: new THREE.Vector3(0, 0, 9) // 农田南侧大门处
+            farm: new THREE.Vector3(-42, 0, 44)
         };
         
         // 1. 构建出租车 3D 造型
         this.buildMesh();
+        this.loadDetailedMesh();
         
         // 2. 初始位置：放置在主干道上
-        this.mesh.position.set(0, 0.05, -40); 
+        this.mesh.position.set(-3.5, 0.05, -24); 
     }
     
     buildMesh() {
@@ -99,6 +102,21 @@ export class Taxi {
         this.mesh.add(this.taxilamp);
         
         this.scene.add(this.mesh);
+        this.primitiveParts = [...this.mesh.children];
+    }
+
+    async loadDetailedMesh() {
+        try {
+            const model = await this.assetLoader.clone('taxiCab');
+            model.scale.setScalar(0.95);
+            model.position.set(0, 0, 0);
+            this.mesh.add(model);
+            this.primitiveParts.forEach((part) => {
+                part.visible = false;
+            });
+        } catch (error) {
+            console.warn('Failed to load detailed taxi model.', error);
+        }
     }
     
     /**

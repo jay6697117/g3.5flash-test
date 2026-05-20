@@ -150,6 +150,11 @@ function renderGameToText() {
             type: currentActiveTrigger.type,
             label: getActiveTriggerLabel(currentActiveTrigger),
         } : null,
+        visualAssets: {
+            loaded: town.loadedAssetCount,
+            failed: town.failedAssetCount,
+            runtimeGroups: town.runtimeAssetGroups.length,
+        },
         state: {
             day: gameState.day,
             hour: round(gameState.hour),

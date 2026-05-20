@@ -1,0 +1,145 @@
+{
+  "state": {
+    "mode": "playing",
+    "coordinateSystem": "Three.js world coordinates, X east-west, Z north-south, Y up.",
+    "player": {
+      "x": 0,
+      "y": 0,
+      "z": -5,
+      "visible": true
+    },
+    "camera": {
+      "x": -6.18,
+      "y": 15.39,
+      "z": 14.05,
+      "radius": 24
+    },
+    "activeTrigger": null,
+    "visualAssets": {
+      "loaded": 19,
+      "failed": 0,
+      "runtimeGroups": 19
+    },
+    "state": {
+      "day": 1,
+      "hour": 8.01,
+      "coins": 100,
+      "satiety": 100,
+      "knowledge": 0,
+      "activeTask": "在小镇里熟悉一下环境吧，或者尝试去农地种菜！"
+    },
+    "taxi": {
+      "state": "IDLE",
+      "destination": null,
+      "x": 0,
+      "z": -40
+    },
+    "farm": [
+      {
+        "index": 0,
+        "state": "EMPTY",
+        "seedType": null,
+        "growTime": 0
+      },
+      {
+        "index": 1,
+        "state": "EMPTY",
+        "seedType": null,
+        "growTime": 0
+      },
+      {
+        "index": 2,
+        "state": "EMPTY",
+        "seedType": null,
+        "growTime": 0
+      },
+      {
+        "index": 3,
+        "state": "EMPTY",
+        "seedType": null,
+        "growTime": 0
+      }
+    ],
+    "inventory": {
+      "carrot_seed": 3,
+      "cabbage_seed": 2,
+      "pumpkin_seed": 1,
+      "carrot": 0,
+      "cabbage": 0,
+      "pumpkin": 0,
+      "bread": 1,
+      "soda": 1
+    }
+  },
+  "boxes": [
+    {
+      "selector": ".hud-header",
+      "display": "grid",
+      "visible": true,
+      "left": 10,
+      "top": 10,
+      "right": 380,
+      "bottom": 86,
+      "width": 370,
+      "height": 76
+    },
+    {
+      "selector": "#task-panel",
+      "display": "flex",
+      "visible": true,
+      "left": 10,
+      "top": 92,
+      "right": 380,
+      "bottom": 150.375,
+      "width": 370,
+      "height": 58.375
+    },
+    {
+      "selector": "#inventory-hud",
+      "display": "block",
+      "visible": true,
+      "left": 10,
+      "top": 787,
+      "right": 278,
+      "bottom": 832,
+      "width": 268,
+      "height": 45
+    },
+    {
+      "selector": "#btn-call-taxi",
+      "display": "flex",
+      "visible": true,
+      "left": 312,
+      "top": 764,
+      "right": 376,
+      "bottom": 828,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "selector": "#action-prompt",
+      "display": "none",
+      "visible": false,
+      "left": 0,
+      "top": 0,
+      "right": 0,
+      "bottom": 0,
+      "width": 0,
+      "height": 0
+    },
+    {
+      "selector": ".resident-card",
+      "display": "none",
+      "visible": false,
+      "left": 0,
+      "top": 0,
+      "right": 0,
+      "bottom": 0,
+      "width": 0,
+      "height": 0
+    }
+  ],
+  "overflow": [],
+  "overlaps": [],
+  "logs": []
+}

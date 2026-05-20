@@ -1,0 +1,197 @@
+{
+  "pass": false,
+  "checks": [
+    {
+      "name": "assets loaded",
+      "pass": true,
+      "details": {
+        "loaded": 38,
+        "failed": 0,
+        "runtimeGroups": 38
+      }
+    },
+    {
+      "name": "home interaction updates task",
+      "pass": true,
+      "details": {}
+    },
+    {
+      "name": "supermarket modal opens",
+      "pass": true,
+      "details": {}
+    },
+    {
+      "name": "supermarket purchase changes coins",
+      "pass": true,
+      "details": {
+        "coins": 95
+      }
+    },
+    {
+      "name": "market modal opens",
+      "pass": true,
+      "details": {}
+    },
+    {
+      "name": "school modal opens",
+      "pass": true,
+      "details": {}
+    },
+    {
+      "name": "school quiz starts",
+      "pass": true,
+      "details": {}
+    },
+    {
+      "name": "farm modal opens at relocated plot",
+      "pass": true,
+      "details": {}
+    },
+    {
+      "name": "farm plant state",
+      "pass": true,
+      "details": {
+        "farm": {
+          "index": 0,
+          "state": "PLANTED",
+          "seedType": "carrot_seed",
+          "growTime": 15
+        }
+      }
+    },
+    {
+      "name": "farm water state",
+      "pass": true,
+      "details": {
+        "farm": {
+          "index": 0,
+          "state": "GROWING",
+          "seedType": "carrot_seed",
+          "growTime": 15
+        }
+      }
+    },
+    {
+      "name": "farm mature state",
+      "pass": true,
+      "details": {
+        "farm": {
+          "index": 0,
+          "state": "MATURE",
+          "seedType": "carrot_seed",
+          "growTime": 0
+        }
+      }
+    },
+    {
+      "name": "farm harvest inventory",
+      "pass": true,
+      "details": {
+        "inventory": {
+          "carrot_seed": 3,
+          "cabbage_seed": 2,
+          "pumpkin_seed": 1,
+          "carrot": 1,
+          "cabbage": 0,
+          "pumpkin": 0,
+          "bread": 1,
+          "soda": 1
+        }
+      }
+    },
+    {
+      "name": "taxi modal opens",
+      "pass": true,
+      "details": {}
+    },
+    {
+      "name": "taxi farm order starts",
+      "pass": false,
+      "details": {
+        "taxi": {
+          "state": "IDLE",
+          "destination": null,
+          "x": 24.87,
+          "z": 0
+        }
+      }
+    }
+  ],
+  "logs": [],
+  "finalState": {
+    "mode": "playing",
+    "coordinateSystem": "Three.js world coordinates, X east-west, Z north-south, Y up.",
+    "player": {
+      "x": -46.5,
+      "y": 0,
+      "z": 29.5,
+      "visible": true
+    },
+    "camera": {
+      "x": -59.69,
+      "y": 15.83,
+      "z": 41.81,
+      "radius": 24
+    },
+    "activeTrigger": {
+      "id": "farm_plot_0",
+      "type": "farm_plot",
+      "label": "农田地块 #1 (闲置，按 E 播种)"
+    },
+    "visualAssets": {
+      "loaded": 38,
+      "failed": 0,
+      "runtimeGroups": 38
+    },
+    "state": {
+      "day": 1,
+      "hour": 9.67,
+      "coins": 95,
+      "satiety": 95,
+      "knowledge": 0,
+      "activeTask": "🧺 成功收获了 1 个美味的[胡萝卜]！可以去菜市场卖掉换取金币。"
+    },
+    "taxi": {
+      "state": "IDLE",
+      "destination": null,
+      "x": 24.87,
+      "z": 0
+    },
+    "farm": [
+      {
+        "index": 0,
+        "state": "EMPTY",
+        "seedType": null,
+        "growTime": 0
+      },
+      {
+        "index": 1,
+        "state": "EMPTY",
+        "seedType": null,
+        "growTime": 0
+      },
+      {
+        "index": 2,
+        "state": "EMPTY",
+        "seedType": null,
+        "growTime": 0
+      },
+      {
+        "index": 3,
+        "state": "EMPTY",
+        "seedType": null,
+        "growTime": 0
+      }
+    ],
+    "inventory": {
+      "carrot_seed": 3,
+      "cabbage_seed": 2,
+      "pumpkin_seed": 1,
+      "carrot": 1,
+      "cabbage": 0,
+      "pumpkin": 0,
+      "bread": 1,
+      "soda": 1
+    }
+  }
+}
