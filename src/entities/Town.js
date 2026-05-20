@@ -371,7 +371,7 @@ export class Town {
             ['marketStall', { position: [-37, 0, 25], scale: 0.62, rotationY: Math.PI / 2, collider: [3.2, 2.2, '路边摊位'], castShadow: false }],
             ['marketStall', { position: [-14, 0, 25], scale: 0.62, rotationY: -Math.PI / 2, collider: [3.2, 2.2, '路边摊位'], castShadow: false }],
             ['cornerCafe', { position: [16, 0, 13], scale: 0.48, rotationY: -Math.PI / 2, collider: [3.8, 4.4, '街角咖啡店'] }],
-            ['cottageYard', { position: [-25, 0, -18.1], scale: 0.92, rotationY: 0, fallbackKey: null, castShadow: false }],
+            ['cottageYard', { position: [-25, 0, -18.1], scale: 0.92, rotationY: 0, fallbackKey: null, collider: false, castShadow: false }],
             ['cottageYard', { position: [42, 0, -11.5], scale: 0.62, rotationY: -Math.PI / 2, fallbackKey: null, castShadow: false }],
             ['lakesideGazebo', { position: [38, 0.02, -79], scale: 1.35, rotationY: Math.PI / 8, fallbackKey: null, castShadow: false }],
             ['lakesideGazebo', { position: [-38, 0.02, -78], scale: 1.05, rotationY: -Math.PI / 7, fallbackKey: null, castShadow: false }],

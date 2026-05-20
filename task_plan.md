@@ -227,4 +227,17 @@ Original prompt: 我想写一个3D模拟小镇，模拟真实世界的小镇，�
 | --- | --- | --- |
 | 35. Camera/input audit and mobile viewpoint design | complete | 已确认相机集中在 `Player.updateCamera()`，移动端使用更高 pitch/radius 的俯拍跟随，桌面保持原参数。 |
 | 36. Mobile follow-camera implementation | complete | `Player` 已加入 `mobile-overhead-follow` 相机 profile，文本状态输出当前相机模式和参数。 |
-| 37. Build and browser movement verification | pending | 构建并验证桌面/移动相机、移动摇杆行走和无溢出。 |
+| 37. Build and browser movement verification | in_progress | `npm run build` 通过；桌面相机为 `desktop-third-person`，移动端摇杆移动约 7.27 单位且相机为 `mobile-overhead-follow`。 |
+
+## Current Goal Extension 9
+修复玩家住宅门口/院子入口无法进入的问题：
+- 用户截图红框区域是住宅南侧门口平台，应该可以从院子入口走到门前。
+- 当前阻挡大概率来自前院装饰或房屋附近碰撞体，优先用运行时碰撞探针定位。
+- 修复目标是打开门口中线通路，同时保留房屋本体、周边花箱等真实障碍。
+
+## Extension Phases 9
+| Phase | Status | Notes |
+| --- | --- | --- |
+| 38. Home entrance collision audit | complete | 运行时网格探针确认 `cottageYard` 的大块 collider 覆盖了门口平台。 |
+| 39. Collider adjustment | complete | 已禁用住宅前院 `cottageYard` 的整块 collider，让可视走道恢复通行。 |
+| 40. Build and entrance probe verification | complete | `npm run build` 通过；门口 `x=-25,z=-19.5~-15.5` 探针均可通行。 |

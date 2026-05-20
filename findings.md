@@ -125,3 +125,8 @@
 - 预计最小风险方案是在现有 `Player.updateCamera()` 参数层做移动端特化，而不是引入第二套相机控制器。
 - 相机定位结果：`src/entities/Player.js` 构造函数中当前参数是 `cameraYaw=-0.72`、`cameraPitch=0.34`、`cameraRadius=16.4`；`updateCamera()` 每帧用这些参数算相机偏移并 `lookAt` 玩家头顶。移动端可在这里选择更高 pitch、更大 radius、稍高 lookAt。
 - 移动端检测已有先例：`src/core/Engine.js` 使用 `matchMedia('(max-width: 768px), (pointer: coarse)')` 调整 DPR/阴影。相机也应使用同一类 viewport/coarse pointer 判断，保持桌面端不变。
+
+## Home Entrance Collision Findings
+- 用户截图红框对应玩家住宅南侧入口，运行时探针显示 `x=-25,z=-20.5` 可通行，但 `x=-25,z=-19.5~-17.5` 被阻挡，正好落在 `cottageYard` 默认整块 collider 内。
+- 根因是 `Town.buildGltfScenePass()` 中 `cottageYard` at `[-25,0,-18.1]` 继承了 `DEFAULT_MODEL_COLLIDERS.cottageYard` 的大矩形碰撞盒，覆盖了本该可走的门口平台/院子入口。
+- 修复后禁用该住宅前院装饰的 broad collider，构建通过；门口关键点 `(-25,-19.5)`、`(-25,-18.5)`、`(-25,-17.5)`、`(-25,-16.5)`、`(-25,-15.5)` 均返回 `blocked=false`，周边花箱点 `(-30,-15)` 仍为 `blocked=true`。

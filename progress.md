@@ -159,3 +159,7 @@ Original prompt: 我想写一个3D模拟小镇，模拟真实世界的小镇，�
 - Started Extension 8 mobile follow-camera pass after user reported the character is often hidden by tall buildings while walking on mobile.
 - Audited current camera path: `Player.updateCamera()` is the single third-person follow camera path; mobile top-down behavior can be added by selecting mobile-specific camera radius/pitch in `Player`.
 - Implemented mobile-only overhead follow camera parameters in `src/entities/Player.js` and exposed camera `mode/radius/pitch/lookAtHeight` through `render_game_to_text()`.
+- Started home entrance collision fix after user screenshot showed the front-door path is blocked; runtime grid probing identified the home `cottageYard` collider as the blocker.
+- Disabled the broad collider on the home-front `cottageYard` placement so the visible walkway and doorway approach remain passable.
+- Ran `npm run build`; build passed with the existing `vendor-three` 500 kB warning.
+- Browser collision probe passed after reload: home entrance points from `x=-25,z=-19.5` through `z=-15.5` are passable, while nearby planter point `x=-30,z=-15` remains blocked.
