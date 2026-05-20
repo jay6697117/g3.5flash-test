@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { MATERIAL_TOKENS, STREET_FURNITURE } from '../content/townContent.js';
 
 export class Town {
     constructor(scene, physics) {
@@ -13,24 +14,36 @@ export class Town {
         
         // 初始化材料库，采用暖色和柔和低饱和度的色彩，确保高级感
         this.materials = {
-            ground: new THREE.MeshStandardMaterial({ color: 0x8ebe70, roughness: 0.9, metalness: 0.1 }),
-            road: new THREE.MeshStandardMaterial({ color: 0x4f5258, roughness: 0.8 }),
+            ground: new THREE.MeshStandardMaterial({ color: MATERIAL_TOKENS.grass, roughness: 0.95, metalness: 0.02 }),
+            grassDark: new THREE.MeshStandardMaterial({ color: MATERIAL_TOKENS.grassDark, roughness: 1.0 }),
+            grassLight: new THREE.MeshStandardMaterial({ color: MATERIAL_TOKENS.grassLight, roughness: 1.0 }),
+            road: new THREE.MeshStandardMaterial({ color: MATERIAL_TOKENS.road, roughness: 0.82 }),
+            roadEdge: new THREE.MeshStandardMaterial({ color: MATERIAL_TOKENS.roadEdge, roughness: 0.85 }),
+            sidewalk: new THREE.MeshStandardMaterial({ color: MATERIAL_TOKENS.sidewalk, roughness: 0.9 }),
+            crosswalk: new THREE.MeshStandardMaterial({ color: MATERIAL_TOKENS.crosswalk, roughness: 0.8 }),
             roadMark: new THREE.MeshStandardMaterial({ color: 0xdddddd, roughness: 0.8 }),
-            houseWall: new THREE.MeshStandardMaterial({ color: 0xfdfdfd, roughness: 0.6 }),
-            houseRoof: new THREE.MeshStandardMaterial({ color: 0xd85b5b, roughness: 0.5 }), // 红色屋顶
-            supermarketWall: new THREE.MeshStandardMaterial({ color: 0x3d6cb9, roughness: 0.5 }), // 深蓝
+            houseWall: new THREE.MeshStandardMaterial({ color: MATERIAL_TOKENS.creamWall, roughness: 0.68 }),
+            houseRoof: new THREE.MeshStandardMaterial({ color: MATERIAL_TOKENS.houseRoof, roughness: 0.58 }), // 红色屋顶
+            supermarketWall: new THREE.MeshStandardMaterial({ color: MATERIAL_TOKENS.supermarketBlue, roughness: 0.55 }), // 深蓝
             supermarketGlass: new THREE.MeshStandardMaterial({ color: 0xa0e0ff, transparent: true, opacity: 0.6, roughness: 0.1, metalness: 0.9 }),
-            marketTent1: new THREE.MeshStandardMaterial({ color: 0x5ebd90, roughness: 0.5 }), // 绿白相间遮阳棚
+            marketTent1: new THREE.MeshStandardMaterial({ color: MATERIAL_TOKENS.marketGreen, roughness: 0.5 }), // 绿白相间遮阳棚
             marketTent2: new THREE.MeshStandardMaterial({ color: 0xfafafa, roughness: 0.5 }),
-            wood: new THREE.MeshStandardMaterial({ color: 0x8B5A2B, roughness: 0.9 }),
-            schoolBrick: new THREE.MeshStandardMaterial({ color: 0xb14d34, roughness: 0.7 }), // 红砖
-            schoolPillar: new THREE.MeshStandardMaterial({ color: 0xcccccc, roughness: 0.5 }),
+            wood: new THREE.MeshStandardMaterial({ color: MATERIAL_TOKENS.wood, roughness: 0.9 }),
+            darkWood: new THREE.MeshStandardMaterial({ color: MATERIAL_TOKENS.darkWood, roughness: 0.9 }),
+            schoolBrick: new THREE.MeshStandardMaterial({ color: MATERIAL_TOKENS.schoolBrick, roughness: 0.72 }), // 红砖
+            schoolPillar: new THREE.MeshStandardMaterial({ color: MATERIAL_TOKENS.stone, roughness: 0.55 }),
             trunk: new THREE.MeshStandardMaterial({ color: 0x5c4033, roughness: 0.9 }),
             foliage: new THREE.MeshStandardMaterial({ color: 0x4d8a55, roughness: 0.8 }),
             foliageYellow: new THREE.MeshStandardMaterial({ color: 0xdbb035, roughness: 0.8 }),
             farmSoil: new THREE.MeshStandardMaterial({ color: 0x5a3e2b, roughness: 1.0 }), // 土地
             fence: new THREE.MeshStandardMaterial({ color: 0xeeeeee, roughness: 0.7 }),
             lampPole: new THREE.MeshStandardMaterial({ color: 0x777777, roughness: 0.5, metalness: 0.8 }),
+            planterStone: new THREE.MeshStandardMaterial({ color: 0x9c9285, roughness: 0.85 }),
+            flowerRed: new THREE.MeshStandardMaterial({ color: MATERIAL_TOKENS.accentRed, roughness: 0.65 }),
+            flowerYellow: new THREE.MeshStandardMaterial({ color: MATERIAL_TOKENS.accentYellow, roughness: 0.65 }),
+            signBoard: new THREE.MeshStandardMaterial({ color: MATERIAL_TOKENS.warmWhite, roughness: 0.6 }),
+            accentYellow: new THREE.MeshStandardMaterial({ color: MATERIAL_TOKENS.accentYellow, roughness: 0.5 }),
+            accentBlue: new THREE.MeshStandardMaterial({ color: MATERIAL_TOKENS.accentBlue, roughness: 0.55 }),
             lampOff: new THREE.MeshStandardMaterial({ color: 0xdddddd }),
             lampOn: new THREE.MeshBasicMaterial({ color: 0xffe677 }), // 晚上发光
             windowOff: new THREE.MeshStandardMaterial({ color: 0x334455, roughness: 0.3 }),
@@ -47,6 +60,7 @@ export class Town {
         this.buildSchool();
         this.buildFarm();
         this.buildStreetLights();
+        this.buildTownDetails();
     }
     
     // 1. 构建小镇地基
@@ -94,6 +108,147 @@ export class Town {
             markEW.position.set(i, 0.02, 0);
             this.scene.add(markEW);
         }
+    }
+
+    addBox(group, width, height, depth, material, x, y, z) {
+        const mesh = new THREE.Mesh(new THREE.BoxGeometry(width, height, depth), material);
+        mesh.position.set(x, y, z);
+        mesh.castShadow = height > 0.2;
+        mesh.receiveShadow = true;
+        group.add(mesh);
+        return mesh;
+    }
+
+    buildTownDetails() {
+        this.buildSidewalks();
+        this.buildLandmarkPads();
+        this.buildStreetFurniture();
+        this.buildDirectionalSigns();
+    }
+
+    buildSidewalks() {
+        const group = new THREE.Group();
+
+        this.addBox(group, 2.4, 0.08, 120, this.materials.sidewalk, -5.4, 0.08, 0);
+        this.addBox(group, 2.4, 0.08, 120, this.materials.sidewalk, 5.4, 0.08, 0);
+        this.addBox(group, 120, 0.08, 2.4, this.materials.sidewalk, 0, 0.09, -5.4);
+        this.addBox(group, 120, 0.08, 2.4, this.materials.sidewalk, 0, 0.09, 5.4);
+
+        this.addBox(group, 0.18, 0.22, 120, this.materials.roadEdge, -4.1, 0.18, 0);
+        this.addBox(group, 0.18, 0.22, 120, this.materials.roadEdge, 4.1, 0.18, 0);
+        this.addBox(group, 120, 0.22, 0.18, this.materials.roadEdge, 0, 0.19, -4.1);
+        this.addBox(group, 120, 0.22, 0.18, this.materials.roadEdge, 0, 0.19, 4.1);
+
+        for (let i = -3; i <= 3; i += 1.2) {
+            this.addBox(group, 0.45, 0.04, 5.8, this.materials.crosswalk, i, 0.16, -8.2);
+            this.addBox(group, 0.45, 0.04, 5.8, this.materials.crosswalk, i, 0.16, 8.2);
+            this.addBox(group, 5.8, 0.04, 0.45, this.materials.crosswalk, -8.2, 0.17, i);
+            this.addBox(group, 5.8, 0.04, 0.45, this.materials.crosswalk, 8.2, 0.17, i);
+        }
+
+        this.scene.add(group);
+    }
+
+    buildLandmarkPads() {
+        const group = new THREE.Group();
+        const pads = [
+            [-25, -20, 8, 5],
+            [25, -20, 14, 5],
+            [-25, 19, 12, 6],
+            [25, 18, 16, 6],
+            [0, 10.2, 9, 4],
+        ];
+
+        pads.forEach(([x, z, width, depth]) => {
+            this.addBox(group, width, 0.06, depth, this.materials.sidewalk, x, 0.13, z);
+        });
+
+        const gardenPatches = [
+            [-31, -18, 4, 3], [-19, -18, 4, 3],
+            [18, -18, 4, 3], [32, -18, 4, 3],
+            [-32, 17, 4, 3], [-18, 17, 4, 3],
+            [17, 17, 5, 3], [33, 17, 5, 3],
+        ];
+
+        gardenPatches.forEach(([x, z, width, depth], index) => {
+            const material = index % 2 === 0 ? this.materials.grassLight : this.materials.grassDark;
+            this.addBox(group, width, 0.05, depth, material, x, 0.14, z);
+        });
+
+        this.scene.add(group);
+    }
+
+    buildStreetFurniture() {
+        const group = new THREE.Group();
+
+        STREET_FURNITURE.benches.forEach(([x, z, rotation]) => {
+            const bench = new THREE.Group();
+            bench.position.set(x, 0, z);
+            bench.rotation.y = rotation;
+            this.addBox(bench, 2.2, 0.18, 0.45, this.materials.wood, 0, 0.65, 0);
+            this.addBox(bench, 2.2, 0.18, 0.28, this.materials.darkWood, 0, 1.05, -0.34);
+            this.addBox(bench, 0.18, 0.65, 0.18, this.materials.lampPole, -0.82, 0.35, 0.12);
+            this.addBox(bench, 0.18, 0.65, 0.18, this.materials.lampPole, 0.82, 0.35, 0.12);
+            group.add(bench);
+        });
+
+        STREET_FURNITURE.planters.forEach(([x, z], index) => {
+            const planter = new THREE.Group();
+            planter.position.set(x, 0, z);
+            this.addBox(planter, 1.2, 0.55, 0.9, this.materials.planterStone, 0, 0.35, 0);
+            this.addBox(planter, 0.9, 0.12, 0.62, this.materials.farmSoil, 0, 0.68, 0);
+
+            for (let i = -1; i <= 1; i++) {
+                const flower = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.13, 6, 6),
+                    (index + i) % 2 === 0 ? this.materials.flowerYellow : this.materials.flowerRed
+                );
+                flower.position.set(i * 0.24, 0.88, Math.sin(i + index) * 0.18);
+                flower.castShadow = true;
+                planter.add(flower);
+            }
+
+            group.add(planter);
+        });
+
+        this.scene.add(group);
+    }
+
+    buildDirectionalSigns() {
+        const group = new THREE.Group();
+
+        STREET_FURNITURE.signPosts.forEach((config, index) => {
+            const signGroup = new THREE.Group();
+            signGroup.position.set(config.x, 0, config.z);
+            signGroup.rotation.y = index % 2 === 0 ? Math.PI / 6 : -Math.PI / 6;
+
+            const post = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.1, 2.2, 8), this.materials.wood);
+            post.position.y = 1.1;
+            post.castShadow = true;
+            signGroup.add(post);
+
+            const board = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.72, 0.16), this.materials.signBoard);
+            board.position.y = 2.0;
+            board.castShadow = true;
+            signGroup.add(board);
+
+            const accent = new THREE.Mesh(
+                new THREE.BoxGeometry(1.52, 0.12, 0.18),
+                new THREE.MeshStandardMaterial({ color: config.accent, roughness: 0.5 })
+            );
+            accent.position.set(0, 2.12, 0.02);
+            signGroup.add(accent);
+
+            const arrow = new THREE.Mesh(new THREE.ConeGeometry(0.22, 0.42, 3), this.materials.accentYellow);
+            arrow.position.set(0.58, 1.86, 0.04);
+            arrow.rotation.z = -Math.PI / 2;
+            arrow.rotation.y = Math.PI / 2;
+            signGroup.add(arrow);
+
+            group.add(signGroup);
+        });
+
+        this.scene.add(group);
     }
     
     // 3. 构建玩家住宅 (坐标: -25, -25)

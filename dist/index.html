@@ -8,8 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Noto+Sans+SC:wght@300;400;700&display=swap" rel="stylesheet">
-  <script type="module" crossorigin src="/assets/index-CN2h5zxD.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-DJlGtjLS.css">
+  <script type="module" crossorigin src="/assets/index-CN4t-rjG.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-C3l6OapD.css">
 </head>
 <body>
     <!-- Three.js 渲染画布 -->
@@ -53,13 +53,16 @@
         </div>
 
         <!-- 打车呼叫悬浮按钮 -->
-        <button id="btn-call-taxi" class="glass-button circle-btn" title="呼叫出租车">
+        <button id="btn-call-taxi" class="glass-button circle-btn" title="呼叫出租车" aria-label="呼叫出租车">
             🚕
         </button>
 
         <!-- 背包抽屉（快捷查看） -->
         <div id="inventory-hud" class="glass-panel">
-            <div class="inventory-title">🎒 背包</div>
+            <button id="btn-toggle-inventory" class="inventory-title" aria-expanded="false" aria-controls="inventory-grid">
+                <span>🎒</span>
+                <span>背包</span>
+            </button>
             <div class="inventory-grid" id="inventory-grid">
                 <!-- 动态生成格子 -->
             </div>

@@ -58,27 +58,31 @@ body, html {
     height: 100%;
     z-index: 10;
     pointer-events: none; /* 让鼠标事件能够穿透 HUD 点击 3D 场景 */
-    padding: 24px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    padding: 18px;
 }
 
 /* 顶部状态栏 */
 .hud-header {
     pointer-events: auto; /* 允许与顶部状态栏交互 */
-    align-self: center;
+    position: absolute;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
-    gap: 20px;
-    padding: 12px 28px;
+    max-width: calc(100vw - 32px);
+    gap: 14px;
+    padding: 10px 20px;
     align-items: center;
+    justify-content: center;
+    white-space: nowrap;
 }
 
 .hud-item {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 16px;
+    min-width: 0;
+    font-size: 15px;
     font-weight: 600;
 }
 
@@ -89,7 +93,7 @@ body, html {
 
 .hud-item .value {
     text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-    letter-spacing: 0.5px;
+    letter-spacing: 0;
 }
 
 .hud-item .sub-value {
@@ -103,7 +107,7 @@ body, html {
 
 /* 饱食度条 */
 .bar-container {
-    width: 100px;
+    width: 96px;
     height: 8px;
     background: rgba(255, 255, 255, 0.15);
     border-radius: 99px;
@@ -124,9 +128,9 @@ body, html {
     pointer-events: auto;
     position: absolute;
     top: 96px;
-    left: 24px;
-    padding: 12px 20px;
-    max-width: 320px;
+    left: 18px;
+    padding: 10px 16px;
+    max-width: min(340px, calc(100vw - 36px));
     display: flex;
     gap: 8px;
     align-items: flex-start;
@@ -140,7 +144,7 @@ body, html {
 }
 
 .task-content {
-    font-size: 14px;
+    font-size: 13px;
     line-height: 1.4;
     font-weight: 400;
 }
@@ -148,14 +152,15 @@ body, html {
 /* 屏幕中间动作提示 */
 .action-prompt {
     position: absolute;
-    top: 75%;
+    top: auto;
+    bottom: 108px;
     left: 50%;
     transform: translate(-50%, -50%);
     background: rgba(10, 15, 30, 0.85);
     border: 1.5px solid #ffcc00;
     color: #ffcc00;
-    padding: 10px 24px;
-    border-radius: 30px;
+    padding: 10px 20px;
+    border-radius: 22px;
     font-weight: 700;
     font-size: 15px;
     box-shadow: 0 4px 20px rgba(255, 204, 0, 0.25);
@@ -195,9 +200,9 @@ body, html {
     position: absolute;
     bottom: 24px;
     right: 24px;
-    width: 64px;
-    height: 64px;
-    font-size: 32px;
+    width: 58px;
+    height: 58px;
+    font-size: 28px;
     cursor: pointer;
     background: linear-gradient(135deg, #ffd000, #ff9000);
     border: 1px solid rgba(255, 255, 255, 0.3);
@@ -225,17 +230,26 @@ body, html {
     position: absolute;
     bottom: 24px;
     left: 24px;
-    padding: 16px;
-    width: 280px;
+    padding: 12px;
+    width: 256px;
 }
 
 .inventory-title {
+    width: 100%;
+    border: 0;
+    background: transparent;
+    color: #fff;
+    cursor: pointer;
     font-weight: 700;
     font-size: 14px;
     margin-bottom: 12px;
     letter-spacing: 0.5px;
     border-bottom: 1px solid rgba(255,255,255,0.1);
     padding-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-align: left;
 }
 
 .inventory-grid {
@@ -729,9 +743,9 @@ body, html {
 }
 
 @keyframes taxiPulse {
-    0% { transform: scale(1); box-shadow: 0 8px 24px rgba(255, 144, 0, 0.4); }
-    50% { transform: scale(1.05); box-shadow: 0 8px 36px rgba(255, 144, 0, 0.6); }
-    100% { transform: scale(1); box-shadow: 0 8px 24px rgba(255, 144, 0, 0.4); }
+    0% { box-shadow: 0 8px 24px rgba(255, 144, 0, 0.4); }
+    50% { box-shadow: 0 8px 36px rgba(255, 144, 0, 0.6); }
+    100% { box-shadow: 0 8px 24px rgba(255, 144, 0, 0.4); }
 }
 
 @keyframes bounceCar {
@@ -742,4 +756,142 @@ body, html {
 /* 隐藏显示辅助类 */
 .hidden {
     display: none !important;
+}
+
+@media (max-width: 700px) {
+    #game-hud {
+        padding: 10px;
+    }
+
+    .hud-header {
+        top: 10px;
+        left: 10px;
+        right: 10px;
+        transform: none;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        max-width: none;
+        gap: 6px;
+        padding: 8px;
+        white-space: normal;
+    }
+
+    .hud-item {
+        justify-content: center;
+        gap: 5px;
+        font-size: 13px;
+        min-width: 0;
+    }
+
+    .hud-item .icon {
+        font-size: 16px;
+    }
+
+    .hud-item .value {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .hud-item .sub-value {
+        margin-left: 0;
+        padding: 1px 5px;
+        font-size: 10px;
+    }
+
+    .status-time {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    .status-satiety {
+        grid-column: 1 / -1;
+        grid-row: 2;
+    }
+
+    .status-coins {
+        grid-column: 2;
+        grid-row: 1;
+    }
+
+    .status-knowledge {
+        grid-column: 3;
+        grid-row: 1;
+    }
+
+    .status-satiety .bar-container {
+        flex: 1;
+        min-width: 72px;
+        max-width: 150px;
+    }
+
+    .task-hud {
+        top: 92px;
+        left: 10px;
+        right: 10px;
+        max-width: none;
+        padding: 10px 12px;
+        border-radius: 12px;
+    }
+
+    .task-title {
+        font-size: 13px;
+    }
+
+    .task-content {
+        font-size: 13px;
+    }
+
+    .action-prompt {
+        left: 50%;
+        bottom: 112px;
+        width: min(330px, calc(100vw - 36px));
+        padding: 10px 14px;
+        font-size: 14px;
+        text-align: center;
+        line-height: 1.35;
+    }
+
+    #inventory-hud {
+        left: 10px;
+        bottom: 12px;
+        width: min(268px, calc(100vw - 104px));
+        padding: 10px;
+        border-radius: 12px;
+    }
+
+    #inventory-hud:not(.expanded) .inventory-grid {
+        display: none;
+    }
+
+    #inventory-hud:not(.expanded) .inventory-title {
+        margin-bottom: 0;
+        border-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    .inventory-grid {
+        grid-template-columns: repeat(4, minmax(42px, 1fr));
+        gap: 8px;
+        margin-top: 8px;
+    }
+
+    #btn-call-taxi {
+        right: 14px;
+        bottom: 16px;
+        width: 64px;
+        height: 64px;
+        font-size: 28px;
+    }
+
+    .game-modal {
+        max-width: calc(100vw - 28px);
+        max-height: calc(100vh - 36px);
+        overflow-y: auto;
+        padding: 18px;
+        border-radius: 14px;
+    }
+
+    .taxi-destinations {
+        grid-template-columns: 1fr;
+    }
 }

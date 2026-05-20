@@ -52,13 +52,16 @@
         </div>
 
         <!-- 打车呼叫悬浮按钮 -->
-        <button id="btn-call-taxi" class="glass-button circle-btn" title="呼叫出租车">
+        <button id="btn-call-taxi" class="glass-button circle-btn" title="呼叫出租车" aria-label="呼叫出租车">
             🚕
         </button>
 
         <!-- 背包抽屉（快捷查看） -->
         <div id="inventory-hud" class="glass-panel">
-            <div class="inventory-title">🎒 背包</div>
+            <button id="btn-toggle-inventory" class="inventory-title" aria-expanded="false" aria-controls="inventory-grid">
+                <span>🎒</span>
+                <span>背包</span>
+            </button>
             <div class="inventory-grid" id="inventory-grid">
                 <!-- 动态生成格子 -->
             </div>

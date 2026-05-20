@@ -30,89 +30,170 @@ let prevIsNight = null;
 
 // 交互按键去抖触发记录
 let wasInteractPressed = false;
+let currentActiveTrigger = null;
 
-// 5. 游戏主循环 (Game Loop)
-function animate() {
-    requestAnimationFrame(animate);
+function formatFarmTriggerLabel(trigger) {
+    const plot = farmSystem.plots[trigger.plotIndex];
+    const labelPrefix = `农田地块 #${trigger.plotIndex + 1}`;
+    if (plot.state === 'EMPTY') return `${labelPrefix} (闲置，按 E 播种)`;
+    if (plot.state === 'PLANTED') return `${labelPrefix} (已播种，按 E 浇水)`;
+    if (plot.state === 'GROWING') return `${labelPrefix} (生长中)`;
+    if (plot.state === 'MATURE') return `${labelPrefix} (已成熟，按 E 收割)`;
+    return labelPrefix;
+}
+
+function renderActionPrompt(prompt, labelName) {
+    prompt.replaceChildren();
+
+    const prefix = document.createElement('span');
+    prefix.textContent = `靠近 [${labelName}]，按 `;
+
+    const key = document.createElement('kbd');
+    key.textContent = 'E';
+
+    const suffix = document.createElement('span');
+    suffix.textContent = ' 互动';
+
+    prompt.append(prefix, key, suffix);
+}
+
+function getActiveTriggerLabel(activeTrigger) {
+    if (!activeTrigger) return '';
+    if (activeTrigger.type === 'farm_plot') {
+        return formatFarmTriggerLabel(activeTrigger);
+    }
+    return activeTrigger.label;
+}
+
+function stepGame(deltaTime) {
+    const cappedDeltaTime = Math.min(0.05, Math.max(0, deltaTime));
+
+    // Advance simulation state.
+    gameState.tick(cappedDeltaTime);
     
-    const deltaTime = Math.min(0.05, clock.getDelta()); // 限制最大增量，防止切屏时物理穿透
-    
-    // A. 游戏时间与饱食度推进
-    gameState.tick(deltaTime);
-    
-    // B. 更新昼夜交替与雾气颜色
+    // Sync world lighting with the game clock.
     engine.updateDayNightCycle(gameState.hour);
     
-    // 天黑天亮时触发路灯和窗户发光状态改变
     const isNight = engine.isNight;
     if (isNight !== prevIsNight) {
         prevIsNight = isNight;
         town.updateLights(isNight);
     }
     
-    // C. 驱动出租车 NPC 移动与路线运行
-    taxi.update(deltaTime);
+    taxi.update(cappedDeltaTime);
     
-    // D. 驱动农田生长计时与水滴粒子效果
-    farmSystem.update(deltaTime);
+    farmSystem.update(cappedDeltaTime);
     
-    // E. 玩家移动控制与坐车逻辑
     if (taxi.state === 'RIDING') {
-        // 如果正在坐车，让玩家角色贴合出租车位置，并隐身
         player.mesh.position.copy(taxi.mesh.position);
-        player.updateCamera(); // 仍然让相机平滑跟随玩家 (即跟随车子移动)
+        player.updateCamera();
     } else {
-        // 正常人行逻辑
-        // 根据饱食度状态折算速度 (饱食度为 0 时速度减半)
         const speedMultiplier = (gameState.satiety > 0) ? 1.0 : 0.5;
-        player.update(deltaTime, input, speedMultiplier);
+        player.update(cappedDeltaTime, input, speedMultiplier);
     }
     
-    // F. 交互范围检测 (触发器)
     const px = player.mesh.position.x;
     const pz = player.mesh.position.z;
     const activeTrigger = physics.checkTriggers(px, pz);
+    currentActiveTrigger = activeTrigger;
     
     const prompt = document.getElementById('action-prompt');
     
     if (activeTrigger) {
-        // 进入了可互动的范围
         prompt.classList.remove('hidden');
+        renderActionPrompt(prompt, getActiveTriggerLabel(activeTrigger));
         
-        let labelName = activeTrigger.label;
-        // 如果是特定地块，显示地块名字
-        if (activeTrigger.type === 'farm_plot') {
-            const plot = farmSystem.plots[activeTrigger.plotIndex];
-            if (plot.state === 'EMPTY') {
-                labelName = `农田地块 #${activeTrigger.plotIndex + 1} (闲置，按 E 播种)`;
-            } else if (plot.state === 'PLANTED') {
-                labelName = `农田地块 #${activeTrigger.plotIndex + 1} (已播种，按 E 浇水)`;
-            } else if (plot.state === 'GROWING') {
-                labelName = `农田地块 #${activeTrigger.plotIndex + 1} (生长中)`;
-            } else if (plot.state === 'MATURE') {
-                labelName = `农田地块 #${activeTrigger.plotIndex + 1} (已成熟，按 E 收割)`;
-            }
-        }
-        
-        prompt.innerHTML = `靠近 [${labelName}]，按 <kbd>E</kbd> 互动`;
-        
-        // 键盘 E 键触发交互 (检测上升沿，防止一直按住)
         if (input.keys.interact && !wasInteractPressed) {
             uiManager.triggerInteraction(activeTrigger);
             input.resetInteract();
         }
     } else {
-        // 没靠近任何交互点，隐藏提示
         prompt.classList.add('hidden');
         uiManager.activeTrigger = null;
     }
     
-    // 记录按键历史
     wasInteractPressed = input.keys.interact;
-    
-    // G. 渲染 3D 帧
+}
+
+function renderFrame() {
     engine.render();
 }
 
-// 6. 启动游戏主循环
+function animate() {
+    requestAnimationFrame(animate);
+    stepGame(clock.getDelta());
+    renderFrame();
+}
+
+function round(value) {
+    return Number(value.toFixed(2));
+}
+
+function renderGameToText() {
+    const payload = {
+        mode: document.getElementById('welcome-screen').classList.contains('hidden') ? 'playing' : 'welcome',
+        coordinateSystem: 'Three.js world coordinates, X east-west, Z north-south, Y up.',
+        player: {
+            x: round(player.mesh.position.x),
+            y: round(player.mesh.position.y),
+            z: round(player.mesh.position.z),
+            visible: player.mesh.visible,
+        },
+        camera: {
+            x: round(engine.camera.position.x),
+            y: round(engine.camera.position.y),
+            z: round(engine.camera.position.z),
+            radius: round(player.cameraRadius),
+        },
+        activeTrigger: currentActiveTrigger ? {
+            id: currentActiveTrigger.id,
+            type: currentActiveTrigger.type,
+            label: getActiveTriggerLabel(currentActiveTrigger),
+        } : null,
+        state: {
+            day: gameState.day,
+            hour: round(gameState.hour),
+            coins: gameState.coins,
+            satiety: gameState.satiety,
+            knowledge: gameState.knowledge,
+            activeTask: gameState.activeTask,
+        },
+        taxi: {
+            state: taxi.state,
+            destination: taxi.targetDest,
+            x: round(taxi.mesh.position.x),
+            z: round(taxi.mesh.position.z),
+        },
+        farm: farmSystem.plots.map((plot) => ({
+            index: plot.index,
+            state: plot.state,
+            seedType: plot.seedType,
+            growTime: round(Math.max(0, plot.growTime)),
+        })),
+        inventory: { ...gameState.inventory },
+    };
+    return JSON.stringify(payload);
+}
+
+window.render_game_to_text = renderGameToText;
+window.advanceTime = (ms) => {
+    const steps = Math.max(1, Math.round(ms / (1000 / 60)));
+    for (let i = 0; i < steps; i++) {
+        stepGame(1 / 60);
+    }
+    renderFrame();
+    return renderGameToText();
+};
+window.__townGame = {
+    stepGame,
+    renderFrame,
+    renderGameToText,
+    setPlayerPosition(x, z) {
+        player.mesh.position.set(x, 0, z);
+        stepGame(1 / 60);
+        renderFrame();
+        return renderGameToText();
+    },
+};
+
 animate();

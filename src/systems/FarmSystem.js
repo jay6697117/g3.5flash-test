@@ -57,6 +57,7 @@ export class FarmSystem {
         plot.mesh = sprout;
         
         this.gameState.setTask('🌱 种子已播下！快走到地块旁点击“浇水”来催化它成长。');
+        this.notifyPlotUpdated(plotIndex);
         return true;
     }
     
@@ -76,6 +77,7 @@ export class FarmSystem {
         this.spawnWaterParticles(plotInfo.worldX, plotInfo.worldZ);
         
         this.gameState.setTask('💧 已经成功浇水！作物正在蓬勃生长中，请耐心等候。');
+        this.notifyPlotUpdated(plotIndex);
         return true;
     }
     
@@ -104,7 +106,14 @@ export class FarmSystem {
         plot.watered = false;
         
         this.gameState.setTask(`🧺 成功收获了 1 个美味的[${config.name}]！可以去菜市场卖掉换取金币。`);
+        this.notifyPlotUpdated(plotIndex);
         return true;
+    }
+
+    notifyPlotUpdated(plotIndex) {
+        window.dispatchEvent(new CustomEvent('farm-plot-updated', {
+            detail: { plotIndex }
+        }));
     }
     
     /**
@@ -276,6 +285,7 @@ export class FarmSystem {
                     plot.mesh = matureMesh;
                     
                     this.gameState.setTask(`🎉 农田块 #${plot.index + 1} 的作物已成熟！快过去收割吧！`);
+                    this.notifyPlotUpdated(plot.index);
                 }
             }
         });

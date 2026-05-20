@@ -1,0 +1,82 @@
+{
+  "errors": [],
+  "finalState": {
+    "mode": "playing",
+    "coordinateSystem": "Three.js world coordinates, X east-west, Z north-south, Y up.",
+    "player": {
+      "x": -4.5,
+      "y": 0,
+      "z": -4.5,
+      "visible": true
+    },
+    "camera": {
+      "x": -4.5,
+      "y": 4.67,
+      "z": 6.55,
+      "radius": 12
+    },
+    "activeTrigger": {
+      "id": "farm_plot_0",
+      "type": "farm_plot",
+      "label": "农田地块 #1 (闲置，按 E 播种)"
+    },
+    "state": {
+      "day": 1,
+      "hour": 9.51,
+      "coins": 95,
+      "satiety": 96,
+      "knowledge": 0,
+      "activeTask": "🚕 已呼叫滴滴出行！出租车正在向您驶来，请在原地等待。"
+    },
+    "taxi": {
+      "state": "FETCHING",
+      "destination": "supermarket",
+      "x": 17.82,
+      "z": 0
+    },
+    "farm": [
+      {
+        "index": 0,
+        "state": "EMPTY",
+        "seedType": null,
+        "growTime": 0
+      },
+      {
+        "index": 1,
+        "state": "EMPTY",
+        "seedType": null,
+        "growTime": 0
+      },
+      {
+        "index": 2,
+        "state": "EMPTY",
+        "seedType": null,
+        "growTime": 0
+      },
+      {
+        "index": 3,
+        "state": "EMPTY",
+        "seedType": null,
+        "growTime": 0
+      }
+    ],
+    "inventory": {
+      "carrot_seed": 3,
+      "cabbage_seed": 2,
+      "pumpkin_seed": 1,
+      "carrot": 1,
+      "cabbage": 0,
+      "pumpkin": 0,
+      "bread": 1,
+      "soda": 1
+    }
+  },
+  "checks": [
+    "home",
+    "supermarketBuy",
+    "marketModal",
+    "schoolQuiz",
+    "farmLifecycle",
+    "taxiCall"
+  ]
+}

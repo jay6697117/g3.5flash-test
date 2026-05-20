@@ -45,6 +45,11 @@ export class UIManager {
         
         // 绑定状态广播监听
         window.addEventListener('state-change', (e) => this.renderHUD(e.detail.type, e.detail.state));
+        window.addEventListener('farm-plot-updated', (e) => {
+            if (this.activeTrigger?.type === 'farm_plot' && this.activeTrigger.plotIndex === e.detail.plotIndex) {
+                this.updateFarmModal(e.detail.plotIndex);
+            }
+        });
         
         // 初始化绑定 DOM 事件
         this.initEvents();
@@ -77,6 +82,13 @@ export class UIManager {
         // 3. 打车按钮
         document.getElementById('btn-call-taxi').addEventListener('click', () => {
             this.openModal('modal-taxi');
+        });
+
+        const inventoryHud = document.getElementById('inventory-hud');
+        const toggleInventory = document.getElementById('btn-toggle-inventory');
+        toggleInventory.addEventListener('click', () => {
+            inventoryHud.classList.toggle('expanded');
+            toggleInventory.setAttribute('aria-expanded', inventoryHud.classList.contains('expanded') ? 'true' : 'false');
         });
         
         // 4. 打车目的地按钮绑定
@@ -198,10 +210,44 @@ export class UIManager {
             this.updateInventoryHUD(state.inventory);
         }
     }
+
+    createTextElement(tagName, className, text) {
+        const element = document.createElement(tagName);
+        if (className) element.className = className;
+        element.textContent = text;
+        return element;
+    }
+
+    createItemInfo(meta, titleText = meta.name) {
+        const info = document.createElement('div');
+        info.className = 'item-info';
+
+        const icon = this.createTextElement('span', 'item-icon', meta.icon);
+        const textBlock = document.createElement('div');
+        textBlock.append(
+            this.createTextElement('div', 'item-name', titleText),
+            this.createTextElement('div', 'item-desc', meta.desc)
+        );
+
+        info.append(icon, textBlock);
+        return info;
+    }
+
+    createPriceAction(priceText, buttonClass, buttonText, disabled) {
+        const price = document.createElement('div');
+        price.className = 'item-price';
+
+        const label = this.createTextElement('span', 'price-text', priceText);
+        const button = this.createTextElement('button', buttonClass, buttonText);
+        button.disabled = disabled;
+
+        price.append(label, button);
+        return { price, button };
+    }
     
     updateInventoryHUD(inv) {
         const grid = document.getElementById('inventory-grid');
-        grid.innerHTML = '';
+        grid.replaceChildren();
         
         Object.entries(inv).forEach(([itemId, qty]) => {
             const meta = this.itemsMeta[itemId];
@@ -213,10 +259,10 @@ export class UIManager {
             
             // 只有数量 > 0 才显示卡片，或我们可以始终显示但是只有带数量的才高亮
             if (qty > 0) {
-                slot.innerHTML = `
-                    <span class="slot-icon">${meta.icon}</span>
-                    <span class="slot-count">${qty}</span>
-                `;
+                slot.append(
+                    this.createTextElement('span', 'slot-icon', meta.icon),
+                    this.createTextElement('span', 'slot-count', String(qty))
+                );
                 
                 // 如果是面包或者汽水，允许双击吃掉/喝掉
                 if (itemId === 'bread' || itemId === 'soda') {
@@ -229,7 +275,9 @@ export class UIManager {
                 }
             } else {
                 // 空格子虚化
-                slot.innerHTML = `<span class="slot-icon" style="opacity: 0.15">${meta.icon || '❓'}</span>`;
+                const icon = this.createTextElement('span', 'slot-icon', meta.icon || '❓');
+                icon.style.opacity = '0.15';
+                slot.append(icon);
                 slot.style.opacity = '0.4';
             }
             grid.appendChild(slot);
@@ -283,7 +331,7 @@ export class UIManager {
     openSupermarketModal() {
         this.openModal('modal-supermarket');
         const list = document.getElementById('supermarket-list');
-        list.innerHTML = '';
+        list.replaceChildren();
         
         // 售卖：种子、面包、汽水
         const goods = ['carrot_seed', 'cabbage_seed', 'pumpkin_seed', 'bread', 'soda'];
@@ -294,23 +342,11 @@ export class UIManager {
             div.className = 'shop-item';
             
             const disabled = this.gameState.coins < meta.price;
-            
-            div.innerHTML = `
-                <div class="item-info">
-                    <span class="item-icon">${meta.icon}</span>
-                    <div>
-                        <div class="item-name">${meta.name}</div>
-                        <div class="item-desc">${meta.desc}</div>
-                    </div>
-                </div>
-                <div class="item-price">
-                    <span class="price-text">🪙 ${meta.price}</span>
-                    <button class="buy-btn" ${disabled ? 'disabled' : ''}>购买</button>
-                </div>
-            `;
+            const { price, button } = this.createPriceAction(`🪙 ${meta.price}`, 'buy-btn', '购买', disabled);
+            div.append(this.createItemInfo(meta), price);
             
             // 购买事件绑定
-            div.querySelector('.buy-btn').addEventListener('click', () => {
+            button.addEventListener('click', () => {
                 if (this.gameState.spendCoins(meta.price)) {
                     this.gameState.addItem(itemId, 1);
                     this.openSupermarketModal(); // 刷新货架按钮状态
@@ -327,7 +363,7 @@ export class UIManager {
     openMarketModal() {
         this.openModal('modal-market');
         const list = document.getElementById('market-list');
-        list.innerHTML = '';
+        list.replaceChildren();
         
         // 回收：作物 (carrot, cabbage, pumpkin)
         const sellItems = ['carrot', 'cabbage', 'pumpkin'];
@@ -339,23 +375,11 @@ export class UIManager {
             
             const qty = this.gameState.inventory[itemId] || 0;
             const disabled = qty <= 0;
-            
-            div.innerHTML = `
-                <div class="item-info">
-                    <span class="item-icon">${meta.icon}</span>
-                    <div>
-                        <div class="item-name">${meta.name} (持有: ${qty})</div>
-                        <div class="item-desc">${meta.desc}</div>
-                    </div>
-                </div>
-                <div class="item-price">
-                    <span class="price-text">🪙 +${meta.price}</span>
-                    <button class="sell-btn" ${disabled ? 'disabled' : ''}>出售 1 个</button>
-                </div>
-            `;
+            const { price, button } = this.createPriceAction(`🪙 +${meta.price}`, 'sell-btn', '出售 1 个', disabled);
+            div.append(this.createItemInfo(meta, `${meta.name} (持有: ${qty})`), price);
             
             // 出售事件绑定
-            div.querySelector('.sell-btn').addEventListener('click', () => {
+            button.addEventListener('click', () => {
                 if (this.gameState.removeItem(itemId, 1)) {
                     this.gameState.addCoins(meta.price);
                     this.openMarketModal(); // 刷新出售状态
@@ -395,7 +419,7 @@ export class UIManager {
             
             // 渲染种子选择器
             const seedList = document.getElementById('farm-seed-list');
-            seedList.innerHTML = '';
+            seedList.replaceChildren();
             
             const seeds = ['carrot_seed', 'cabbage_seed', 'pumpkin_seed'];
             seeds.forEach(sId => {
@@ -403,12 +427,11 @@ export class UIManager {
                 const qty = this.gameState.inventory[sId] || 0;
                 const option = document.createElement('div');
                 option.className = `seed-option ${qty <= 0 ? 'disabled' : ''}`;
-                
-                option.innerHTML = `
-                    <div class="seed-icon">${meta.icon}</div>
-                    <div class="seed-name">${meta.name.replace('种子', '')}</div>
-                    <div class="seed-qty">拥有: ${qty}</div>
-                `;
+                option.append(
+                    this.createTextElement('div', 'seed-icon', meta.icon),
+                    this.createTextElement('div', 'seed-name', meta.name.replace('种子', '')),
+                    this.createTextElement('div', 'seed-qty', `拥有: ${qty}`)
+                );
                 
                 if (qty > 0) {
                     option.addEventListener('click', () => {
@@ -490,7 +513,7 @@ export class UIManager {
         document.getElementById('quiz-question').innerText = qData.q;
         
         const optContainer = document.getElementById('quiz-options');
-        optContainer.innerHTML = '';
+        optContainer.replaceChildren();
         
         qData.a.forEach((optText, optIdx) => {
             const btn = document.createElement('button');

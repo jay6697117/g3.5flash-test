@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 
+THREE.ColorManagement.enabled = true;
+
 export class Engine {
     constructor(canvasId) {
         this.canvas = document.getElementById(canvasId);
@@ -25,6 +27,9 @@ export class Engine {
         });
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        this.renderer.outputColorSpace = THREE.SRGBColorSpace;
+        this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        this.renderer.toneMappingExposure = 1.08;
         
         // 开启阴影贴图支持，提升 3D 立体感
         this.renderer.shadowMap.enabled = true;
@@ -40,16 +45,25 @@ export class Engine {
         
         // 6. 窗口自适应监听
         window.addEventListener('resize', () => this.onWindowResize());
+        this.canvas.addEventListener('webglcontextlost', (event) => {
+            event.preventDefault();
+            this.contextLost = true;
+        });
+        this.canvas.addEventListener('webglcontextrestored', () => {
+            this.contextLost = false;
+            this.onWindowResize();
+            this.render();
+        });
     }
     
     setupLights() {
         // 半球光：模拟天空和地面反射，提供均匀的底色
-        this.hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0.6);
+        this.hemiLight = new THREE.HemisphereLight(0xfff4de, 0x6b7b5d, 0.7);
         this.hemiLight.position.set(0, 50, 0);
         this.scene.add(this.hemiLight);
         
         // 主光源：太阳光/月光
-        this.dirLight = new THREE.DirectionalLight(0xfffaed, 0.8);
+        this.dirLight = new THREE.DirectionalLight(0xfff0d2, 0.9);
         this.dirLight.position.set(30, 40, 20);
         this.dirLight.castShadow = true;
         
@@ -69,7 +83,7 @@ export class Engine {
         this.scene.add(this.dirLight);
         
         // 辅助光：为暗部提供少量细节补偿
-        this.backLight = new THREE.DirectionalLight(0xa0b0ff, 0.2);
+        this.backLight = new THREE.DirectionalLight(0x91a7ff, 0.18);
         this.backLight.position.set(-30, 20, -20);
         this.scene.add(this.backLight);
     }
@@ -94,26 +108,26 @@ export class Engine {
         if (hour >= 6 && hour < 11) {
             // 清晨 (6:00 - 11:00)
             const t = (hour - 6) / 5;
-            skyColor = new THREE.Color('#ffc896').lerp(new THREE.Color('#a0c0e0'), t);
+            skyColor = new THREE.Color('#f4caa8').lerp(new THREE.Color('#9fc4d3'), t);
             fogColor = skyColor;
-            sunIntensity = 0.2 + t * 0.8;
-            hemiIntensity = 0.4 + t * 0.4;
-            sunColor = 0xffe5cc;
+            sunIntensity = 0.35 + t * 0.75;
+            hemiIntensity = 0.5 + t * 0.35;
+            sunColor = 0xffdfbd;
         } else if (hour >= 11 && hour < 17) {
             // 白天 (11:00 - 17:00)
-            skyColor = new THREE.Color('#a0c0e0');
+            skyColor = new THREE.Color('#9fc4d3');
             fogColor = skyColor;
-            sunIntensity = 1.0;
-            hemiIntensity = 0.8;
-            sunColor = 0xffffff;
+            sunIntensity = 1.12;
+            hemiIntensity = 0.9;
+            sunColor = 0xfff6df;
         } else if (hour >= 17 && hour < 19.5) {
             // 黄昏 (17:00 - 19:30)
             const t = (hour - 17) / 2.5;
-            skyColor = new THREE.Color('#a0c0e0').lerp(new THREE.Color('#e65c00'), t);
-            fogColor = skyColor.clone().lerp(new THREE.Color('#201030'), t * 0.5);
-            sunIntensity = 1.0 - t * 0.8;
-            hemiIntensity = 0.8 - t * 0.5;
-            sunColor = 0xffb366;
+            skyColor = new THREE.Color('#9fc4d3').lerp(new THREE.Color('#cf8050'), t);
+            fogColor = skyColor.clone().lerp(new THREE.Color('#30203c'), t * 0.45);
+            sunIntensity = 1.05 - t * 0.75;
+            hemiIntensity = 0.85 - t * 0.48;
+            sunColor = 0xffbd7a;
         } else {
             // 黑夜 (19:30 - 次日 6:00)
             let t = 0;
@@ -122,10 +136,10 @@ export class Engine {
             } else {
                 t = Math.min(1, (6 - hour) / 2);
             }
-            skyColor = new THREE.Color('#050510');
-            fogColor = new THREE.Color('#030308');
-            sunIntensity = 0.05; // 月光微弱
-            hemiIntensity = 0.15;
+            skyColor = new THREE.Color('#07111f');
+            fogColor = new THREE.Color('#07101a');
+            sunIntensity = 0.08; // 月光微弱
+            hemiIntensity = 0.22;
             sunColor = 0xa0b0ff; // 偏冷色调月光
         }
         
@@ -148,6 +162,7 @@ export class Engine {
     }
     
     render() {
+        if (this.contextLost) return;
         this.renderer.render(this.scene, this.camera);
     }
 }
