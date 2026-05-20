@@ -29,7 +29,9 @@ town.emitAssetLoadingProgress?.();
 const clock = new THREE.Clock();
 let prevIsNight = null;
 let dayNightUpdateElapsed = 0;
+let hudTimeUpdateElapsed = 0;
 const DAY_NIGHT_UPDATE_INTERVAL = 0.2;
+const HUD_TIME_UPDATE_INTERVAL = 0.25;
 
 // 交互按键去抖触发记录
 let wasInteractPressed = false;
@@ -57,8 +59,18 @@ function getInteractionVerb(activeTrigger) {
     return '互动';
 }
 
-function renderActionPrompt(prompt, labelName, verb) {
+function triggerActiveInteraction(activeTrigger) {
+    if (!activeTrigger) return;
+
+    uiManager.triggerInteraction(activeTrigger);
+    input.resetInteract();
+}
+
+function renderActionPrompt(prompt, labelName, verb, activeTrigger) {
     prompt.replaceChildren();
+
+    const desktopInstruction = document.createElement('span');
+    desktopInstruction.className = 'action-prompt-desktop';
 
     const prefix = document.createElement('span');
     prefix.textContent = `靠近 [${labelName}]，按 `;
@@ -69,7 +81,28 @@ function renderActionPrompt(prompt, labelName, verb) {
     const suffix = document.createElement('span');
     suffix.textContent = ` ${verb}`;
 
-    prompt.append(prefix, key, suffix);
+    desktopInstruction.append(prefix, key, suffix);
+
+    const mobileInstruction = document.createElement('span');
+    mobileInstruction.className = 'action-prompt-mobile';
+
+    const mobileLabel = document.createElement('span');
+    mobileLabel.className = 'mobile-interact-label';
+    mobileLabel.textContent = `靠近 [${labelName}]`;
+
+    const mobileButton = document.createElement('button');
+    mobileButton.type = 'button';
+    mobileButton.className = 'mobile-interact-button';
+    mobileButton.textContent = `点击${verb}`;
+    mobileButton.setAttribute('aria-label', `与 ${labelName} ${verb}`);
+    mobileButton.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        triggerActiveInteraction(activeTrigger);
+    });
+
+    mobileInstruction.append(mobileLabel, mobileButton);
+    prompt.append(desktopInstruction, mobileInstruction);
 }
 
 function getActiveTriggerLabel(activeTrigger) {
@@ -85,6 +118,12 @@ function stepGame(deltaTime) {
 
     // Advance simulation state.
     gameState.tick(cappedDeltaTime);
+
+    hudTimeUpdateElapsed += cappedDeltaTime;
+    if (hudTimeUpdateElapsed >= HUD_TIME_UPDATE_INTERVAL) {
+        hudTimeUpdateElapsed = 0;
+        uiManager.renderHUD('time', gameState);
+    }
 
     dayNightUpdateElapsed += cappedDeltaTime;
     const nextIsNight = gameState.hour >= 19 || gameState.hour < 6;
@@ -125,7 +164,7 @@ function stepGame(deltaTime) {
 
         if (promptChanged) {
             actionPrompt.classList.remove('hidden');
-            renderActionPrompt(actionPrompt, label, verb);
+            renderActionPrompt(actionPrompt, label, verb, activeTrigger);
             uiManager.setActiveWorldCue(activeTrigger);
             promptCache.visible = true;
             promptCache.id = promptId;
@@ -134,8 +173,7 @@ function stepGame(deltaTime) {
         }
 
         if (input.keys.interact && !wasInteractPressed) {
-            uiManager.triggerInteraction(activeTrigger);
-            input.resetInteract();
+            triggerActiveInteraction(activeTrigger);
         }
     } else if (promptCache.visible) {
         actionPrompt.classList.add('hidden');
@@ -201,6 +239,7 @@ function renderGameToText() {
             total: town.totalAssetCount,
             runtimeGroups: town.runtimeAssetGroups.length,
         },
+        collision: town.getCollisionDiagnostics(),
         state: {
             day: gameState.day,
             hour: round(gameState.hour),
@@ -244,6 +283,12 @@ window.__townGame = {
         stepGame(1 / 60);
         renderFrame();
         return renderGameToText();
+    },
+    getCollisionDiagnostics() {
+        return town.getCollisionDiagnostics();
+    },
+    checkCollision(x, z, radius = player.radius) {
+        return physics.checkCollision(x, z, radius);
     },
 };
 

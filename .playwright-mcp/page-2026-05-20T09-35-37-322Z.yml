@@ -1,0 +1,57 @@
+- generic [active] [ref=e1]:
+  - generic:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]: 🕒
+        - generic [ref=e6]: 08:00
+        - generic [ref=e7]: 第 1 天
+      - generic [ref=e8]:
+        - generic [ref=e9]: 🪙
+        - generic [ref=e10]: "100"
+      - generic [ref=e11]:
+        - generic [ref=e12]: 🍖
+        - generic [ref=e15]: 100%
+      - generic [ref=e16]:
+        - generic [ref=e17]: 🎓
+        - generic [ref=e18]: "0"
+    - generic [ref=e19]:
+      - generic [ref=e20]: "🎯 当前任务:"
+      - generic [ref=e21]: 在小镇里熟悉一下环境吧，或者尝试去农地种菜！
+    - status:
+      - generic: 正在加载小镇资源 0/70
+    - button "呼叫出租车" [ref=e22] [cursor=pointer]: 🚕
+    - button "🎒 背包" [ref=e26] [cursor=pointer]:
+      - generic [ref=e27]: 🎒
+      - generic [ref=e28]: 背包
+  - generic:
+    - generic:
+      - generic: 🚕
+      - paragraph: 出租车行驶中，请稍后...
+  - generic [ref=e30]:
+    - heading "🏡 3D 梦幻模拟小镇" [level=1] [ref=e31]
+    - paragraph [ref=e32]: 在这个小小的 3D 虚拟世界中，体验轻松舒适的小镇生活吧！
+    - generic [ref=e33]:
+      - heading "🎮 操作说明" [level=3] [ref=e34]
+      - list [ref=e35]:
+        - listitem [ref=e36]:
+          - generic [ref=e37]: W
+          - generic [ref=e38]: A
+          - generic [ref=e39]: S
+          - generic [ref=e40]: D
+          - text: 或
+          - generic [ref=e41]: ↑
+          - generic [ref=e42]: ↓
+          - generic [ref=e43]: ←
+          - generic [ref=e44]: →
+          - text: 键移动角色。
+        - listitem [ref=e45]: 移动端按住屏幕左半边空白处，会出现虚拟摇杆控制角色移动。
+        - listitem [ref=e46]:
+          - text: 按住
+          - strong [ref=e47]: 鼠标右键并拖动
+          - text: 旋转镜头视角。
+        - listitem [ref=e48]:
+          - text: 靠近建筑物或农田时，按
+          - generic [ref=e49]: E
+          - text: 键或点击屏幕提示进行互动。
+        - listitem [ref=e50]: 随时点击右下角的 🚕 按钮打车，呼叫出租车接送。
+    - button "进入小镇" [ref=e51] [cursor=pointer]

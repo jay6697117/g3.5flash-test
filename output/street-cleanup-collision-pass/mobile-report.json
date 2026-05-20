@@ -1,0 +1,20 @@
+{
+  "pass": true,
+  "visualAssets": {
+    "loaded": 70,
+    "failed": 0,
+    "total": 70,
+    "runtimeGroups": 70
+  },
+  "collision": {
+    "colliders": 130,
+    "triggers": 12,
+    "roadOccupancyIssues": []
+  },
+  "overflow": [],
+  "viewport": {
+    "width": 390,
+    "height": 844,
+    "scrollWidth": 390
+  }
+}

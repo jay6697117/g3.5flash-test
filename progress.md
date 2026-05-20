@@ -128,3 +128,26 @@ Original prompt: 我想写一个3D模拟小镇，模拟真实世界的小镇，�
 - Initial combined mobile screenshot run reached `loaded=64`, `failed=0` but timed out inside Playwright full-page screenshot; reran with a viewport screenshot and DPR 2.
 - Mobile visual verification wrote `output/street-facade-pass5/mobile-default.png` and `mobile-report.json`; result `pass=true`, no overflow, no overlaps, console/page/request errors `0`.
 - Gameplay regression wrote `output/street-facade-regression/report.json`; result `pass=true`, checks `21`, console/page/request errors `0`.
+- New focused continuation started. User explicitly limited scope to item 2 (`advanceTime()` night crash in `Town.updateLights()`) and item 3 (bring the default art direction closer to `town-art-direction.png`).
+- Re-read `task_plan.md`, `findings.md`, `progress.md`, inspected `src/entities/Town.js`, `src/entities/Player.js`, `src/entities/Taxi.js`, and compared `assets/concepts/town-art-direction.png` with `output/opening-composition-pass6/desktop-default.png`.
+- Current diagnosis: `Town.updateLights()` copies `MeshBasicMaterial` (`windowOn`) into `MeshStandardMaterial` clones stored in `windowMaterials`, which can corrupt expected material fields and trigger the observed `.r` read failure during night rendering.
+- Current visual diagnosis: the pass6 default view is functional but still too top-down; road/empty grass dominate, while concept alignment needs a lower street-facing composition with stronger front facade, NPC, market, and taxi focus.
+- Implemented first focused patch: changed `lampOn` and `windowOn` to emissive `MeshStandardMaterial` instances, kept `windowOff`/`lampOff` as compatible `MeshStandardMaterial`, lowered the default camera, nudged player spawn toward the market/NPC street, moved idle taxi closer to the opening road, and added a small foreground set of cottage/shop/person/bench/planter GLB placements.
+- First pass7 screenshot showed the lower camera and foreground buildings, but the taxi randomly left the opening composition during the asset-load wait and a foreground garden tree blocked the center of the frame.
+- Implemented second visual patch: added an opening idle-patrol delay to `Taxi` and moved the center-blocking `foregroundGarden` placement toward the left edge of the frame.
+- Pass8 screenshot confirmed `visualAssets.loaded=70`, `failed=0`, and taxi stayed at the opening coordinate, but the foreground garden tree still occupied the center of the frame. Moved that garden farther left/out of the main view and pulled the taxi closer to the market/NPC opening focus.
+- First custom night verification passed for the original crash condition: after `window.advanceTime(150000)`, game hour reached about `20.09`, `advanceError=null`, console/page/request errors were all `0`.
+- The same night screenshot showed the HUD clock still displayed `08:00` even though `render_game_to_text()` reported night time. Implemented a small HUD time refresh interval in `src/main.js` so accelerated time and normal runtime stay visually consistent.
+- Implemented one more opening-composition adjustment: snap the camera to the new low street-facing target at player initialization, reduce default pitch/radius slightly, and move the center-blocking foreground garden out to the far-left edge.
+- New user screenshot shows the opening street has too many objects visually spilling into the road and many placed props lack collision volume.
+- Started Extension 6 street cleanup/collision pass: will keep the existing vanilla Three.js runtime, clear the main road corridors, add colliders for GLB props and programmatic street furniture, and expose road/collider diagnostics through `render_game_to_text()`.
+- Added default model collider rules in `src/entities/Town.js` for farm barn, water tower, gazebos, cottage yards, street detail kits, gardens, trees, benches, planters, and townspeople.
+- Moved the center market stall, street detail kit, foreground garden, main-street rows, market racks, planters, and one decorative townsperson out of the road corridor and onto roadside/green/sidewalk areas.
+- Added collision boxes for programmatic benches, planters, and signposts; exposed `collision` diagnostics in `render_game_to_text()` and `window.__townGame.checkCollision()`.
+- Ran `npm run build`; build passed with the existing `vendor-three` 500 kB chunk warning.
+- Ran production preview at `http://127.0.0.1:4174/?autostart=1`; desktop verification passed with `loaded=70`, `failed=0`, `colliders=130`, `roadOccupancyIssues=[]`.
+- Saved desktop evidence to `output/street-cleanup-collision-pass/desktop-day.png` and `output/street-cleanup-collision-pass/report.json`.
+- Verified night transition with `window.advanceTime(150000)` from the fresh preview state; game time reached `22.15`, no crash, and road occupancy remained empty.
+- Ran 390x844 mobile smoke; `output/street-cleanup-collision-pass/mobile-report.json` passed with `overflow=[]`, `scrollWidth=390`, and `roadOccupancyIssues=[]`; screenshot saved to `output/street-cleanup-collision-pass/mobile-390x844.png`.
+- Started Extension 7 mobile talk pass after user screenshot showed “press E to talk” is not usable on mobile touch screens.
+- Created `mobile-talk-interaction` agent team and assigned code search plus mobile UX review agents.

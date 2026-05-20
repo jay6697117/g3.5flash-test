@@ -15,9 +15,9 @@ export class Player {
         this.isMoving = false;
         
         // 相机控制状态
-        this.cameraYaw = -0.78;
-        this.cameraPitch = 0.5;
-        this.cameraRadius = 21.5;
+        this.cameraYaw = -0.72;
+        this.cameraPitch = 0.34;
+        this.cameraRadius = 16.4;
         this.isMouseDown = false;
         this.prevMousePosition = { x: 0, y: 0 };
         
@@ -26,11 +26,12 @@ export class Player {
         
         // 2. 绑定鼠标相机控制事件
         this.setupCameraControls();
+        this.updateCamera(true);
     }
     
     buildMesh() {
         this.mesh = new THREE.Group();
-        this.mesh.position.set(-7.4, 0, -10.6);
+        this.mesh.position.set(-7.4, 0, -11.8);
         
         // 材质库
         const bodyMat = new THREE.MeshStandardMaterial({ color: 0x3d7cc9, roughness: 0.5 }); // 蓝色夹克
@@ -242,7 +243,7 @@ export class Player {
         this.updateCamera();
     }
     
-    updateCamera() {
+    updateCamera(snap = false) {
         // 计算相机相对于玩家的目标世界位置
         const offsetX = this.cameraRadius * Math.sin(this.cameraYaw) * Math.cos(this.cameraPitch);
         const offsetY = this.cameraRadius * Math.sin(this.cameraPitch);
@@ -253,9 +254,13 @@ export class Player {
         const targetCamZ = this.mesh.position.z + offsetZ;
         
         // Lerp 平滑缓动相机，带来电影级的高档视觉感受
-        this.camera.position.x += (targetCamX - this.camera.position.x) * 0.1;
-        this.camera.position.y += (targetCamY - this.camera.position.y) * 0.1;
-        this.camera.position.z += (targetCamZ - this.camera.position.z) * 0.1;
+        if (snap) {
+            this.camera.position.set(targetCamX, targetCamY, targetCamZ);
+        } else {
+            this.camera.position.x += (targetCamX - this.camera.position.x) * 0.1;
+            this.camera.position.y += (targetCamY - this.camera.position.y) * 0.1;
+            this.camera.position.z += (targetCamZ - this.camera.position.z) * 0.1;
+        }
         
         // 相机注视玩家偏上方 (脖子/头部高度)
         this.camera.lookAt(

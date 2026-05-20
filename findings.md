@@ -97,3 +97,22 @@
 - `output/street-facade-pass5/desktop-default.png` 与 `mobile-default.png` 证明新增街道细节已可见：更多花箱、路灯、摊位、人物和街角构件进入默认画面。
 - `output/street-facade-regression/report.json` 为玩法回归证据：21 项检查通过，覆盖 NPC 对话、住宅休息、超市购买、菜市场弹窗、学校测验入口、农田播种/浇水/成熟/收割、出租车订单。
 - 概念图对照结论：UI 与 `ui-style-board.png` 的色彩、面板层级和移动端低干扰布局已接近；3D 与 `town-art-direction.png` 的差距继续集中在默认镜头偏高、近景建筑立面不够占画面、出租车/人物/商铺的中心叙事焦点仍不够强。
+
+## Extension 6 Focus Findings
+- 本轮按用户要求只处理两个范围：`advanceTime()` 推进到夜间触发的 `Town.updateLights()` 崩溃，以及默认画面继续贴近 `assets/concepts/town-art-direction.png`。
+- 夜间崩溃根因集中在 `src/entities/Town.js:992-997`：`windowMaterials` 中保存的是 `MeshStandardMaterial` clone，但夜间调用 `mat.copy(this.materials.windowOn)`，而 `windowOn` 当前是 `MeshBasicMaterial`。不同材质类之间 copy 会留下不兼容字段，后续 Three.js 渲染读颜色/emissive 通道时可能出现 `Cannot read properties of undefined (reading 'r')`。
+- 当前 `output/opening-composition-pass6/desktop-default.png` 已有街具和人物，但与概念图相比仍偏高俯视和路面/空地占比过大；默认第一视觉锚点应更靠近前景房屋立面、商铺、市集、人物和出租车。
+
+## Extension 6 Street Cleanup Findings
+- 当前项目是原生 `Three.js + Vite`，本轮应按 `game-studio:three-webgl-game` 处理；没有 React app shell，不应迁移到 React Three Fiber。
+- 主路规则来自 `Town.buildRoads()`：南北主路占 `x=-4..4`，东西主路占 `z=-4..4`；人行道在主路外侧约 `4.2..6.6`。
+- `Town.buildGltfScenePass()` 中 `marketStall` at `[0,-12]`、`streetDetailKit` at `[-2.4,-8.2]`、`townsperson` at `[-6.7,-14.2]` 附近形成开场道路视觉杂乱；其中前两者直接落在南北主路区域。
+- `getGltfPropPlacements()` 中大量 `bench`、`planter`、`townsperson` 只有视觉 placement，没有统一阻挡碰撞；程序化 `buildStreetFurniture()` 也没有给 benches、planters、signposts 注册碰撞盒。
+- 最小风险方案是保留现有 Three.js 资产管线，在 placement config 上集中补 `collider`，同时新增道路占用调试摘要，而不是引入 Rapier 或重写场景系统。
+- 修复后 `render_game_to_text()` 增加 `collision` 摘要；`output/street-cleanup-collision-pass/report.json` 显示桌面运行态 `loaded=70`、`failed=0`、`colliders=130`、`roadOccupancyIssues=[]`。
+- 夜间推进验证覆盖 `window.advanceTime(150000)`，游戏时间到 `22.15`，`Town.updateLights()` 没有复现材质崩溃，道路占用仍为 `[]`。
+- 移动端 390x844 验证 `output/street-cleanup-collision-pass/mobile-report.json` 显示 `pass=true`、`scrollWidth=390`、`overflow=[]`。
+
+## Extension 7 Mobile Talk Findings
+- 用户截图指出移动端红框里的“靠近 NPC，按 E 交谈”不适合触屏玩家；本轮目标是同一 NPC trigger 下桌面保留键盘 E，移动端改用可触摸按钮。
+- 既有项目已实现移动摇杆和 NPC 对话状态，因此最小风险方向应复用现有 activeTrigger/dialogue 打开链路，不新建一套 NPC 交互系统。

@@ -173,3 +173,44 @@ Original prompt: 我想写一个3D模拟小镇，模拟真实世界的小镇，�
 | Error | Attempt | Resolution |
 | --- | --- | --- |
 | `CLAUDE_PLUGIN_ROOT` 为空导致 session-catchup.py 路径解析成 `/scripts/session-catchup.py` | 1 | 改用 `/Users/zhangjinhui/.claude/skills/planning-with-files/scripts/session-catchup.py` 绝对路径，恢复检查成功无输出。 |
+
+## Current Goal Extension 6
+根据最新截图修复街道可读性和碰撞问题：
+- 清理十字主路和行车通道上的建筑、摊位、街具与装饰物，保证主路视觉上是连续可通行道路。
+- 保留开场构图的街区生活密度，但把资产迁到人行道、路边铺装、商铺前场或绿地内。
+- 给可阻挡的 GLB 与程序化街具补齐碰撞盒；云、远景山水、纯路面装饰和 NPC 不作为阻挡物。
+- 扩展文本调试状态，输出碰撞体摘要与道路占用风险，便于 Playwright 自动验证。
+
+## Extension Phases 6
+| Phase | Status | Notes |
+| --- | --- | --- |
+| 29. Street occupancy audit | complete | 已从截图和 `Town.buildGltfScenePass()` 发现中心摊位、街道细节和部分 NPC/街具落在主路区域。 |
+| 30. Placement and collider pass | complete | 已迁出主路物件，GLB props、程序化长椅/花箱/路牌补齐碰撞体。 |
+| 31. Build and browser verification | complete | `npm run build`、桌面/移动截图、夜间推进、道路占用与碰撞探针均通过。 |
+
+## Extension 6 Evidence
+- `npm run build` 通过；仍保留既有 `vendor-three` chunk 超过 500 kB warning。
+- 桌面验证输出：
+  - `output/street-cleanup-collision-pass/desktop-day.png`
+  - `output/street-cleanup-collision-pass/report.json`
+- 移动端 390x844 验证输出：
+  - `output/street-cleanup-collision-pass/mobile-390x844.png`
+  - `output/street-cleanup-collision-pass/mobile-report.json`
+- 运行态资源 `loaded=70`、`failed=0`、`total=70`，碰撞体 `colliders=130`，触发器 `triggers=12`。
+- 道路占用诊断 `collision.roadOccupancyIssues=[]`；夜间推进到 `22.15` 后仍为 `[]`。
+- 碰撞探针：主路点 `(0,-16)` 与 `(-16,0)` 可通行，迁移后的摊位、街具、花箱点不可穿透，出生点附近可通行。
+
+## Current Goal Extension 7
+为移动端补齐 NPC 交谈触控能力，同时保持桌面端键盘交互不变：
+- 桌面端继续显示并支持“按 E 交谈”。
+- 移动端靠近 NPC 时显示可点击/可触摸的交谈按钮，不要求用户按键盘。
+- 触控按钮必须避开移动摇杆、背包、出租车按钮和对话框，且触控目标不小于 44px。
+- `render_game_to_text()` 继续输出可验证的 activeTrigger/dialogue 状态。
+- 验证包含构建、桌面键盘交谈、移动端触控交谈和移动布局检查。
+
+## Extension Phases 7
+| Phase | Status | Notes |
+| --- | --- | --- |
+| 32. Interaction code and mobile UX audit | in_progress | 使用 agent team 定位交谈代码并确认移动端触控方案。 |
+| 33. Mobile talk button implementation | pending | 在现有交谈提示/对话系统上增加移动端触控入口。 |
+| 34. Desktop and mobile verification | pending | 验证桌面 E 键、移动触控按钮、无布局溢出/重叠和构建结果。 |

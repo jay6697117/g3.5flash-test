@@ -1,0 +1,97 @@
+- generic [active] [ref=e1]:
+  - generic:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]: 🕒
+        - generic [ref=e6]: 08:00
+        - generic [ref=e7]: 第 1 天
+      - generic [ref=e8]:
+        - generic [ref=e9]: 🪙
+        - generic [ref=e10]: "100"
+      - generic [ref=e11]:
+        - generic [ref=e12]: 🍖
+        - generic [ref=e15]: 100%
+      - generic [ref=e16]:
+        - generic [ref=e17]: 🎓
+        - generic [ref=e18]: "0"
+    - button "展开背包" [ref=e19] [cursor=pointer]: ☰
+    - region "居民状态" [ref=e20]:
+      - generic [ref=e21]:
+        - generic [ref=e22]: 🧑
+        - generic [ref=e23]: LV.1
+      - generic [ref=e24]:
+        - generic [ref=e25]: 小镇居民
+        - generic [ref=e27]: ❤
+        - generic [ref=e31]: ⚡
+        - generic [ref=e35]: ☻
+    - generic [ref=e38]:
+      - generic [ref=e39]: "🎯 当前任务:"
+      - generic [ref=e40]: 在小镇里熟悉一下环境吧，或者尝试去农地种菜！
+      - text: ›
+    - status:
+      - generic: 正在加载小镇资源 21/70
+    - button "呼叫出租车" [ref=e41] [cursor=pointer]: 🚕
+    - generic [ref=e43]:
+      - generic "背包分类" [ref=e44]:
+        - button "全部物品" [ref=e45] [cursor=pointer]: 🎒
+        - button "种子" [ref=e46] [cursor=pointer]: 🌱
+        - button "食物" [ref=e47] [cursor=pointer]: 🍞
+      - generic [ref=e48]:
+        - button "🎒 背包 道具栏" [ref=e49] [cursor=pointer]:
+          - generic [ref=e50]: 🎒
+          - generic [ref=e51]: 背包
+          - generic [ref=e52]: 道具栏
+        - generic [ref=e53]:
+          - generic "胡萝卜种子 - 可在农田播种，需要浇水" [ref=e54]:
+            - generic [ref=e55]: 🌱
+            - generic [ref=e56]: "3"
+          - generic "卷心菜种子 - 绿油油的蔬菜种子" [ref=e57]:
+            - generic [ref=e58]: 🌱
+            - generic [ref=e59]: "2"
+          - generic "南瓜种子 - 可以种出巨大的南瓜" [ref=e60]:
+            - generic [ref=e61]: 🌱
+            - generic [ref=e62]: "1"
+          - generic "胡萝卜 - 成熟的甜甜胡萝卜，可出售" [ref=e63]:
+            - generic [ref=e64]: 🥕
+          - generic "卷心菜 - 爽口脆嫩的圆白菜，可出售" [ref=e65]:
+            - generic [ref=e66]: 🥬
+          - generic "南瓜 - 金灿灿的饱满南瓜，可出售" [ref=e67]:
+            - generic [ref=e68]: 🎃
+          - generic "罗森面包 - 吃掉它可以恢复 30% 饱食度" [ref=e69] [cursor=pointer]:
+            - generic [ref=e70]: 🍞
+            - generic [ref=e71]: "1"
+          - generic "汽水 - 好喝的汽水，恢复 45% 饱食度" [ref=e72] [cursor=pointer]:
+            - generic [ref=e73]: 🥤
+            - generic [ref=e74]: "1"
+  - generic:
+    - generic:
+      - generic: 🚕
+      - paragraph: 出租车行驶中，请稍后...
+  - generic [ref=e76]:
+    - heading "🏡 3D 梦幻模拟小镇" [level=1] [ref=e77]
+    - paragraph [ref=e78]: 在这个小小的 3D 虚拟世界中，体验轻松舒适的小镇生活吧！
+    - generic [ref=e79]:
+      - heading "🎮 操作说明" [level=3] [ref=e80]
+      - list [ref=e81]:
+        - listitem [ref=e82]:
+          - generic [ref=e83]: W
+          - generic [ref=e84]: A
+          - generic [ref=e85]: S
+          - generic [ref=e86]: D
+          - text: 或
+          - generic [ref=e87]: ↑
+          - generic [ref=e88]: ↓
+          - generic [ref=e89]: ←
+          - generic [ref=e90]: →
+          - text: 键移动角色。
+        - listitem [ref=e91]: 移动端按住屏幕左半边空白处，会出现虚拟摇杆控制角色移动。
+        - listitem [ref=e92]:
+          - text: 按住
+          - strong [ref=e93]: 鼠标右键并拖动
+          - text: 旋转镜头视角。
+        - listitem [ref=e94]:
+          - text: 靠近建筑物或农田时，按
+          - generic [ref=e95]: E
+          - text: 键或点击屏幕提示进行互动。
+        - listitem [ref=e96]: 随时点击右下角的 🚕 按钮打车，呼叫出租车接送。
+    - button "进入小镇" [ref=e97] [cursor=pointer]

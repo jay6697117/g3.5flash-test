@@ -16,6 +16,7 @@ export class Taxi {
         this.passenger = null;  // 当前载着的玩家对象
         this.targetDest = null; // 目的地 ID
         this.assetLoader = new AssetLoader();
+        this.idlePatrolDelay = 18;
         
         // 各地标在马路上的上下车路点 (保证车停在马路中心，且靠近建筑)
         this.roadWaypoints = {
@@ -31,7 +32,8 @@ export class Taxi {
         this.loadDetailedMesh();
         
         // 2. 初始位置：放置在主干道上
-        this.mesh.position.set(-1.5, 0.05, -18.2);
+        this.mesh.position.set(-1.6, 0.05, -13.8);
+        this.mesh.rotation.y = -Math.PI / 2;
     }
     
     buildMesh() {
@@ -199,6 +201,10 @@ export class Taxi {
         // 如果处于等待状态 (IDLE)，它可以在街上做随机巡逻，或者静止
         if (this.state === 'IDLE') {
             if (this.path.length === 0) {
+                if (this.idlePatrolDelay > 0) {
+                    this.idlePatrolDelay = Math.max(0, this.idlePatrolDelay - deltaTime);
+                    return;
+                }
                 // 偶尔进行随机巡逻
                 if (Math.random() < 0.005) {
                     const keys = Object.keys(this.roadWaypoints);

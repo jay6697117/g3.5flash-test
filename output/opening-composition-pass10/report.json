@@ -1,0 +1,362 @@
+{
+  "pass": true,
+  "url": "http://127.0.0.1:5198/?autostart=1",
+  "before": {
+    "mode": "playing",
+    "coordinateSystem": "Three.js world coordinates, X east-west, Z north-south, Y up.",
+    "player": {
+      "x": -7.4,
+      "y": 0,
+      "z": -11.8,
+      "visible": true
+    },
+    "camera": {
+      "x": -15.25,
+      "y": 8,
+      "z": 3.86,
+      "radius": 17.8
+    },
+    "activeTrigger": {
+      "id": "npc_maya_vendor",
+      "type": "npc",
+      "label": "Maya 菜市场摊主",
+      "npcId": "mayaVendor"
+    },
+    "input": {
+      "joystick": {
+        "active": false,
+        "x": 0,
+        "y": 0,
+        "intensity": 0
+      }
+    },
+    "dialogue": {
+      "isOpen": false,
+      "npcId": null,
+      "topicId": null,
+      "line": ""
+    },
+    "visualAssets": {
+      "loaded": 70,
+      "failed": 0,
+      "total": 70,
+      "runtimeGroups": 70
+    },
+    "collision": {
+      "colliders": 130,
+      "triggers": 12,
+      "roadOccupancyIssues": []
+    },
+    "state": {
+      "day": 1,
+      "hour": 8.05,
+      "coins": 100,
+      "satiety": 100,
+      "knowledge": 0,
+      "activeTask": "在小镇里熟悉一下环境吧，或者尝试去农地种菜！"
+    },
+    "taxi": {
+      "state": "IDLE",
+      "destination": null,
+      "x": -1.6,
+      "z": -13.8
+    },
+    "farm": [
+      {
+        "index": 0,
+        "state": "EMPTY",
+        "seedType": null,
+        "growTime": 0
+      },
+      {
+        "index": 1,
+        "state": "EMPTY",
+        "seedType": null,
+        "growTime": 0
+      },
+      {
+        "index": 2,
+        "state": "EMPTY",
+        "seedType": null,
+        "growTime": 0
+      },
+      {
+        "index": 3,
+        "state": "EMPTY",
+        "seedType": null,
+        "growTime": 0
+      }
+    ],
+    "inventory": {
+      "carrot_seed": 3,
+      "cabbage_seed": 2,
+      "pumpkin_seed": 1,
+      "carrot": 0,
+      "cabbage": 0,
+      "pumpkin": 0,
+      "bread": 1,
+      "soda": 1
+    }
+  },
+  "nightState": {
+    "mode": "playing",
+    "coordinateSystem": "Three.js world coordinates, X east-west, Z north-south, Y up.",
+    "player": {
+      "x": -7.4,
+      "y": 0,
+      "z": -11.8,
+      "visible": true
+    },
+    "camera": {
+      "x": -18.3,
+      "y": 6.6,
+      "z": 0.63,
+      "radius": 17.8
+    },
+    "activeTrigger": {
+      "id": "npc_maya_vendor",
+      "type": "npc",
+      "label": "Maya 菜市场摊主",
+      "npcId": "mayaVendor"
+    },
+    "input": {
+      "joystick": {
+        "active": false,
+        "x": 0,
+        "y": 0,
+        "intensity": 0
+      }
+    },
+    "dialogue": {
+      "isOpen": false,
+      "npcId": null,
+      "topicId": null,
+      "line": ""
+    },
+    "visualAssets": {
+      "loaded": 70,
+      "failed": 0,
+      "total": 70,
+      "runtimeGroups": 70
+    },
+    "collision": {
+      "colliders": 130,
+      "triggers": 12,
+      "roadOccupancyIssues": []
+    },
+    "state": {
+      "day": 1,
+      "hour": 20.06,
+      "coins": 100,
+      "satiety": 63,
+      "knowledge": 0,
+      "activeTask": "在小镇里熟悉一下环境吧，或者尝试去农地种菜！"
+    },
+    "taxi": {
+      "state": "IDLE",
+      "destination": null,
+      "x": 25,
+      "z": 0
+    },
+    "farm": [
+      {
+        "index": 0,
+        "state": "EMPTY",
+        "seedType": null,
+        "growTime": 0
+      },
+      {
+        "index": 1,
+        "state": "EMPTY",
+        "seedType": null,
+        "growTime": 0
+      },
+      {
+        "index": 2,
+        "state": "EMPTY",
+        "seedType": null,
+        "growTime": 0
+      },
+      {
+        "index": 3,
+        "state": "EMPTY",
+        "seedType": null,
+        "growTime": 0
+      }
+    ],
+    "inventory": {
+      "carrot_seed": 3,
+      "cabbage_seed": 2,
+      "pumpkin_seed": 1,
+      "carrot": 0,
+      "cabbage": 0,
+      "pumpkin": 0,
+      "bread": 1,
+      "soda": 1
+    }
+  },
+  "after": {
+    "mode": "playing",
+    "coordinateSystem": "Three.js world coordinates, X east-west, Z north-south, Y up.",
+    "player": {
+      "x": -7.4,
+      "y": 0,
+      "z": -11.8,
+      "visible": true
+    },
+    "camera": {
+      "x": -18.3,
+      "y": 6.6,
+      "z": 0.63,
+      "radius": 17.8
+    },
+    "activeTrigger": {
+      "id": "npc_maya_vendor",
+      "type": "npc",
+      "label": "Maya 菜市场摊主",
+      "npcId": "mayaVendor"
+    },
+    "input": {
+      "joystick": {
+        "active": false,
+        "x": 0,
+        "y": 0,
+        "intensity": 0
+      }
+    },
+    "dialogue": {
+      "isOpen": false,
+      "npcId": null,
+      "topicId": null,
+      "line": ""
+    },
+    "visualAssets": {
+      "loaded": 70,
+      "failed": 0,
+      "total": 70,
+      "runtimeGroups": 70
+    },
+    "collision": {
+      "colliders": 130,
+      "triggers": 12,
+      "roadOccupancyIssues": []
+    },
+    "state": {
+      "day": 1,
+      "hour": 20.09,
+      "coins": 100,
+      "satiety": 63,
+      "knowledge": 0,
+      "activeTask": "在小镇里熟悉一下环境吧，或者尝试去农地种菜！"
+    },
+    "taxi": {
+      "state": "IDLE",
+      "destination": null,
+      "x": 25,
+      "z": 0
+    },
+    "farm": [
+      {
+        "index": 0,
+        "state": "EMPTY",
+        "seedType": null,
+        "growTime": 0
+      },
+      {
+        "index": 1,
+        "state": "EMPTY",
+        "seedType": null,
+        "growTime": 0
+      },
+      {
+        "index": 2,
+        "state": "EMPTY",
+        "seedType": null,
+        "growTime": 0
+      },
+      {
+        "index": 3,
+        "state": "EMPTY",
+        "seedType": null,
+        "growTime": 0
+      }
+    ],
+    "inventory": {
+      "carrot_seed": 3,
+      "cabbage_seed": 2,
+      "pumpkin_seed": 1,
+      "carrot": 0,
+      "cabbage": 0,
+      "pumpkin": 0,
+      "bread": 1,
+      "soda": 1
+    }
+  },
+  "hudTimeText": "20:03",
+  "advanceError": null,
+  "layout": {
+    "boxes": [
+      {
+        "selector": ".hud-header",
+        "visible": true,
+        "left": 919,
+        "top": 16,
+        "right": 1352,
+        "bottom": 62,
+        "width": 433,
+        "height": 46
+      },
+      {
+        "selector": "#task-panel",
+        "visible": true,
+        "left": 18,
+        "top": 190,
+        "right": 378,
+        "bottom": 258,
+        "width": 360,
+        "height": 68
+      },
+      {
+        "selector": "#btn-call-taxi",
+        "visible": true,
+        "left": 1356,
+        "top": 816,
+        "right": 1416,
+        "bottom": 876,
+        "width": 60,
+        "height": 60
+      },
+      {
+        "selector": "#action-prompt",
+        "visible": true,
+        "left": 567,
+        "top": 728,
+        "right": 873,
+        "bottom": 771,
+        "width": 305,
+        "height": 43
+      },
+      {
+        "selector": ".resident-card",
+        "visible": true,
+        "left": 18,
+        "top": 16,
+        "right": 334,
+        "bottom": 172,
+        "width": 316,
+        "height": 156
+      }
+    ]
+  },
+  "events": {
+    "consoleErrors": [],
+    "pageErrors": [],
+    "requestFailures": [],
+    "warnings": [
+      "[.WebGL-0x12c0013d200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+      "[.WebGL-0x12c0013d200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+      "[.WebGL-0x12c0013d200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+      "[.WebGL-0x12c0013d200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+    ]
+  }
+}

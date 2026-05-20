@@ -387,6 +387,45 @@ button:focus-visible {
     box-shadow: 0 2px 0 #a7781e;
 }
 
+.action-prompt-desktop {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.action-prompt-mobile {
+    display: none;
+}
+
+.mobile-interact-label {
+    color: var(--town-muted);
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 1.25;
+}
+
+.mobile-interact-button {
+    min-width: 148px;
+    min-height: 48px;
+    border: 1px solid rgba(255, 248, 223, 0.68);
+    border-radius: 16px;
+    background: linear-gradient(135deg, #fff1a8, #ffd166 42%, #d88d26 100%);
+    color: #172315;
+    cursor: pointer;
+    font: inherit;
+    font-size: 16px;
+    font-weight: 900;
+    letter-spacing: 0.02em;
+    box-shadow: 0 8px 18px rgba(5, 16, 10, 0.34), inset 0 2px 0 rgba(255, 255, 255, 0.32);
+    touch-action: manipulation;
+    transition: filter 0.16s ease, box-shadow 0.16s ease;
+}
+
+.mobile-interact-button:active {
+    filter: brightness(0.94);
+    box-shadow: 0 5px 14px rgba(5, 16, 10, 0.4), inset 0 2px 0 rgba(255, 255, 255, 0.22);
+}
+
 .mobile-joystick {
     position: absolute;
     left: 0;
@@ -1307,12 +1346,29 @@ button:focus-visible {
 
     .action-prompt {
         left: 50%;
-        bottom: 112px;
+        bottom: 106px;
         width: min(330px, calc(100vw - 36px));
-        padding: 10px 14px;
+        padding: 8px 10px;
         font-size: 14px;
         text-align: center;
         line-height: 1.35;
+        pointer-events: auto;
+    }
+
+    .action-prompt-desktop {
+        display: none;
+    }
+
+    .action-prompt-mobile {
+        display: grid;
+        justify-items: center;
+        gap: 7px;
+    }
+
+    .mobile-interact-button {
+        width: 100%;
+        max-width: 236px;
+        min-height: 52px;
     }
 
     .npc-talk-cue {

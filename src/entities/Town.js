@@ -3,6 +3,22 @@ import { MATERIAL_TOKENS, STREET_FURNITURE } from '../content/townContent.js';
 import { NPC_TRIGGERS } from '../content/dialogueContent.js';
 import { AssetLoader } from '../render/loaders/AssetLoader.js';
 
+const ROAD_HALF_WIDTH = 4.05;
+
+const DEFAULT_MODEL_COLLIDERS = {
+    farmBarn: { width: 4.4, depth: 4.0, label: 'Farm barn', rotate: true },
+    waterTower: { width: 2.6, depth: 2.6, label: 'Water tower' },
+    lakesideGazebo: { width: 3.2, depth: 3.2, label: 'Lakeside gazebo' },
+    cottageYard: { width: 4.8, depth: 3.4, label: 'Cottage yard', rotate: true },
+    streetDetailKit: { width: 3.4, depth: 2.2, label: 'Street details', rotate: true },
+    foregroundGarden: { width: 4.4, depth: 3.0, label: 'Foreground garden', rotate: true },
+    treeOak: { width: 1.2, depth: 1.2, label: 'Tree' },
+    treePine: { width: 1.1, depth: 1.1, label: 'Pine tree' },
+    bench: { width: 2.1, depth: 0.75, label: 'Bench', rotate: true },
+    planter: { width: 1.15, depth: 0.9, label: 'Planter', rotate: true },
+    townsperson: { width: 0.72, depth: 0.72, label: 'Townsperson' },
+};
+
 export class Town {
     constructor(scene, physics) {
         this.scene = scene;
@@ -53,10 +69,10 @@ export class Town {
             accentYellow: new THREE.MeshStandardMaterial({ color: MATERIAL_TOKENS.accentYellow, roughness: 0.5 }),
             accentBlue: new THREE.MeshStandardMaterial({ color: MATERIAL_TOKENS.accentBlue, roughness: 0.55 }),
             water: new THREE.MeshStandardMaterial({ color: MATERIAL_TOKENS.water, roughness: 0.34, metalness: 0.08 }),
-            lampOff: new THREE.MeshStandardMaterial({ color: 0xdddddd }),
-            lampOn: new THREE.MeshBasicMaterial({ color: 0xffe677 }), // 晚上发光
-            windowOff: new THREE.MeshStandardMaterial({ color: 0x334455, roughness: 0.3 }),
-            windowOn: new THREE.MeshBasicMaterial({ color: 0xffdd66 }) // 晚上窗户亮灯
+            lampOff: new THREE.MeshStandardMaterial({ color: 0xdddddd, roughness: 0.45, emissive: 0x000000, emissiveIntensity: 0 }),
+            lampOn: new THREE.MeshStandardMaterial({ color: 0xffe677, roughness: 0.24, emissive: 0xffd35a, emissiveIntensity: 1.7 }),
+            windowOff: new THREE.MeshStandardMaterial({ color: 0x334455, roughness: 0.3, emissive: 0x000000, emissiveIntensity: 0 }),
+            windowOn: new THREE.MeshStandardMaterial({ color: 0xffdd66, roughness: 0.22, emissive: 0xffc94a, emissiveIntensity: 1.35 })
         };
 
         // 构建大世界
@@ -150,6 +166,41 @@ export class Town {
         return mesh;
     }
 
+    addColliderBox(x, z, width, depth, label, rotationY = 0, rotate = false) {
+        let finalWidth = width;
+        let finalDepth = depth;
+
+        if (rotate) {
+            const cos = Math.abs(Math.cos(rotationY));
+            const sin = Math.abs(Math.sin(rotationY));
+            finalWidth = width * cos + depth * sin;
+            finalDepth = width * sin + depth * cos;
+        }
+
+        this.physics.addCollider({
+            x,
+            z,
+            width: finalWidth,
+            depth: finalDepth,
+            label,
+        });
+    }
+
+    resolveModelCollider(key, config) {
+        if (config.collider === false) return null;
+
+        if (Array.isArray(config.collider)) {
+            const [width, depth, label] = config.collider;
+            return { width, depth, label, rotate: false };
+        }
+
+        if (config.collider && typeof config.collider === 'object') {
+            return config.collider;
+        }
+
+        return DEFAULT_MODEL_COLLIDERS[key] ?? null;
+    }
+
     buildTownDetails() {
         this.buildSidewalks();
         this.buildLandmarkPads();
@@ -221,6 +272,7 @@ export class Town {
             this.addBox(bench, 0.18, 0.65, 0.18, this.materials.lampPole, -0.82, 0.35, 0.12);
             this.addBox(bench, 0.18, 0.65, 0.18, this.materials.lampPole, 0.82, 0.35, 0.12);
             group.add(bench);
+            this.addColliderBox(x, z, 2.2, 0.75, 'Bench', rotation, true);
         });
 
         STREET_FURNITURE.planters.forEach(([x, z], index) => {
@@ -240,6 +292,7 @@ export class Town {
             }
 
             group.add(planter);
+            this.addColliderBox(x, z, 1.2, 0.9, 'Planter');
         });
 
         this.scene.add(group);
@@ -277,6 +330,7 @@ export class Town {
             signGroup.add(arrow);
 
             group.add(signGroup);
+            this.addColliderBox(config.x, config.z, 0.8, 0.8, 'Sign post');
         });
 
         this.scene.add(group);
@@ -290,18 +344,21 @@ export class Town {
             ['marketStall', { position: [-28, 0, 25], scale: 0.92, rotationY: Math.PI, fallbackKey: 'market' }],
             ['marketStall', { position: [-22, 0, 25], scale: 0.92, rotationY: Math.PI, fallbackKey: null }],
             ['farmBarn', { position: [13.5, 0, 12.5], scale: 0.88, rotationY: -Math.PI / 3, fallbackKey: null }],
-            ['marketStall', { position: [-12, 0, -12], scale: 0.54, rotationY: Math.PI, collider: [3.0, 2.0, '中心摊位'] }],
-            ['marketStall', { position: [0, 0, -12], scale: 0.54, rotationY: Math.PI, collider: [3.0, 2.0, '中心摊位'] }],
-            ['marketStall', { position: [12, 0, -12], scale: 0.54, rotationY: Math.PI, collider: [3.0, 2.0, '中心摊位'] }],
+            ['marketStall', { position: [-14.2, 0, -12.4], scale: 0.54, rotationY: Math.PI, collider: [3.0, 2.0, 'Roadside stall'] }],
+            ['marketStall', { position: [-8.6, 0, -14.2], scale: 0.54, rotationY: Math.PI, collider: [3.0, 2.0, 'Roadside stall'] }],
+            ['marketStall', { position: [12.4, 0, -13.4], scale: 0.54, rotationY: Math.PI, collider: [3.0, 2.0, 'Roadside stall'] }],
             ['cornerCafe', { position: [18, 0, -16], scale: 0.54, rotationY: Math.PI, collider: [4.8, 3.4, '街角咖啡店'] }],
             ['cornerCafe', { position: [-17, 0, -18], scale: 0.5, rotationY: Math.PI / 2, collider: [3.8, 4.6, '街角咖啡店'] }],
             ['cafeTerrace', { position: [-18, 0, -9.2], scale: 0.78, rotationY: Math.PI / 2, collider: [4.6, 3.0, '街角露台'], castShadow: false }],
             ['cafeTerrace', { position: [18.5, 0, -9.4], scale: 0.66, rotationY: -Math.PI / 2, collider: [3.8, 2.6, '露天座位'], castShadow: false }],
-            ['marketDecor', { position: [-10.8, 0, -12.4], scale: 0.58, rotationY: Math.PI, collider: [4.0, 1.4, '市场货架'], castShadow: false }],
-            ['marketDecor', { position: [9.2, 0, -12.2], scale: 0.58, rotationY: Math.PI, collider: [4.0, 1.4, '市场货架'], castShadow: false }],
-            ['mainStreetRow', { position: [-24.5, 0, -4.8], scale: 0.42, rotationY: Math.PI / 2, castShadow: false }],
-            ['streetDetailKit', { position: [-2.4, 0, -8.2], scale: 0.78, rotationY: Math.PI, castShadow: false }],
-            ['foregroundGarden', { position: [-16.5, 0, -2.2], scale: 0.86, rotationY: Math.PI / 10, castShadow: false }],
+            ['marketDecor', { position: [-13.0, 0, -15.9], scale: 0.58, rotationY: Math.PI, collider: [4.0, 1.4, 'Market rack'], castShadow: false }],
+            ['marketDecor', { position: [14.3, 0, -15.5], scale: 0.58, rotationY: Math.PI, collider: [4.0, 1.4, 'Market rack'], castShadow: false }],
+            ['cottageHouse', { position: [-18.8, 0, -23.5], scale: 0.72, rotationY: 0, collider: [5.4, 4.8, '前景住宅'] }],
+            ['mainStreetRow', { position: [-9.8, 0, -19.4], scale: 0.5, rotationY: 0, collider: [5.6, 3.2, '前景商铺'] }],
+            ['townsperson', { position: [-6.7, 0, -14.2], scale: 0.9, rotationY: -Math.PI / 2, castShadow: false }],
+            ['mainStreetRow', { position: [-24.5, 0, -9.6], scale: 0.42, rotationY: Math.PI / 2, collider: [3.2, 5.2, 'Shop frontage'], castShadow: false }],
+            ['streetDetailKit', { position: [5.8, 0, -14.4], scale: 0.78, rotationY: Math.PI, castShadow: false }],
+            ['foregroundGarden', { position: [-43, 0, 5], scale: 0.38, rotationY: Math.PI / 10, castShadow: false }],
         ];
         const deferredModels = [
             ['waterTower', { position: [-42, 0, -35], scale: 1.35, rotationY: Math.PI / 8, fallbackKey: null }],
@@ -318,10 +375,10 @@ export class Town {
             ['cottageYard', { position: [42, 0, -11.5], scale: 0.62, rotationY: -Math.PI / 2, fallbackKey: null, castShadow: false }],
             ['lakesideGazebo', { position: [38, 0.02, -79], scale: 1.35, rotationY: Math.PI / 8, fallbackKey: null, castShadow: false }],
             ['lakesideGazebo', { position: [-38, 0.02, -78], scale: 1.05, rotationY: -Math.PI / 7, fallbackKey: null, castShadow: false }],
-            ['mainStreetRow', { position: [-34, 0, -7.8], scale: 0.68, rotationY: Math.PI / 2, collider: [4.1, 9.8, '主街店铺'] }],
-            ['mainStreetRow', { position: [34.5, 0, -7.1], scale: 0.62, rotationY: -Math.PI / 2, collider: [3.8, 9.0, '主街店铺'] }],
-            ['streetDetailKit', { position: [14.6, 0, -6.4], scale: 0.64, rotationY: -Math.PI / 2, castShadow: false }],
-            ['foregroundGarden', { position: [23.5, 0, 3.6], scale: 0.7, rotationY: -Math.PI / 7, castShadow: false }],
+            ['mainStreetRow', { position: [-34, 0, -11.2], scale: 0.68, rotationY: Math.PI / 2, collider: [4.1, 6.8, 'Main street shops'] }],
+            ['mainStreetRow', { position: [34.5, 0, -11.0], scale: 0.62, rotationY: -Math.PI / 2, collider: [3.8, 6.6, 'Main street shops'] }],
+            ['streetDetailKit', { position: [14.6, 0, -7.4], scale: 0.64, rotationY: -Math.PI / 2, castShadow: false }],
+            ['foregroundGarden', { position: [23.5, 0, 8.8], scale: 0.7, rotationY: -Math.PI / 7, castShadow: false }],
         ];
         const propModels = this.getGltfPropPlacements();
 
@@ -355,9 +412,17 @@ export class Town {
                 this.landmarkGroups[config.fallbackKey].visible = false;
             }
 
-            if (config.collider) {
-                const [width, depth, label] = config.collider;
-                this.physics.addCollider({ x, z, width, depth, label });
+            const collider = this.resolveModelCollider(key, config);
+            if (collider) {
+                this.addColliderBox(
+                    x,
+                    z,
+                    collider.width,
+                    collider.depth,
+                    collider.label ?? key,
+                    config.rotationY ?? 0,
+                    collider.rotate ?? false
+                );
             }
 
             this.emitAssetLoadingProgress();
@@ -418,18 +483,20 @@ export class Town {
             ['treePine', { position: [37, 0, 32], scale: 1.1, rotationY: -Math.PI / 7 }],
             ['bench', { position: [-17, 0, -7], scale: 1.0, rotationY: Math.PI / 2, castShadow: false }],
             ['bench', { position: [17, 0, -7], scale: 1.0, rotationY: Math.PI / 2, castShadow: false }],
+            ['bench', { position: [-10.6, 0, -16.1], scale: 0.92, rotationY: Math.PI / 2, castShadow: false }],
             ['bench', { position: [-17, 0, 7], scale: 1.0, rotationY: Math.PI / 2, castShadow: false }],
             ['bench', { position: [17, 0, 7], scale: 1.0, rotationY: Math.PI / 2, castShadow: false }],
-            ['planter', { position: [-12, 0, -4], scale: 1.0, rotationY: 0, castShadow: false }],
-            ['planter', { position: [12, 0, -4], scale: 1.0, rotationY: Math.PI / 5, castShadow: false }],
-            ['planter', { position: [-12, 0, 4], scale: 1.0, rotationY: -Math.PI / 5, castShadow: false }],
-            ['planter', { position: [12, 0, 4], scale: 1.0, rotationY: Math.PI / 9, castShadow: false }],
+            ['planter', { position: [-12, 0, -6.9], scale: 1.0, rotationY: 0, castShadow: false }],
+            ['planter', { position: [12, 0, -6.9], scale: 1.0, rotationY: Math.PI / 5, castShadow: false }],
+            ['planter', { position: [-12, 0, 6.9], scale: 1.0, rotationY: -Math.PI / 5, castShadow: false }],
+            ['planter', { position: [12, 0, 6.9], scale: 1.0, rotationY: Math.PI / 9, castShadow: false }],
             ['planter', { position: [-7, 0, -15], scale: 0.86, rotationY: Math.PI / 9, castShadow: false }],
             ['planter', { position: [7, 0, -15], scale: 0.86, rotationY: -Math.PI / 9, castShadow: false }],
+            ['planter', { position: [-13.8, 0, -17.2], scale: 0.95, rotationY: -Math.PI / 7, castShadow: false }],
             ['bench', { position: [-7, 0, -7], scale: 0.9, rotationY: Math.PI / 2, castShadow: false }],
             ['bench', { position: [7, 0, -7], scale: 0.9, rotationY: Math.PI / 2, castShadow: false }],
             ['townsperson', { position: [-8.5, 0, -9.5], scale: 0.9, rotationY: Math.PI / 5, castShadow: false }],
-            ['townsperson', { position: [-2.4, 0, -9.2], scale: 0.86, rotationY: -Math.PI / 9, castShadow: false }],
+            ['townsperson', { position: [-5.8, 0, -9.2], scale: 0.86, rotationY: -Math.PI / 9, castShadow: false }],
             ['townsperson', { position: [5.8, 0, -10.2], scale: 0.88, rotationY: -Math.PI / 5, castShadow: false }],
             ['townsperson', { position: [10.8, 0, -8.8], scale: 0.84, rotationY: Math.PI / 3, castShadow: false }],
             ['townsperson', { position: [-20.5, 0, -11.5], scale: 0.82, rotationY: Math.PI / 2, castShadow: false }],
@@ -452,6 +519,33 @@ export class Town {
                 type: 'npc',
             });
         });
+    }
+
+    colliderOverlapsDriveLane(collider) {
+        const overlapsNorthSouthRoad = collider.minX < ROAD_HALF_WIDTH && collider.maxX > -ROAD_HALF_WIDTH;
+        const overlapsEastWestRoad = collider.minZ < ROAD_HALF_WIDTH && collider.maxZ > -ROAD_HALF_WIDTH;
+        return overlapsNorthSouthRoad || overlapsEastWestRoad;
+    }
+
+    getRoadOccupancyIssues() {
+        return this.physics.colliders
+            .filter((collider) => this.colliderOverlapsDriveLane(collider))
+            .map((collider) => ({
+                label: collider.label,
+                minX: Number(collider.minX.toFixed(2)),
+                maxX: Number(collider.maxX.toFixed(2)),
+                minZ: Number(collider.minZ.toFixed(2)),
+                maxZ: Number(collider.maxZ.toFixed(2)),
+            }));
+    }
+
+    getCollisionDiagnostics() {
+        const roadOccupancyIssues = this.getRoadOccupancyIssues();
+        return {
+            colliders: this.physics.colliders.length,
+            triggers: this.physics.triggers.length,
+            roadOccupancyIssues,
+        };
     }
     
     // 3. 构建玩家住宅 (坐标: -25, -25)

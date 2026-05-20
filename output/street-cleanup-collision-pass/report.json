@@ -1,0 +1,116 @@
+{
+  "pass": true,
+  "beforeNight": {
+    "mode": "playing",
+    "coordinateSystem": "Three.js world coordinates, X east-west, Z north-south, Y up.",
+    "player": {
+      "x": -7.4,
+      "y": 0,
+      "z": -11.8,
+      "visible": true
+    },
+    "camera": {
+      "x": -18.3,
+      "y": 6.6,
+      "z": 0.63,
+      "radius": 17.8
+    },
+    "activeTrigger": {
+      "id": "npc_maya_vendor",
+      "type": "npc",
+      "label": "Maya 菜市场摊主",
+      "npcId": "mayaVendor"
+    },
+    "input": {
+      "joystick": {
+        "active": false,
+        "x": 0,
+        "y": 0,
+        "intensity": 0
+      }
+    },
+    "dialogue": {
+      "isOpen": false,
+      "npcId": null,
+      "topicId": null,
+      "line": ""
+    },
+    "visualAssets": {
+      "loaded": 70,
+      "failed": 0,
+      "total": 70,
+      "runtimeGroups": 70
+    },
+    "collision": {
+      "colliders": 130,
+      "triggers": 12,
+      "roadOccupancyIssues": []
+    },
+    "state": {
+      "day": 1,
+      "hour": 10.15,
+      "coins": 100,
+      "satiety": 94,
+      "knowledge": 0,
+      "activeTask": "在小镇里熟悉一下环境吧，或者尝试去农地种菜！"
+    },
+    "taxi": {
+      "state": "IDLE",
+      "destination": null,
+      "x": 5.47,
+      "z": 0
+    },
+    "farm": [
+      {
+        "index": 0,
+        "state": "EMPTY",
+        "seedType": null,
+        "growTime": 0
+      },
+      {
+        "index": 1,
+        "state": "EMPTY",
+        "seedType": null,
+        "growTime": 0
+      },
+      {
+        "index": 2,
+        "state": "EMPTY",
+        "seedType": null,
+        "growTime": 0
+      },
+      {
+        "index": 3,
+        "state": "EMPTY",
+        "seedType": null,
+        "growTime": 0
+      }
+    ],
+    "inventory": {
+      "carrot_seed": 3,
+      "cabbage_seed": 2,
+      "pumpkin_seed": 1,
+      "carrot": 0,
+      "cabbage": 0,
+      "pumpkin": 0,
+      "bread": 1,
+      "soda": 1
+    }
+  },
+  "night": {
+    "hour": 22.15,
+    "collision": {
+      "colliders": 130,
+      "triggers": 12,
+      "roadOccupancyIssues": []
+    }
+  },
+  "probes": {
+    "northSouthRoad": false,
+    "eastWestRoad": false,
+    "relocatedMarketStall": true,
+    "relocatedStreetDetails": true,
+    "roadsidePlanter": true,
+    "sidewalkGapNearSpawn": false
+  }
+}
