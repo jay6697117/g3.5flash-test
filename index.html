@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D 模拟小镇 - 奇幻之旅</title>
+    <!-- 引入 Google Fonts 提升排版视觉品质 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Noto+Sans+SC:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./src/style.css">
+</head>
+<body>
+    <!-- Three.js 渲染画布 -->
+    <canvas id="game-canvas"></canvas>
+
+    <!-- 游戏 UI HUD 顶层容器 -->
+    <div id="game-hud">
+        <!-- 顶部状态栏 -->
+        <header class="hud-header glass-panel">
+            <div class="hud-item status-time">
+                <span class="icon">🕒</span>
+                <span id="time-display" class="value">08:00</span>
+                <span id="day-display" class="sub-value">第 1 天</span>
+            </div>
+            <div class="hud-item status-coins">
+                <span class="icon">🪙</span>
+                <span id="coins-display" class="value">100</span>
+            </div>
+            <div class="hud-item status-satiety">
+                <span class="icon">🍖</span>
+                <div class="bar-container">
+                    <div id="satiety-bar" class="bar-fill" style="width: 100%;"></div>
+                </div>
+                <span id="satiety-display" class="value">100%</span>
+            </div>
+            <div class="hud-item status-knowledge">
+                <span class="icon">🎓</span>
+                <span id="knowledge-display" class="value">0</span>
+            </div>
+        </header>
+
+        <!-- 任务提示栏 -->
+        <div class="task-hud glass-panel" id="task-panel">
+            <span class="task-title">🎯 当前任务:</span>
+            <span id="task-display" class="task-content">在小镇里转转，或者去农田种菜吧！</span>
+        </div>
+
+        <!-- 屏幕中间动作提示（例如：按 E 种植） -->
+        <div id="action-prompt" class="action-prompt hidden">
+            按 <kbd>E</kbd> 进行互动
+        </div>
+
+        <!-- 打车呼叫悬浮按钮 -->
+        <button id="btn-call-taxi" class="glass-button circle-btn" title="呼叫出租车">
+            🚕
+        </button>
+
+        <!-- 背包抽屉（快捷查看） -->
+        <div id="inventory-hud" class="glass-panel">
+            <div class="inventory-title">🎒 背包</div>
+            <div class="inventory-grid" id="inventory-grid">
+                <!-- 动态生成格子 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 全局弹窗容器（毛玻璃模态框） -->
+    <div id="modal-container" class="modal-overlay hidden">
+        <!-- 1. 超市购物弹窗 -->
+        <div id="modal-supermarket" class="game-modal glass-panel hidden">
+            <div class="modal-header">
+                <h2>🛒 罗森超市</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="modal-content">
+                <p class="store-tip">购买食物可补充饱食度，买种子可以去菜地种植。</p>
+                <div class="shop-list" id="supermarket-list">
+                    <!-- 动态生成商品列表 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. 菜市场交易弹窗 -->
+        <div id="modal-market" class="game-modal glass-panel hidden">
+            <div class="modal-header">
+                <h2>🥬 菜市场农产回收站</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="modal-content">
+                <p class="store-tip">在这儿卖掉你收获的农作物赚取金币，也可以买到其他美味食材。</p>
+                <div class="shop-list" id="market-list">
+                    <!-- 动态生成交易项 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. 种植交互弹窗 -->
+        <div id="modal-farm" class="game-modal glass-panel hidden">
+            <div class="modal-header">
+                <h2>🌱 农田管理 - 土地 #<span id="farm-index">1</span></h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="modal-content">
+                <div id="farm-status-section">
+                    <p>当前状态: <strong id="farm-status-text">空闲</strong></p>
+                    <div id="farm-progress-container" class="bar-container hidden">
+                        <div id="farm-progress-bar" class="bar-fill" style="width: 0%;"></div>
+                    </div>
+                </div>
+                <div class="farm-actions" id="farm-actions-panel">
+                    <!-- 播种选择 -->
+                    <div id="seed-selector" class="hidden">
+                        <h3>选择种子进行播种:</h3>
+                        <div class="seed-list" id="farm-seed-list"></div>
+                    </div>
+                    <!-- 浇水和收割 -->
+                    <button id="btn-water-crop" class="action-btn hidden">💧 浇水</button>
+                    <button id="btn-harvest-crop" class="action-btn hidden">🧺 收割</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. 学校答题上学弹窗 -->
+        <div id="modal-school" class="game-modal glass-panel hidden">
+            <div class="modal-header">
+                <h2>🏫 阳光学院教室</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="modal-content">
+                <div id="school-intro">
+                    <p>欢迎来到课堂！上学将消耗 <strong>15% 饱食度</strong>，完成测试可获得知识点与奖学金。</p>
+                    <button id="btn-start-class" class="action-btn">📚 开始上课</button>
+                </div>
+                <div id="school-quiz" class="hidden">
+                    <div class="quiz-progress">问题 <span id="quiz-current">1</span> / 3</div>
+                    <div id="quiz-question" class="quiz-question">这是问题题目？</div>
+                    <div class="quiz-options" id="quiz-options">
+                        <!-- 动态生成选项按钮 -->
+                    </div>
+                </div>
+                <div id="school-result" class="hidden">
+                    <h3>🔔 考试结业</h3>
+                    <p id="quiz-score-text">你答对了 3 道题！</p>
+                    <p id="quiz-rewards-text">获得奖励：🪙+15 金币，🎓+30 知识点</p>
+                    <button id="btn-finish-class" class="action-btn">离开教室</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. 呼叫出租车弹窗 -->
+        <div id="modal-taxi" class="game-modal glass-panel hidden">
+            <div class="modal-header">
+                <h2>🚕 快滴打车出行</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="modal-content">
+                <p>呼叫出租车带您快速到达目的地。每次乘车收费 <strong>🪙 5 金币</strong>。</p>
+                <div class="taxi-destinations">
+                    <button class="dest-btn" data-dest="home">🏡 玩家住宅</button>
+                    <button class="dest-btn" data-dest="supermarket">🛒 罗森超市</button>
+                    <button class="dest-btn" data-dest="market">🥬 菜市场</button>
+                    <button class="dest-btn" data-dest="school">🏫 阳光学院</button>
+                    <button class="dest-btn" data-dest="farm">🌱 绿色农田</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 坐车黑屏遮罩过渡 -->
+    <div id="taxi-ride-overlay" class="fade-overlay">
+        <div class="overlay-content">
+            <span class="taxi-icon">🚕</span>
+            <p id="taxi-ride-text">出租车行驶中，请稍后...</p>
+        </div>
+    </div>
+
+    <!-- 游戏加载与欢迎引导 -->
+    <div id="welcome-screen" class="modal-overlay">
+        <div class="welcome-panel glass-panel">
+            <h1>🏡 3D 梦幻模拟小镇</h1>
+            <p>在这个小小的 3D 虚拟世界中，体验轻松舒适的小镇生活吧！</p>
+            <div class="instructions-panel">
+                <h3>🎮 操作说明</h3>
+                <ul>
+                    <li><span class="key-cap">W</span><span class="key-cap">A</span><span class="key-cap">S</span><span class="key-cap">D</span> 或 <span class="key-cap">↑</span><span class="key-cap">↓</span><span class="key-cap">←</span><span class="key-cap">→</span> 键移动角色。</li>
+                    <li>按住<strong>鼠标右键并拖动</strong>旋转镜头视角。</li>
+                    <li>靠近建筑物或农田时，按 <kbd class="key-cap">E</kbd> 键或点击屏幕提示进行互动。</li>
+                    <li>随时点击右下角的 🚕 按钮打车，呼叫出租车接送。</li>
+                </ul>
+            </div>
+            <button id="btn-start-game" class="action-btn start-btn">进入小镇</button>
+        </div>
+    </div>
+
+    <script type="module" src="./src/main.js"></script>
+</body>
+</html>
