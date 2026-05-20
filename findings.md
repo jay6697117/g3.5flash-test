@@ -116,3 +116,6 @@
 ## Extension 7 Mobile Talk Findings
 - 用户截图指出移动端红框里的“靠近 NPC，按 E 交谈”不适合触屏玩家；本轮目标是同一 NPC trigger 下桌面保留键盘 E，移动端改用可触摸按钮。
 - 既有项目已实现移动摇杆和 NPC 对话状态，因此最小风险方向应复用现有 activeTrigger/dialogue 打开链路，不新建一套 NPC 交互系统。
+- 代码定位结果：`src/main.js` 渲染 `#action-prompt` 并监听 `input.keys.interact`，`src/ui/UIManager.js` 的 `triggerInteraction()`/`openNpcDialogue()` 是交谈入口，`src/style.css` 的移动端 media query 控制提示位置。
+- 实现后桌面仍显示“靠近 [... ]，按 E 交谈”；移动端 390x844 显示“靠近 [...]”和可点击按钮“点击交谈”，按钮 `aria-label` 为“与 Maya 菜市场摊主 交谈”。
+- 验证结果：`npm run build` 通过；桌面按 `KeyE` 可打开 Maya 对话；移动端点击 `.mobile-interact-button` 后 `dialogue.isOpen=true`、`npcId=mayaVendor`，并且 `documentElement.scrollWidth=390` 无横向溢出。

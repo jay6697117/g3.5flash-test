@@ -211,6 +211,6 @@ Original prompt: 我想写一个3D模拟小镇，模拟真实世界的小镇，�
 ## Extension Phases 7
 | Phase | Status | Notes |
 | --- | --- | --- |
-| 32. Interaction code and mobile UX audit | in_progress | 使用 agent team 定位交谈代码并确认移动端触控方案。 |
-| 33. Mobile talk button implementation | pending | 在现有交谈提示/对话系统上增加移动端触控入口。 |
-| 34. Desktop and mobile verification | pending | 验证桌面 E 键、移动触控按钮、无布局溢出/重叠和构建结果。 |
+| 32. Interaction code and mobile UX audit | complete | agent team 已定位 `src/main.js`、`src/ui/UIManager.js`、`src/style.css` 中的交谈提示、键盘 E 和对话链路。 |
+| 33. Mobile talk button implementation | complete | 已在 action prompt 中增加移动端“点击交谈/互动”按钮，桌面端继续显示键帽 E。 |
+| 34. Desktop and mobile verification | complete | `npm run build` 通过；桌面 KeyE 与移动端触控按钮都能打开 Maya 对话；移动 390x844 无横向溢出。 |

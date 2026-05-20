@@ -139,6 +139,7 @@ Original prompt: 我想写一个3D模拟小镇，模拟真实世界的小镇，�
 - First custom night verification passed for the original crash condition: after `window.advanceTime(150000)`, game hour reached about `20.09`, `advanceError=null`, console/page/request errors were all `0`.
 - The same night screenshot showed the HUD clock still displayed `08:00` even though `render_game_to_text()` reported night time. Implemented a small HUD time refresh interval in `src/main.js` so accelerated time and normal runtime stay visually consistent.
 - Implemented one more opening-composition adjustment: snap the camera to the new low street-facing target at player initialization, reduce default pitch/radius slightly, and move the center-blocking foreground garden out to the far-left edge.
+- The follow-up `web_game_playwright_client` run for `output/opening-composition-pass11-client` exceeded the previous normal runtime without producing artifacts and was terminated. The process ended with `page.evaluate: Target page, context or browser has been closed`, so final verification continues with the narrower Playwright viewport script that has been stable for this project.
 - New user screenshot shows the opening street has too many objects visually spilling into the road and many placed props lack collision volume.
 - Started Extension 6 street cleanup/collision pass: will keep the existing vanilla Three.js runtime, clear the main road corridors, add colliders for GLB props and programmatic street furniture, and expose road/collider diagnostics through `render_game_to_text()`.
 - Added default model collider rules in `src/entities/Town.js` for farm barn, water tower, gazebos, cottage yards, street detail kits, gardens, trees, benches, planters, and townspeople.
@@ -151,3 +152,7 @@ Original prompt: 我想写一个3D模拟小镇，模拟真实世界的小镇，�
 - Ran 390x844 mobile smoke; `output/street-cleanup-collision-pass/mobile-report.json` passed with `overflow=[]`, `scrollWidth=390`, and `roadOccupancyIssues=[]`; screenshot saved to `output/street-cleanup-collision-pass/mobile-390x844.png`.
 - Started Extension 7 mobile talk pass after user screenshot showed “press E to talk” is not usable on mobile touch screens.
 - Created `mobile-talk-interaction` agent team and assigned code search plus mobile UX review agents.
+- Added mobile touch action rendering in `src/main.js`: desktop prompt keeps the E key, mobile prompt renders a real button that calls the existing `UIManager.triggerInteraction()` path.
+- Added mobile prompt/button CSS in `src/style.css` with touch-sized “点击交谈/互动” control and desktop/mobile prompt variants.
+- Ran `npm run build`; it passed with the existing `vendor-three` 500 kB chunk warning.
+- Browser verification passed: desktop `KeyE` opens Maya dialogue; mobile 390x844 touch button opens Maya dialogue with `dialogue.isOpen=true`; mobile scroll width equals viewport width.
