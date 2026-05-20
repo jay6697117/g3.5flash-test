@@ -1,43 +1,188 @@
 {
-  "pass": false,
-  "checks": [],
+  "pass": true,
+  "checks": [
+    {
+      "name": "assets loaded",
+      "pass": true,
+      "details": {
+        "loaded": 50,
+        "failed": 0,
+        "runtimeGroups": 50
+      }
+    },
+    {
+      "name": "home interaction updates task",
+      "pass": true,
+      "details": {
+        "activeTask": "🏡 在家里美美睡了一大觉，饱食度与体力恢复到了 100%！"
+      }
+    },
+    {
+      "name": "supermarket modal opens",
+      "pass": true,
+      "details": {}
+    },
+    {
+      "name": "supermarket purchase changes coins",
+      "pass": true,
+      "details": {
+        "coins": 95,
+        "inventory": {
+          "carrot_seed": 4,
+          "cabbage_seed": 2,
+          "pumpkin_seed": 1,
+          "carrot": 0,
+          "cabbage": 0,
+          "pumpkin": 0,
+          "bread": 1,
+          "soda": 1
+        }
+      }
+    },
+    {
+      "name": "market modal opens",
+      "pass": true,
+      "details": {}
+    },
+    {
+      "name": "school modal opens",
+      "pass": true,
+      "details": {}
+    },
+    {
+      "name": "school quiz starts",
+      "pass": true,
+      "details": {}
+    },
+    {
+      "name": "farm modal opens at relocated plot",
+      "pass": true,
+      "details": {
+        "trigger": {
+          "id": "farm_plot_0",
+          "type": "farm_plot",
+          "label": "农田地块 #1 (闲置，按 E 播种)"
+        }
+      }
+    },
+    {
+      "name": "farm plant state",
+      "pass": true,
+      "details": {
+        "farm": {
+          "index": 0,
+          "state": "PLANTED",
+          "seedType": "carrot_seed",
+          "growTime": 15
+        }
+      }
+    },
+    {
+      "name": "farm water state",
+      "pass": true,
+      "details": {
+        "farm": {
+          "index": 0,
+          "state": "GROWING",
+          "seedType": "carrot_seed",
+          "growTime": 14.85
+        }
+      }
+    },
+    {
+      "name": "farm mature state",
+      "pass": true,
+      "details": {
+        "farm": {
+          "index": 0,
+          "state": "MATURE",
+          "seedType": "carrot_seed",
+          "growTime": 0
+        }
+      }
+    },
+    {
+      "name": "farm harvest inventory",
+      "pass": true,
+      "details": {
+        "inventory": {
+          "carrot_seed": 3,
+          "cabbage_seed": 2,
+          "pumpkin_seed": 1,
+          "carrot": 1,
+          "cabbage": 0,
+          "pumpkin": 0,
+          "bread": 1,
+          "soda": 1
+        },
+        "farm": {
+          "index": 0,
+          "state": "EMPTY",
+          "seedType": null,
+          "growTime": 0
+        }
+      }
+    },
+    {
+      "name": "taxi modal opens",
+      "pass": true,
+      "details": {}
+    },
+    {
+      "name": "taxi farm order starts from town center",
+      "pass": true,
+      "details": {
+        "taxi": {
+          "state": "FETCHING",
+          "destination": "farm",
+          "x": -39,
+          "z": 44
+        },
+        "player": {
+          "x": 0,
+          "y": 0,
+          "z": -5,
+          "visible": true
+        }
+      }
+    }
+  ],
   "logs": [],
   "failures": [],
-  "error": "page.waitForFunction: Timeout 15000ms exceeded.",
   "finalState": {
     "mode": "playing",
     "coordinateSystem": "Three.js world coordinates, X east-west, Z north-south, Y up.",
     "player": {
-      "x": -6,
+      "x": 0,
       "y": 0,
-      "z": -12,
+      "z": -5,
       "visible": true
     },
     "camera": {
-      "x": -11.76,
-      "y": 15.51,
-      "z": 7.94,
+      "x": -15.16,
+      "y": 15.83,
+      "z": 8.77,
       "radius": 24
     },
     "activeTrigger": null,
     "visualAssets": {
-      "loaded": 21,
+      "loaded": 50,
       "failed": 0,
-      "runtimeGroups": 21
+      "runtimeGroups": 50
     },
     "state": {
       "day": 1,
-      "hour": 8.03,
-      "coins": 100,
-      "satiety": 100,
+      "hour": 9.98,
+      "coins": 95,
+      "satiety": 94,
       "knowledge": 0,
-      "activeTask": "在小镇里熟悉一下环境吧，或者尝试去农地种菜！"
+      "activeTask": "🚕 已呼叫滴滴出行！出租车正在向您驶来，请在原地等待。"
     },
     "taxi": {
-      "state": "IDLE",
-      "destination": null,
-      "x": -3.5,
-      "z": -24
+      "state": "FETCHING",
+      "destination": "farm",
+      "x": -32.25,
+      "z": 44
     },
     "farm": [
       {
@@ -69,7 +214,7 @@
       "carrot_seed": 3,
       "cabbage_seed": 2,
       "pumpkin_seed": 1,
-      "carrot": 0,
+      "carrot": 1,
       "cabbage": 0,
       "pumpkin": 0,
       "bread": 1,

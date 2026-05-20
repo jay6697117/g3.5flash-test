@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>3D 模拟小镇 - 奇幻之旅</title>
+    <link rel="icon" href="data:,">
     <link rel="stylesheet" href="./src/style.css">
 </head>
 <body>
@@ -36,9 +37,17 @@
             </div>
         </header>
 
+        <button id="btn-town-menu" class="town-menu-button glass-panel" title="展开背包" aria-label="展开背包">
+            ☰
+        </button>
+
         <section class="resident-card glass-panel" aria-label="居民状态">
-            <div class="resident-avatar">🧑</div>
+            <div class="resident-avatar-wrap">
+                <div class="resident-avatar">🧑</div>
+                <span class="resident-level">LV.1</span>
+            </div>
             <div class="resident-bars">
+                <div class="resident-name">小镇居民</div>
                 <div class="resident-row">
                     <span>❤</span>
                     <div class="mini-meter"><span style="width: 82%;"></span></div>
@@ -65,6 +74,26 @@
             按 <kbd>E</kbd> 进行互动
         </div>
 
+        <div id="npc-talk-cue" class="npc-talk-cue hidden" aria-live="polite">
+            <span class="talk-hand">☝</span>
+            <span id="npc-talk-name">居民</span>
+        </div>
+
+        <section id="npc-dialogue-panel" class="npc-dialogue-panel glass-panel hidden" aria-live="polite">
+            <div class="dialogue-portrait" id="dialogue-avatar">🧑</div>
+            <div class="dialogue-main">
+                <div class="dialogue-topline">
+                    <div>
+                        <div id="dialogue-name" class="dialogue-name">居民</div>
+                        <div id="dialogue-role" class="dialogue-role">小镇居民</div>
+                    </div>
+                    <button id="btn-close-dialogue" class="dialogue-close" aria-label="关闭对话">×</button>
+                </div>
+                <p id="dialogue-line" class="dialogue-line">你好。</p>
+                <div id="dialogue-options" class="dialogue-options"></div>
+            </div>
+        </section>
+
         <!-- 打车呼叫悬浮按钮 -->
         <button id="btn-call-taxi" class="glass-button circle-btn" title="呼叫出租车" aria-label="呼叫出租车">
             🚕
@@ -72,12 +101,22 @@
 
         <!-- 背包抽屉（快捷查看） -->
         <div id="inventory-hud" class="glass-panel">
-            <button id="btn-toggle-inventory" class="inventory-title" aria-expanded="false" aria-controls="inventory-grid">
-                <span>🎒</span>
-                <span>背包</span>
-            </button>
-            <div class="inventory-grid" id="inventory-grid">
-                <!-- 动态生成格子 -->
+            <div class="inventory-shell">
+                <div class="inventory-category-rail" aria-label="背包分类">
+                    <button class="inventory-category active" title="全部物品" aria-label="全部物品">🎒</button>
+                    <button class="inventory-category" title="种子" aria-label="种子">🌱</button>
+                    <button class="inventory-category" title="食物" aria-label="食物">🍞</button>
+                </div>
+                <div class="inventory-content">
+                    <button id="btn-toggle-inventory" class="inventory-title" aria-expanded="false" aria-controls="inventory-grid">
+                        <span>🎒</span>
+                        <span>背包</span>
+                        <span class="inventory-title-hint">道具栏</span>
+                    </button>
+                    <div class="inventory-grid" id="inventory-grid">
+                        <!-- 动态生成格子 -->
+                    </div>
+                </div>
             </div>
         </div>
     </div>

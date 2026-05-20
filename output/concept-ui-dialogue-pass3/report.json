@@ -1,0 +1,510 @@
+{
+  "pass": true,
+  "url": "http://127.0.0.1:5198/?autostart=1",
+  "checks": [
+    {
+      "name": "desktop game is playing",
+      "ok": true,
+      "detail": {
+        "mode": "playing"
+      }
+    },
+    {
+      "name": "desktop GLB assets loaded",
+      "ok": true,
+      "detail": {
+        "loaded": 50,
+        "failed": 0,
+        "runtimeGroups": 50
+      }
+    },
+    {
+      "name": "desktop default layout has no overflow",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "desktop default layout has no visible HUD overlap",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "npc trigger is discoverable",
+      "ok": true,
+      "detail": {
+        "id": "npc_maya_vendor",
+        "type": "npc",
+        "label": "Maya 菜市场摊主",
+        "npcId": "mayaVendor"
+      }
+    },
+    {
+      "name": "npc dialogue opens from E interaction",
+      "ok": true,
+      "detail": {
+        "isOpen": true,
+        "npcId": "mayaVendor",
+        "topicId": null,
+        "line": "今天的菜刚摆上摊，胡萝卜和卷心菜都很新鲜。你要是有收成，也可以拿去菜市场换金币。"
+      }
+    },
+    {
+      "name": "npc dialogue option updates task and state",
+      "ok": true,
+      "detail": {
+        "dialogue": {
+          "isOpen": true,
+          "npcId": "mayaVendor",
+          "topicId": "market_tip",
+          "line": "成熟作物最好在傍晚前卖掉。胡萝卜来钱快，南瓜更值钱，但要多一点耐心。"
+        },
+        "activeTask": "🥬 Maya 建议你先种一批胡萝卜，再去菜市场卖掉换金币。"
+      }
+    },
+    {
+      "name": "desktop dialogue layout has no overflow",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "desktop dialogue layout has no visible HUD overlap",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "home interaction updates task",
+      "ok": true,
+      "detail": {
+        "activeTask": "🏡 在家里美美睡了一大觉，饱食度与体力恢复到了 100%！",
+        "satiety": 100
+      }
+    },
+    {
+      "name": "supermarket modal opens",
+      "ok": true,
+      "detail": {}
+    },
+    {
+      "name": "market modal opens",
+      "ok": true,
+      "detail": {}
+    },
+    {
+      "name": "school modal opens",
+      "ok": true,
+      "detail": {}
+    },
+    {
+      "name": "farm modal opens",
+      "ok": true,
+      "detail": {}
+    },
+    {
+      "name": "farm plot matures after planting and watering",
+      "ok": true,
+      "detail": {}
+    },
+    {
+      "name": "farm harvest returns plot to empty and adds crop",
+      "ok": true,
+      "detail": {
+        "plot": {
+          "index": 0,
+          "state": "EMPTY",
+          "seedType": null,
+          "growTime": 0
+        },
+        "carrot": 1
+      }
+    },
+    {
+      "name": "taxi modal opens from call button",
+      "ok": true,
+      "detail": {}
+    },
+    {
+      "name": "taxi accepts farm destination",
+      "ok": true,
+      "detail": {
+        "state": "RIDING",
+        "destination": "farm",
+        "x": -25,
+        "z": 0
+      }
+    },
+    {
+      "name": "mobile game is playing",
+      "ok": true,
+      "detail": {
+        "mode": "playing"
+      }
+    },
+    {
+      "name": "mobile GLB assets loaded",
+      "ok": true,
+      "detail": {
+        "loaded": 50,
+        "failed": 0,
+        "runtimeGroups": 50
+      }
+    },
+    {
+      "name": "mobile default layout has no overflow",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "mobile default layout has no visible HUD overlap",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "mobile dialogue layout has no overflow",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "mobile dialogue layout has no visible HUD overlap",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "no console errors",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "no page or request failures",
+      "ok": true,
+      "detail": []
+    }
+  ],
+  "consoleErrors": [],
+  "consoleWarnings": [
+    {
+      "type": "warning",
+      "text": "[.WebGL-0x11c004d5a00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+      "location": {
+        "url": "http://127.0.0.1:5198/?autostart=1",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    },
+    {
+      "type": "warning",
+      "text": "[.WebGL-0x11c004d5a00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+      "location": {
+        "url": "http://127.0.0.1:5198/?autostart=1",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    },
+    {
+      "type": "warning",
+      "text": "[.WebGL-0x11c004d5a00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+      "location": {
+        "url": "http://127.0.0.1:5198/?autostart=1",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    },
+    {
+      "type": "warning",
+      "text": "[.WebGL-0x11c004d5a00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)",
+      "location": {
+        "url": "http://127.0.0.1:5198/?autostart=1",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    }
+  ],
+  "failures": [],
+  "desktop": {
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    },
+    "visible": [
+      {
+        "selector": ".hud-header",
+        "index": 0,
+        "rect": {
+          "x": 420.6328125,
+          "y": 16,
+          "width": 438.734375,
+          "height": 46,
+          "right": 859.3671875,
+          "bottom": 62
+        }
+      },
+      {
+        "selector": ".resident-card",
+        "index": 0,
+        "rect": {
+          "x": 18,
+          "y": 16,
+          "width": 316,
+          "height": 156,
+          "right": 334,
+          "bottom": 172
+        }
+      },
+      {
+        "selector": "#task-panel",
+        "index": 0,
+        "rect": {
+          "x": 18,
+          "y": 190,
+          "width": 360,
+          "height": 68,
+          "right": 378,
+          "bottom": 258
+        }
+      },
+      {
+        "selector": "#inventory-hud",
+        "index": 0,
+        "rect": {
+          "x": 24,
+          "y": 447,
+          "width": 456,
+          "height": 249,
+          "right": 480,
+          "bottom": 696
+        }
+      },
+      {
+        "selector": "#btn-call-taxi",
+        "index": 0,
+        "rect": {
+          "x": 1196,
+          "y": 636,
+          "width": 60,
+          "height": 60,
+          "right": 1256,
+          "bottom": 696
+        }
+      }
+    ],
+    "overflow": [],
+    "overlaps": []
+  },
+  "desktopDialogue": {
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    },
+    "visible": [
+      {
+        "selector": ".hud-header",
+        "index": 0,
+        "rect": {
+          "x": 420.6328125,
+          "y": 16,
+          "width": 438.734375,
+          "height": 46,
+          "right": 859.3671875,
+          "bottom": 62
+        }
+      },
+      {
+        "selector": ".resident-card",
+        "index": 0,
+        "rect": {
+          "x": 18,
+          "y": 16,
+          "width": 316,
+          "height": 156,
+          "right": 334,
+          "bottom": 172
+        }
+      },
+      {
+        "selector": "#task-panel",
+        "index": 0,
+        "rect": {
+          "x": 18,
+          "y": 190,
+          "width": 360,
+          "height": 68,
+          "right": 378,
+          "bottom": 258
+        }
+      },
+      {
+        "selector": "#inventory-hud",
+        "index": 0,
+        "rect": {
+          "x": 24,
+          "y": 447,
+          "width": 456,
+          "height": 249,
+          "right": 480,
+          "bottom": 696
+        }
+      },
+      {
+        "selector": "#btn-call-taxi",
+        "index": 0,
+        "rect": {
+          "x": 1196,
+          "y": 636,
+          "width": 60,
+          "height": 60,
+          "right": 1256,
+          "bottom": 696
+        }
+      },
+      {
+        "selector": "#npc-dialogue-panel",
+        "index": 0,
+        "rect": {
+          "x": 360,
+          "y": 264.4375,
+          "width": 560,
+          "height": 175.5625,
+          "right": 920,
+          "bottom": 440
+        }
+      }
+    ],
+    "overflow": [],
+    "overlaps": []
+  },
+  "mobile": {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "visible": [
+      {
+        "selector": ".hud-header",
+        "index": 0,
+        "rect": {
+          "x": 10,
+          "y": 10,
+          "width": 370,
+          "height": 76,
+          "right": 380,
+          "bottom": 86
+        }
+      },
+      {
+        "selector": "#task-panel",
+        "index": 0,
+        "rect": {
+          "x": 10,
+          "y": 92,
+          "width": 370,
+          "height": 58.375,
+          "right": 380,
+          "bottom": 150.375
+        }
+      },
+      {
+        "selector": "#inventory-hud",
+        "index": 0,
+        "rect": {
+          "x": 10,
+          "y": 787,
+          "width": 268,
+          "height": 45,
+          "right": 278,
+          "bottom": 832
+        }
+      },
+      {
+        "selector": "#btn-call-taxi",
+        "index": 0,
+        "rect": {
+          "x": 312,
+          "y": 764,
+          "width": 64,
+          "height": 64,
+          "right": 376,
+          "bottom": 828
+        }
+      }
+    ],
+    "overflow": [],
+    "overlaps": []
+  },
+  "mobileDialogue": {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "visible": [
+      {
+        "selector": ".hud-header",
+        "index": 0,
+        "rect": {
+          "x": 10,
+          "y": 10,
+          "width": 370,
+          "height": 76,
+          "right": 380,
+          "bottom": 86
+        }
+      },
+      {
+        "selector": "#task-panel",
+        "index": 0,
+        "rect": {
+          "x": 10,
+          "y": 92,
+          "width": 370,
+          "height": 58.375,
+          "right": 380,
+          "bottom": 150.375
+        }
+      },
+      {
+        "selector": "#inventory-hud",
+        "index": 0,
+        "rect": {
+          "x": 10,
+          "y": 787,
+          "width": 268,
+          "height": 45,
+          "right": 278,
+          "bottom": 832
+        }
+      },
+      {
+        "selector": "#btn-call-taxi",
+        "index": 0,
+        "rect": {
+          "x": 312,
+          "y": 764,
+          "width": 64,
+          "height": 64,
+          "right": 376,
+          "bottom": 828
+        }
+      },
+      {
+        "selector": "#npc-dialogue-panel",
+        "index": 0,
+        "rect": {
+          "x": 10,
+          "y": 595.46875,
+          "width": 370,
+          "height": 152.53125,
+          "right": 380,
+          "bottom": 748
+        }
+      }
+    ],
+    "overflow": [],
+    "overlaps": []
+  }
+}

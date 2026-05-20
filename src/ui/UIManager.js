@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import { NPC_DIALOGUES } from '../content/dialogueContent.js';
 
 // 问答题库，包含 8 道精选常识题
 const QUIZ_BANK = [
@@ -38,10 +38,26 @@ export class UIManager {
         };
         
         this.activeTrigger = null; // 当前靠近的 Trigger
+        this.dialogueState = {
+            isOpen: false,
+            npcId: null,
+            topicId: null,
+            line: '',
+        };
         
         // 缓存 DOM 节点
         this.modalContainer = document.getElementById('modal-container');
         this.actionPrompt = document.getElementById('action-prompt');
+        this.inventoryHud = document.getElementById('inventory-hud');
+        this.toggleInventoryButton = document.getElementById('btn-toggle-inventory');
+        this.npcTalkCue = document.getElementById('npc-talk-cue');
+        this.npcTalkName = document.getElementById('npc-talk-name');
+        this.dialoguePanel = document.getElementById('npc-dialogue-panel');
+        this.dialogueAvatar = document.getElementById('dialogue-avatar');
+        this.dialogueName = document.getElementById('dialogue-name');
+        this.dialogueRole = document.getElementById('dialogue-role');
+        this.dialogueLine = document.getElementById('dialogue-line');
+        this.dialogueOptions = document.getElementById('dialogue-options');
         
         // 绑定状态广播监听
         window.addEventListener('state-change', (e) => this.renderHUD(e.detail.type, e.detail.state));
@@ -72,6 +88,10 @@ export class UIManager {
         document.getElementById('btn-start-game').addEventListener('click', () => {
             this.startGame();
         });
+
+        document.getElementById('btn-close-dialogue').addEventListener('click', () => {
+            this.closeNpcDialogue();
+        });
         
         // 2. 全局弹窗通用关闭按钮
         const closeBtns = document.querySelectorAll('.close-btn');
@@ -91,11 +111,12 @@ export class UIManager {
             this.openModal('modal-taxi');
         });
 
-        const inventoryHud = document.getElementById('inventory-hud');
-        const toggleInventory = document.getElementById('btn-toggle-inventory');
-        toggleInventory.addEventListener('click', () => {
-            inventoryHud.classList.toggle('expanded');
-            toggleInventory.setAttribute('aria-expanded', inventoryHud.classList.contains('expanded') ? 'true' : 'false');
+        this.toggleInventoryButton.addEventListener('click', () => {
+            this.toggleInventoryPanel();
+        });
+
+        document.getElementById('btn-town-menu').addEventListener('click', () => {
+            this.toggleInventoryPanel();
         });
         
         // 4. 打车目的地按钮绑定
@@ -251,6 +272,11 @@ export class UIManager {
         price.append(label, button);
         return { price, button };
     }
+
+    toggleInventoryPanel() {
+        this.inventoryHud.classList.toggle('expanded');
+        this.toggleInventoryButton.setAttribute('aria-expanded', this.inventoryHud.classList.contains('expanded') ? 'true' : 'false');
+    }
     
     updateInventoryHUD(inv) {
         const grid = document.getElementById('inventory-grid');
@@ -295,6 +321,8 @@ export class UIManager {
      * 弹出某个指定 ID 的模态窗口
      */
     openModal(modalId) {
+        this.closeNpcDialogue();
+
         // 先关闭所有
         const modals = document.querySelectorAll('.game-modal');
         modals.forEach(m => m.classList.add('hidden'));
@@ -307,6 +335,19 @@ export class UIManager {
         this.modalContainer.classList.add('hidden');
         const modals = document.querySelectorAll('.game-modal');
         modals.forEach(m => m.classList.add('hidden'));
+    }
+
+    setActiveWorldCue(trigger) {
+        if (!this.npcTalkCue || !this.npcTalkName) return;
+
+        if (trigger?.type === 'npc') {
+            const npc = NPC_DIALOGUES[trigger.npcId];
+            this.npcTalkName.textContent = npc ? `${npc.name} · ${npc.role}` : trigger.label;
+            this.npcTalkCue.classList.remove('hidden');
+            return;
+        }
+
+        this.npcTalkCue.classList.add('hidden');
     }
     
     /**
@@ -324,12 +365,84 @@ export class UIManager {
             this.openSchoolModal();
         } else if (trigger.type === 'farm_plot') {
             this.openFarmModal(trigger.plotIndex);
+        } else if (trigger.type === 'npc') {
+            this.openNpcDialogue(trigger.npcId);
         } else if (trigger.type === 'home') {
             // 住宅直接触发交互：睡觉休息
             this.gameState.addSatiety(100);
             this.gameState.setTask('🏡 在家里美美睡了一大觉，饱食度与体力恢复到了 100%！');
             this.showTaxiRideOverlay('💤 睡觉休息中，呼噜噜...', 1500);
         }
+    }
+
+    openNpcDialogue(npcId) {
+        const npc = NPC_DIALOGUES[npcId];
+        if (!npc) {
+            this.gameState.setTask('这个居民暂时没有可聊的内容。');
+            return;
+        }
+
+        this.closeAllModals();
+
+        this.dialogueState = {
+            isOpen: true,
+            npcId,
+            topicId: null,
+            line: npc.greeting,
+        };
+
+        this.dialogueAvatar.textContent = npc.avatar;
+        this.dialogueName.textContent = npc.name;
+        this.dialogueRole.textContent = `${npc.role} · ${npc.location} · ${npc.mood}`;
+        this.dialogueLine.textContent = npc.greeting;
+        this.renderDialogueOptions(npc);
+        document.body.classList.add('dialogue-open');
+        this.dialoguePanel.classList.remove('hidden');
+    }
+
+    renderDialogueOptions(npc) {
+        this.dialogueOptions.replaceChildren();
+
+        npc.topics.forEach((topic) => {
+            const button = this.createTextElement('button', 'dialogue-option-btn', topic.label);
+            button.addEventListener('click', () => this.selectDialogueTopic(npc, topic));
+            this.dialogueOptions.appendChild(button);
+        });
+
+        const closeButton = this.createTextElement('button', 'dialogue-option-btn quiet', '结束交谈');
+        closeButton.addEventListener('click', () => this.closeNpcDialogue());
+        this.dialogueOptions.appendChild(closeButton);
+    }
+
+    selectDialogueTopic(npc, topic) {
+        this.dialogueState = {
+            isOpen: true,
+            npcId: npc.id,
+            topicId: topic.id,
+            line: topic.response,
+        };
+
+        this.dialogueLine.textContent = topic.response;
+        if (topic.taskText) {
+            this.gameState.setTask(topic.taskText);
+        }
+    }
+
+    closeNpcDialogue() {
+        if (!this.dialoguePanel) return;
+
+        this.dialoguePanel.classList.add('hidden');
+        document.body.classList.remove('dialogue-open');
+        this.dialogueState = {
+            isOpen: false,
+            npcId: null,
+            topicId: null,
+            line: '',
+        };
+    }
+
+    getDialogueState() {
+        return { ...this.dialogueState };
     }
     
     /**

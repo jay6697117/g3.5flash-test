@@ -32,6 +32,11 @@ body, html {
     color: var(--town-ink);
 }
 
+button:focus-visible {
+    outline: 2px solid var(--town-gold-strong);
+    outline-offset: 2px;
+}
+
 /* 3D 渲染画布 */
 #game-canvas {
     position: absolute;
@@ -79,13 +84,29 @@ body, html {
     padding: 18px;
 }
 
+#game-hud::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+        radial-gradient(circle at 18% 12%, rgba(255, 210, 135, 0.22), transparent 32%),
+        radial-gradient(circle at 82% 82%, rgba(41, 25, 6, 0.2), transparent 38%),
+        linear-gradient(135deg, rgba(255, 196, 106, 0.12), rgba(43, 72, 51, 0.08) 55%, rgba(3, 11, 7, 0.18));
+    mix-blend-mode: soft-light;
+}
+
+#game-hud > * {
+    z-index: 1;
+}
+
 /* 顶部状态栏 */
 .hud-header {
     pointer-events: auto; /* 允许与顶部状态栏交互 */
     position: absolute;
     top: 16px;
-    left: 50%;
-    transform: translateX(-50%);
+    right: 88px;
     display: flex;
     max-width: calc(100vw - 32px);
     gap: 10px;
@@ -93,6 +114,27 @@ body, html {
     align-items: center;
     justify-content: center;
     white-space: nowrap;
+}
+
+.town-menu-button {
+    pointer-events: auto;
+    position: absolute;
+    top: 16px;
+    right: 24px;
+    width: 50px;
+    height: 46px;
+    display: grid;
+    place-items: center;
+    border-radius: 14px;
+    color: var(--town-gold-strong);
+    font-size: 24px;
+    font-weight: 900;
+    border-color: rgba(242, 196, 92, 0.52);
+    cursor: pointer;
+}
+
+.town-menu-button:hover {
+    color: #fff1b6;
 }
 
 .hud-item {
@@ -131,22 +173,28 @@ body, html {
     position: absolute;
     top: 16px;
     left: 18px;
-    width: 292px;
-    min-height: 104px;
+    width: 316px;
+    min-height: 124px;
     display: grid;
-    grid-template-columns: 82px 1fr;
+    grid-template-columns: 92px 1fr;
     align-items: center;
     gap: 14px;
-    padding: 12px 16px 12px 12px;
+    padding: 14px 16px 14px 12px;
+}
+
+.resident-avatar-wrap {
+    position: relative;
+    width: 88px;
+    height: 88px;
 }
 
 .resident-avatar {
-    width: 76px;
-    height: 76px;
+    width: 88px;
+    height: 88px;
     border-radius: 50%;
     display: grid;
     place-items: center;
-    font-size: 42px;
+    font-size: 48px;
     background:
         radial-gradient(circle at 38% 28%, rgba(255, 248, 223, 0.28), rgba(255, 248, 223, 0.04) 46%),
         linear-gradient(145deg, #345a3a, #162c20);
@@ -154,10 +202,30 @@ body, html {
     box-shadow: inset 0 0 0 3px rgba(10, 26, 16, 0.48), 0 8px 18px rgba(0, 0, 0, 0.24);
 }
 
+.resident-level {
+    position: absolute;
+    right: -4px;
+    bottom: 0;
+    padding: 2px 7px;
+    border-radius: 7px;
+    background: var(--town-gold-strong);
+    color: #172315;
+    font-size: 10px;
+    font-weight: 900;
+    box-shadow: 0 4px 10px rgba(5, 16, 10, 0.28);
+}
+
 .resident-bars {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 9px;
+}
+
+.resident-name {
+    color: var(--town-gold-strong);
+    font-weight: 900;
+    font-size: 15px;
+    letter-spacing: 0;
 }
 
 .resident-row {
@@ -207,14 +275,27 @@ body, html {
 .task-hud {
     pointer-events: auto;
     position: absolute;
-    top: 152px;
+    top: 190px;
     left: 18px;
-    padding: 9px 14px;
-    max-width: min(340px, calc(100vw - 36px));
+    padding: 12px 44px 12px 16px;
+    width: min(360px, calc(100vw - 36px));
+    min-height: 68px;
     display: flex;
     gap: 8px;
     align-items: flex-start;
     animation: slideInLeft 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+.task-hud::after {
+    content: '›';
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--town-gold-strong);
+    font-size: 30px;
+    font-weight: 400;
+    opacity: 0.9;
 }
 
 .task-title {
@@ -259,6 +340,151 @@ body, html {
     font-family: inherit;
     font-weight: 800;
     box-shadow: 0 2px 0 #a7781e;
+}
+
+.dialogue-open .action-prompt,
+.dialogue-open .npc-talk-cue {
+    display: none !important;
+}
+
+.npc-talk-cue {
+    position: absolute;
+    top: 47%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px 10px 12px;
+    border-radius: 999px;
+    background: rgba(20, 45, 31, 0.92);
+    border: 1.5px solid rgba(255, 209, 102, 0.8);
+    color: var(--town-ink);
+    box-shadow: 0 12px 30px rgba(5, 16, 10, 0.42), 0 0 0 5px rgba(242, 196, 92, 0.12);
+    z-index: 110;
+    pointer-events: none;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.talk-hand {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--town-gold-strong);
+    color: #172315;
+    font-size: 20px;
+    box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.12);
+}
+
+.npc-dialogue-panel {
+    pointer-events: auto;
+    position: absolute;
+    left: 50%;
+    bottom: 280px;
+    transform: translateX(-50%);
+    width: min(560px, calc(100vw - 560px));
+    min-width: 440px;
+    display: grid;
+    grid-template-columns: 86px 1fr;
+    gap: 16px;
+    padding: 16px;
+    z-index: 130;
+}
+
+.dialogue-portrait {
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    align-self: start;
+    background:
+        radial-gradient(circle at 35% 25%, rgba(255, 248, 223, 0.32), rgba(255, 248, 223, 0.04) 48%),
+        linear-gradient(145deg, #446a43, #142a1e);
+    border: 3px solid rgba(255, 209, 102, 0.7);
+    font-size: 40px;
+    box-shadow: inset 0 0 0 3px rgba(8, 22, 13, 0.45), 0 8px 20px rgba(0, 0, 0, 0.24);
+}
+
+.dialogue-main {
+    min-width: 0;
+}
+
+.dialogue-topline {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: start;
+    margin-bottom: 8px;
+}
+
+.dialogue-name {
+    color: var(--town-gold-strong);
+    font-size: 18px;
+    font-weight: 900;
+}
+
+.dialogue-role {
+    margin-top: 2px;
+    color: var(--town-muted);
+    font-size: 12px;
+    line-height: 1.35;
+}
+
+.dialogue-close {
+    width: 30px;
+    height: 30px;
+    border: 1px solid rgba(255, 248, 223, 0.16);
+    border-radius: 8px;
+    background: rgba(8, 22, 13, 0.28);
+    color: var(--town-muted);
+    cursor: pointer;
+    font-size: 22px;
+    line-height: 1;
+}
+
+.dialogue-close:hover {
+    color: var(--town-gold-strong);
+    border-color: rgba(255, 209, 102, 0.46);
+}
+
+.dialogue-line {
+    color: var(--town-ink);
+    font-size: 14px;
+    line-height: 1.55;
+    margin-bottom: 12px;
+}
+
+.dialogue-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.dialogue-option-btn {
+    border: 1px solid rgba(255, 209, 102, 0.34);
+    background: rgba(255, 209, 102, 0.16);
+    color: var(--town-ink);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+}
+
+.dialogue-option-btn:hover {
+    background: rgba(255, 209, 102, 0.28);
+    border-color: rgba(255, 209, 102, 0.62);
+}
+
+.dialogue-option-btn.quiet {
+    background: rgba(8, 22, 13, 0.28);
+    color: var(--town-muted);
+    border-color: rgba(255, 248, 223, 0.16);
 }
 
 /* 键盘键帽统一风格 */
@@ -311,8 +537,42 @@ body, html {
     position: absolute;
     bottom: 24px;
     left: 24px;
-    padding: 11px;
-    width: 252px;
+    padding: 12px;
+    width: 456px;
+}
+
+.inventory-shell {
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    gap: 12px;
+}
+
+.inventory-category-rail {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.inventory-category {
+    width: 46px;
+    height: 46px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 248, 223, 0.14);
+    background: rgba(8, 22, 13, 0.34);
+    color: var(--town-ink);
+    cursor: pointer;
+    font-size: 20px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.inventory-category.active,
+.inventory-category:hover {
+    border-color: rgba(255, 209, 102, 0.62);
+    background: rgba(255, 209, 102, 0.2);
+}
+
+.inventory-content {
+    min-width: 0;
 }
 
 .inventory-title {
@@ -331,6 +591,14 @@ body, html {
     align-items: center;
     gap: 8px;
     text-align: left;
+}
+
+.inventory-title-hint {
+    margin-left: auto;
+    color: var(--town-gold-strong);
+    font-size: 11px;
+    font-weight: 800;
+    opacity: 0.86;
 }
 
 .inventory-grid {
@@ -358,7 +626,7 @@ body, html {
 }
 
 .inventory-slot .slot-icon {
-    font-size: 22px;
+    font-size: 28px;
 }
 
 .inventory-slot .slot-count {
@@ -857,6 +1125,10 @@ body, html {
         white-space: normal;
     }
 
+    .town-menu-button {
+        display: none;
+    }
+
     .resident-card {
         display: none;
     }
@@ -913,9 +1185,15 @@ body, html {
         top: 92px;
         left: 10px;
         right: 10px;
+        width: auto;
+        min-height: 0;
         max-width: none;
         padding: 10px 12px;
         border-radius: 12px;
+    }
+
+    .task-hud::after {
+        display: none;
     }
 
     .task-title {
@@ -936,12 +1214,68 @@ body, html {
         line-height: 1.35;
     }
 
+    .npc-talk-cue {
+        top: auto;
+        bottom: 176px;
+        width: min(320px, calc(100vw - 36px));
+        justify-content: center;
+        font-size: 13px;
+    }
+
+    .npc-dialogue-panel {
+        left: 10px;
+        right: 10px;
+        bottom: 96px;
+        transform: none;
+        width: auto;
+        min-width: 0;
+        grid-template-columns: 58px 1fr;
+        gap: 10px;
+        padding: 12px;
+        border-radius: 12px;
+    }
+
+    .dialogue-portrait {
+        width: 52px;
+        height: 52px;
+        font-size: 28px;
+        border-width: 2px;
+    }
+
+    .dialogue-name {
+        font-size: 15px;
+    }
+
+    .dialogue-role {
+        font-size: 11px;
+    }
+
+    .dialogue-line {
+        font-size: 13px;
+        line-height: 1.45;
+        margin-bottom: 10px;
+    }
+
+    .dialogue-option-btn {
+        padding: 7px 10px;
+        font-size: 12px;
+    }
+
     #inventory-hud {
         left: 10px;
         bottom: 12px;
         width: min(268px, calc(100vw - 104px));
         padding: 10px;
         border-radius: 12px;
+    }
+
+    .inventory-shell {
+        display: block;
+    }
+
+    .inventory-category-rail,
+    .inventory-title-hint {
+        display: none;
     }
 
     #inventory-hud:not(.expanded) .inventory-grid {

@@ -41,8 +41,45 @@ Original prompt: 我想写一个3D模拟小镇，模拟真实世界的小镇，�
 ## Extension Phases
 | Phase | Status | Notes |
 | --- | --- | --- |
-| 8. Blender GLB asset generation | complete | 已生成并校验 13 个 `assets/models/*.glb`。 |
+| 8. Blender GLB asset generation | complete | 已生成并校验 15 个 `assets/models/*.glb`。 |
 | 9. Runtime asset loader integration | complete | 已新增 manifest/loader，GLTFLoader 懒加载并克隆 GLB。 |
-| 10. Concept scene composition pass | complete | 已加入关键地标 GLB、背景住宅、街角商铺、远景山水、水塔、云、树木和街具。 |
+| 10. Concept scene composition pass | complete | 已加入关键地标 GLB、街角咖啡店、镇民、背景住宅、远景山水、水塔、云、树木和街具。 |
 | 11. Concept UI pass | complete | 已改为深绿/金色 HUD、资源条、背包抽屉和出租车按钮视觉。 |
-| 12. Final verification loop | in_progress | 构建已通过；待桌面、移动、玩法回归和截图验收。 |
+| 12. Final verification loop | complete | `npm run build`、桌面/移动截图、布局检查和玩法回归均已通过。 |
+
+## Final Evidence
+- Blender 生成的 15 个 GLB 已保存到 `assets/models/`，并通过 `src/content/assetManifest.js` 接入运行时。
+- 最终构建通过，输出包含 GLB 资产和懒加载 `GLTFLoader` chunk；仍保留 Vite 500 kB chunk warning。
+- 最终视觉截图：
+  - `output/final-visual-check-pass3/desktop.png`
+  - `output/final-visual-check-pass3/mobile-390x844.png`
+- 最终截图状态：桌面和 390x844 移动端均为 `visualAssets.loaded=50`、`failed=0`、console errors `0`、request failures `0`、overflow `0`、overlaps `0`。
+- 最终玩法回归：`output/verification-glb-preview-regression-final.json`，覆盖住宅、超市购买、菜市场、学校测验入口、农田播种/浇水/成熟/收割、出租车前往农场订单，结果 `pass=true`。
+
+## Current Goal Extension 2
+继续把项目从“可玩的低模 demo”推进到更接近两张概念图的 3D 小镇 MVP。本轮重点不是继续堆静态 GLB，而是补齐概念图里明显存在、当前缺失的“人物交互与游戏 UI 层次”：
+- 增加 NPC 对话触发器，复用现有镇民 GLB，让玩家靠近镇民后可按 `E` 交谈。
+- 新增概念图式中心交互提示和对话面板，包含头像、姓名、身份、对白、选项与关闭流程。
+- 调整桌面 HUD，使左侧居民面板、任务板、背包板更接近 `ui-style-board.png` 的层级和尺寸；移动端仍保持不遮挡、不溢出。
+- `render_game_to_text()` 继续作为验证接口，新增 NPC/对话状态摘要。
+- 每轮改完后继续对照 `assets/concepts/town-art-direction.png`、`assets/concepts/ui-style-board.png` 和最新截图，记录差距。
+
+## Extension Phases 2
+| Phase | Status | Notes |
+| --- | --- | --- |
+| 13. NPC dialogue content and triggers | complete | 已定义 4 个 NPC 对话资料，并把现有镇民 GLB 位置注册为可交谈触发器。 |
+| 14. Concept interaction UI pass | complete | 已新增中心对话气泡、NPC 对话面板、右上菜单、桌面大型背包板和暖色镜头氛围。 |
+| 15. Text-state and regression coverage | complete | `render_game_to_text` 已增加 dialogue/NPC 摘要，Playwright 全量回归通过。 |
+| 16. Concept comparison verification | complete | 构建、桌面/移动截图、玩法回归、概念图复看均完成。 |
+
+## Extension 2 Evidence
+- 新增 `src/content/dialogueContent.js`，包含 `mayaVendor`、`theoStudent`、`chenDriver`、`linaNeighbor` 四个 NPC 的姓名、身份、对白、话题和任务引导。
+- `Town.populateGltfProps()` 现在把现有镇民 GLB 转化为 `npc` trigger；玩家靠近后中心出现交谈提示，按 `E` 可打开对话面板。
+- `render_game_to_text()` 已输出 `activeTrigger.npcId` 和 `dialogue` 状态，便于 Playwright 验证 NPC 交互。
+- 最终截图：
+  - `output/concept-ui-dialogue-final/desktop-default.png`
+  - `output/concept-ui-dialogue-final/desktop-dialogue.png`
+  - `output/concept-ui-dialogue-final/mobile-default.png`
+  - `output/concept-ui-dialogue-final/mobile-dialogue.png`
+- 全量玩法回归：`output/concept-ui-dialogue-pass3/report.json`，`pass=true`，26 项检查通过，覆盖 NPC 对话、住宅、超市、菜市场、学校、农田、出租车、桌面/移动布局。
+- 最终视觉 smoke：`output/concept-ui-dialogue-final/report.json`，`pass=true`，15 项检查通过，console errors `0`，request/page failures `0`；4 条 console warning 均为 Playwright 截图触发的 WebGL `ReadPixels` 性能提示。

@@ -22,7 +22,7 @@ Original prompt: 我想写一个3D模拟小镇，模拟真实世界的小镇，�
 - Removed transform from taxi pulse animation and kept the visual pulse on box-shadow only.
 
 ## Current Step
-- Generate concept assets, then run desktop and mobile browser verification.
+- Extension 2 completed: NPC dialogue, concept-style interaction UI, final build, screenshots, and regression verification.
 
 ## Known Artifacts
 - `output/plan-visual-check/` was generated during planning and is currently untracked.
@@ -66,3 +66,27 @@ Original prompt: 我想写一个3D模拟小镇，模拟真实世界的小镇，�
 - Started a fifth visual pass: moved the farm to the southwest/outskirts and updated the taxi farm waypoint to the new farm gate.
 - Fifth pass screenshot (`output/verification-glb-desktop-pass5/shot-0.png`) shows a stronger concept-aligned center: roads, crosswalks, taxi button, central stalls, street shop, lake, and low-chrome HUD are visible; `visualAssets.loaded=38`, `failed=0`.
 - The fifth pass dev-server run logged `Failed to load resource: net::ERR_CONNECTION_CLOSED`, likely from Vite/HMR rather than shipped assets, so final verification should use `vite preview` against the built app.
+- Reworked final verification to use production `vite preview` and removed Google Fonts runtime requests so visual checks are not dependent on external font availability.
+- Desktop layout check first found a small resident-card/task-card overlap; moved the desktop task panel down and rechecked with zero overflow and zero overlaps.
+- Concept comparison against `assets/concepts/town-art-direction.png` and `assets/concepts/ui-style-board.png` still showed the default view was too sparse, so a final asset-density pass was added instead of stopping at green tests.
+- Added two new Blender-generated GLB assets: `corner-cafe.glb` and `townsperson.glb`; total runtime source models are now 15 files under `assets/models/`.
+- Updated the supermarket GLB with side/back windows, signs, trim, and produce crates so non-front angles do not show a plain blue wall.
+- Integrated `cornerCafe` and `townsperson` into the asset manifest and town scene; final runtime placement count is `visualAssets.loaded=50`, `failed=0`.
+- Moved the default player spawn to the market street approach and the idle taxi to a visible road segment, improving first-screen alignment with the concept image.
+- Final desktop and mobile visual check generated `output/final-visual-check-pass3/desktop.png` and `output/final-visual-check-pass3/mobile-390x844.png`; both reports show logs `0`, request failures `0`, overflow `0`, overlaps `0`, loaded `50`, failed `0`.
+- Final gameplay regression generated `output/verification-glb-preview-regression-final.json`; result is `pass=true`, checks `14`, logs `0`, failures `0`.
+- Final build passed after the last asset pass. Remaining warning: main JS chunk is above Vite's 500 kB warning threshold; `GLTFLoader` is still emitted as a separate lazy chunk.
+- New goal extension started after comparing the current UI/scene to `assets/concepts/town-art-direction.png` and `assets/concepts/ui-style-board.png`.
+- Recorded the next implementation focus: NPC conversation triggers, concept-style center interaction cue, dialogue panel, desktop backpack board enlargement, and `render_game_to_text` dialogue state.
+- Added `src/content/dialogueContent.js` with four NPC dialogue profiles and trigger definitions.
+- Registered NPC triggers in `Town.populateGltfProps()` at existing townsperson GLB locations.
+- Added center NPC talk cue, bottom dialogue panel, larger desktop inventory board, resident level/name elements, and dialogue state output in `render_game_to_text()`.
+- Ran `npm run build`; build passed. Remaining warning: main JS chunk is above Vite's 500 kB warning threshold.
+- First browser check after adding favicon removed the default `favicon.ico` 404 console error.
+- Full regression pass 2 found a real desktop overlap: enlarged `.resident-card` bottom was `172px`, while `#task-panel` started at `154px`; moving the task panel lower is required.
+- The same regression pass also exposed a test-script issue: repeated `KeyE` interactions need one simulation step after keyup so the interaction debounce can reset before opening the next modal.
+- Moved the desktop task panel to `top: 190px`, reran the full Playwright regression, and generated `output/concept-ui-dialogue-pass3/report.json`; result `pass=true`, checks `26`, console errors `0`, request/page failures `0`.
+- Compared pass3 screenshots against both concept images; added one more visual polish pass: right-aligned resource header, functional top-right menu button, warm scene overlay, and gold focus outline for buttons.
+- Final `npm run build` passed after the polish pass. Remaining warning: main JS chunk is above Vite's 500 kB warning threshold.
+- Final visual smoke generated `output/concept-ui-dialogue-final/report.json`; result `pass=true`, checks `15`, console errors `0`, request/page failures `0`, WebGL screenshot warnings `4`.
+- Final screenshots are saved in `output/concept-ui-dialogue-final/`: `desktop-default.png`, `desktop-dialogue.png`, `mobile-default.png`, and `mobile-dialogue.png`.

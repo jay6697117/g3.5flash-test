@@ -266,6 +266,119 @@ def create_corner_cafe():
     export_asset("corner-cafe.glb")
 
 
+def create_cafe_terrace():
+    reset_scene()
+    m = base_materials()
+    cube("Terrace_Deck", (0, 0, 0.08), (5.8, 3.8, 0.16), m["stone"])
+
+    for x in (-2.55, 2.55):
+        for y in (-1.55, 1.55):
+            cylinder(f"Terrace_Pergola_Post_{x}_{y}", (x, y, 1.55), 0.07, 3.1, m["wood"], vertices=8)
+
+    for y in (-1.55, 1.55):
+        cube(f"Terrace_Pergola_Beam_{y}", (0, y, 3.1), (5.5, 0.14, 0.18), m["dark_wood"])
+
+    for x in (-1.7, 0, 1.7):
+        cube(f"Terrace_Awning_Frame_{x}", (x, 0, 3.26), (0.12, 3.5, 0.16), m["wood"])
+    awning("Terrace_Canvas", 0, 0, 3.45, 5.5, m["stripe"], m["green_light"])
+
+    table_positions = [(-1.55, -0.75), (1.35, -0.65), (-0.1, 0.85)]
+    for i, (x, y) in enumerate(table_positions):
+        cylinder(f"Terrace_Table_{i}", (x, y, 0.72), 0.45, 0.12, m["wood"], vertices=12)
+        cylinder(f"Terrace_Table_Post_{i}", (x, y, 0.4), 0.06, 0.7, m["dark_wood"], vertices=8)
+        for j, (cx, cy) in enumerate(((x - 0.62, y), (x + 0.62, y), (x, y - 0.58))):
+            cube(f"Terrace_Chair_{i}_{j}", (cx, cy, 0.42), (0.42, 0.38, 0.28), m["wood"])
+            cube(f"Terrace_Chair_Back_{i}_{j}", (cx, cy + 0.12, 0.72), (0.42, 0.08, 0.55), m["dark_wood"])
+
+    cube("Terrace_Chalkboard", (-2.65, -1.95, 0.85), (0.16, 0.12, 1.4), m["dark_wood"])
+    cube("Terrace_Chalkboard_Face", (-2.65, -2.02, 0.95), (1.1, 0.08, 0.82), m["road"])
+    for i, x in enumerate((-2.2, 2.2)):
+        cube(f"Terrace_Planter_{i}", (x, 1.95, 0.38), (0.9, 0.52, 0.55), m["stone"])
+        sphere(f"Terrace_Flower_{i}_A", (x - 0.18, 1.95, 0.82), 0.14, m["red"], segments=8)
+        sphere(f"Terrace_Flower_{i}_B", (x + 0.18, 1.95, 0.82), 0.14, m["gold"], segments=8)
+
+    export_asset("cafe-terrace.glb")
+
+
+def create_market_decor():
+    reset_scene()
+    m = base_materials()
+    cube("Market_Decor_Base", (0, 0, 0.08), (6.8, 2.5, 0.16), m["stone"])
+
+    for i, x in enumerate((-2.4, -1.25, 0, 1.25, 2.4)):
+        cube(f"Market_Crate_{i}", (x, -0.4 + (i % 2) * 0.45, 0.45), (0.9, 0.72, 0.55), m["wood"])
+        for j in range(5):
+            sphere(
+                f"Market_Produce_{i}_{j}",
+                (x - 0.25 + j * 0.13, -0.42 + (i % 2) * 0.45, 0.86 + (j % 2) * 0.05),
+                0.12,
+                m["red" if (i + j) % 3 == 0 else "green_light" if (i + j) % 3 == 1 else "gold"],
+                segments=8,
+            )
+
+    for x in (-3.15, 3.15):
+        cylinder(f"Market_Banner_Post_{x}", (x, 0.95, 1.55), 0.07, 3.1, m["wood"], vertices=8)
+    cube("Market_Banner_Rope", (0, 0.95, 2.95), (6.3, 0.06, 0.06), m["dark_wood"])
+    for i, x in enumerate((-2.45, -1.65, -0.85, -0.05, 0.75, 1.55, 2.35)):
+        cone(
+            f"Market_Bunting_{i}",
+            (x, 0.95, 2.66),
+            0.22,
+            0,
+            0.42,
+            m["gold" if i % 2 == 0 else "green_light"],
+            vertices=3,
+            rotation=(math.radians(180), 0, math.radians(30)),
+        )
+
+    cube("Market_Sign_Board", (0, -1.55, 1.32), (2.3, 0.14, 0.74), m["gold"])
+    cylinder("Market_Sign_Post_Left", (-0.92, -1.55, 0.75), 0.05, 1.5, m["wood"], vertices=8)
+    cylinder("Market_Sign_Post_Right", (0.92, -1.55, 0.75), 0.05, 1.5, m["wood"], vertices=8)
+    export_asset("market-decor.glb")
+
+
+def create_lakeside_gazebo():
+    reset_scene()
+    m = base_materials()
+    cylinder("Gazebo_Base", (0, 0, 0.18), 2.1, 0.36, m["stone"], vertices=12)
+    for i in range(8):
+        angle = (math.pi * 2 * i) / 8
+        x = math.cos(angle) * 1.65
+        y = math.sin(angle) * 1.65
+        cylinder(f"Gazebo_Post_{i}", (x, y, 1.65), 0.07, 3.0, m["white"], vertices=8)
+    cone("Gazebo_Roof", (0, 0, 3.45), 2.45, 0.12, 1.25, m["roof_red"], vertices=8)
+    cylinder("Gazebo_Roof_Cap", (0, 0, 4.18), 0.22, 0.16, m["gold"], vertices=12)
+    for i in range(4):
+        angle = (math.pi * 2 * i) / 4 + math.pi / 4
+        x = math.cos(angle) * 1.2
+        y = math.sin(angle) * 1.2
+        bench = cube(f"Gazebo_Bench_{i}", (x, y, 0.68), (1.0, 0.28, 0.22), m["wood"])
+        bench.rotation_euler[2] = angle
+    export_asset("lakeside-gazebo.glb")
+
+
+def create_cottage_yard():
+    reset_scene()
+    m = base_materials()
+    cube("Yard_Path", (0, 0, 0.06), (1.15, 4.6, 0.12), m["stone"])
+
+    for x in (-2.8, 2.8):
+        for y in (-2.2, -1.25, -0.3, 0.65, 1.6, 2.55):
+            cube(f"Yard_Fence_Post_{x}_{y}", (x, y, 0.48), (0.14, 0.14, 0.95), m["white"])
+        cube(f"Yard_Fence_Rail_A_{x}", (x, 0.2, 0.68), (0.12, 5.0, 0.12), m["white"])
+        cube(f"Yard_Fence_Rail_B_{x}", (x, 0.2, 0.36), (0.12, 5.0, 0.12), m["white"])
+
+    for i, x in enumerate((-1.85, -1.15, 1.15, 1.85)):
+        cube(f"Yard_Flowerbed_{i}", (x, -1.95, 0.24), (0.55, 0.85, 0.28), m["wood"])
+        sphere(f"Yard_Flower_{i}_A", (x - 0.12, -1.95, 0.52), 0.12, m["red"], segments=8)
+        sphere(f"Yard_Flower_{i}_B", (x + 0.12, -1.95, 0.52), 0.12, m["gold"], segments=8)
+
+    cube("Yard_Mailbox_Post", (-2.0, 2.55, 0.48), (0.12, 0.12, 0.96), m["wood"])
+    cube("Yard_Mailbox", (-2.0, 2.55, 1.05), (0.62, 0.34, 0.32), m["blue"])
+    cube("Yard_Mailbox_Flag", (-1.62, 2.55, 1.18), (0.08, 0.08, 0.42), m["red"])
+    export_asset("cottage-yard.glb")
+
+
 def create_townsperson():
     reset_scene()
     m = base_materials()
@@ -387,6 +500,10 @@ def main():
         create_school,
         create_market_stall,
         create_corner_cafe,
+        create_cafe_terrace,
+        create_market_decor,
+        create_lakeside_gazebo,
+        create_cottage_yard,
         create_townsperson,
         create_farm_barn,
         create_taxi,

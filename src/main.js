@@ -42,7 +42,12 @@ function formatFarmTriggerLabel(trigger) {
     return labelPrefix;
 }
 
-function renderActionPrompt(prompt, labelName) {
+function getInteractionVerb(activeTrigger) {
+    if (activeTrigger?.type === 'npc') return '交谈';
+    return '互动';
+}
+
+function renderActionPrompt(prompt, labelName, verb) {
     prompt.replaceChildren();
 
     const prefix = document.createElement('span');
@@ -52,7 +57,7 @@ function renderActionPrompt(prompt, labelName) {
     key.textContent = 'E';
 
     const suffix = document.createElement('span');
-    suffix.textContent = ' 互动';
+    suffix.textContent = ` ${verb}`;
 
     prompt.append(prefix, key, suffix);
 }
@@ -101,7 +106,8 @@ function stepGame(deltaTime) {
     
     if (activeTrigger) {
         prompt.classList.remove('hidden');
-        renderActionPrompt(prompt, getActiveTriggerLabel(activeTrigger));
+        renderActionPrompt(prompt, getActiveTriggerLabel(activeTrigger), getInteractionVerb(activeTrigger));
+        uiManager.setActiveWorldCue(activeTrigger);
         
         if (input.keys.interact && !wasInteractPressed) {
             uiManager.triggerInteraction(activeTrigger);
@@ -109,6 +115,7 @@ function stepGame(deltaTime) {
         }
     } else {
         prompt.classList.add('hidden');
+        uiManager.setActiveWorldCue(null);
         uiManager.activeTrigger = null;
     }
     
@@ -149,7 +156,9 @@ function renderGameToText() {
             id: currentActiveTrigger.id,
             type: currentActiveTrigger.type,
             label: getActiveTriggerLabel(currentActiveTrigger),
+            npcId: currentActiveTrigger.npcId ?? null,
         } : null,
+        dialogue: uiManager.getDialogueState(),
         visualAssets: {
             loaded: town.loadedAssetCount,
             failed: town.failedAssetCount,

@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { MATERIAL_TOKENS, STREET_FURNITURE } from '../content/townContent.js';
+import { NPC_TRIGGERS } from '../content/dialogueContent.js';
 import { AssetLoader } from '../render/loaders/AssetLoader.js';
 
 export class Town {
@@ -376,6 +377,13 @@ export class Town {
 
         placements.forEach(([key, position, scale, rotationY]) => {
             this.placeModel(key, { position, scale, rotationY });
+        });
+
+        NPC_TRIGGERS.forEach((trigger) => {
+            this.physics.addTrigger({
+                ...trigger,
+                type: 'npc',
+            });
         });
     }
     
