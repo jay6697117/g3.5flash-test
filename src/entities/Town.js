@@ -304,6 +304,14 @@ export class Town {
             ['cornerCafe', { position: [18, 0, -16], scale: 0.54, rotationY: Math.PI, collider: [4.8, 3.4, '街角咖啡店'] }],
             ['cornerCafe', { position: [-17, 0, -18], scale: 0.5, rotationY: Math.PI / 2, collider: [3.8, 4.6, '街角咖啡店'] }],
             ['cornerCafe', { position: [16, 0, 13], scale: 0.48, rotationY: -Math.PI / 2, collider: [3.8, 4.4, '街角咖啡店'] }],
+            ['cafeTerrace', { position: [-18, 0, -9.2], scale: 0.78, rotationY: Math.PI / 2, collider: [4.6, 3.0, '街角露台'] }],
+            ['cafeTerrace', { position: [18.5, 0, -9.4], scale: 0.66, rotationY: -Math.PI / 2, collider: [3.8, 2.6, '露天座位'] }],
+            ['marketDecor', { position: [-10.8, 0, -12.4], scale: 0.58, rotationY: Math.PI, collider: [4.0, 1.4, '市场货架'] }],
+            ['marketDecor', { position: [9.2, 0, -12.2], scale: 0.58, rotationY: Math.PI, collider: [4.0, 1.4, '市场货架'] }],
+            ['cottageYard', { position: [-25, 0, -18.1], scale: 0.92, rotationY: 0, fallbackKey: null }],
+            ['cottageYard', { position: [42, 0, -11.5], scale: 0.62, rotationY: -Math.PI / 2, fallbackKey: null }],
+            ['lakesideGazebo', { position: [38, 0.02, -79], scale: 1.35, rotationY: Math.PI / 8, fallbackKey: null }],
+            ['lakesideGazebo', { position: [-38, 0.02, -78], scale: 1.05, rotationY: -Math.PI / 7, fallbackKey: null }],
         ];
 
         await Promise.all(mainModels.map(([key, config]) => this.placeModel(key, config)));
