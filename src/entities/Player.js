@@ -18,6 +18,14 @@ export class Player {
         this.cameraYaw = -0.72;
         this.cameraPitch = 0.34;
         this.cameraRadius = 16.4;
+        this.desktopLookAtHeight = 1.2;
+        this.mobileCameraPitch = 1.08;
+        this.mobileCameraRadius = 23.0;
+        this.mobileLookAtHeight = 0.65;
+        this.activeCameraMode = 'desktop-third-person';
+        this.activeCameraPitch = this.cameraPitch;
+        this.activeCameraRadius = this.cameraRadius;
+        this.activeLookAtHeight = this.desktopLookAtHeight;
         this.isMouseDown = false;
         this.prevMousePosition = { x: 0, y: 0 };
         
@@ -243,29 +251,56 @@ export class Player {
         this.updateCamera();
     }
     
+    isMobileCameraViewport() {
+        return window.matchMedia('(max-width: 768px), (pointer: coarse)').matches;
+    }
+
+    getCameraProfile() {
+        if (this.isMobileCameraViewport()) {
+            return {
+                mode: 'mobile-overhead-follow',
+                pitch: this.mobileCameraPitch,
+                radius: this.mobileCameraRadius,
+                lookAtHeight: this.mobileLookAtHeight,
+                lerp: 0.16,
+            };
+        }
+
+        return {
+            mode: 'desktop-third-person',
+            pitch: this.cameraPitch,
+            radius: this.cameraRadius,
+            lookAtHeight: this.desktopLookAtHeight,
+            lerp: 0.1,
+        };
+    }
+
     updateCamera(snap = false) {
-        // 计算相机相对于玩家的目标世界位置
-        const offsetX = this.cameraRadius * Math.sin(this.cameraYaw) * Math.cos(this.cameraPitch);
-        const offsetY = this.cameraRadius * Math.sin(this.cameraPitch);
-        const offsetZ = this.cameraRadius * Math.cos(this.cameraYaw) * Math.cos(this.cameraPitch);
-        
+        const cameraProfile = this.getCameraProfile();
+        this.activeCameraMode = cameraProfile.mode;
+        this.activeCameraPitch = cameraProfile.pitch;
+        this.activeCameraRadius = cameraProfile.radius;
+        this.activeLookAtHeight = cameraProfile.lookAtHeight;
+
+        const offsetX = cameraProfile.radius * Math.sin(this.cameraYaw) * Math.cos(cameraProfile.pitch);
+        const offsetY = cameraProfile.radius * Math.sin(cameraProfile.pitch);
+        const offsetZ = cameraProfile.radius * Math.cos(this.cameraYaw) * Math.cos(cameraProfile.pitch);
+
         const targetCamX = this.mesh.position.x + offsetX;
         const targetCamY = this.mesh.position.y + offsetY;
         const targetCamZ = this.mesh.position.z + offsetZ;
-        
-        // Lerp 平滑缓动相机，带来电影级的高档视觉感受
+
         if (snap) {
             this.camera.position.set(targetCamX, targetCamY, targetCamZ);
         } else {
-            this.camera.position.x += (targetCamX - this.camera.position.x) * 0.1;
-            this.camera.position.y += (targetCamY - this.camera.position.y) * 0.1;
-            this.camera.position.z += (targetCamZ - this.camera.position.z) * 0.1;
+            this.camera.position.x += (targetCamX - this.camera.position.x) * cameraProfile.lerp;
+            this.camera.position.y += (targetCamY - this.camera.position.y) * cameraProfile.lerp;
+            this.camera.position.z += (targetCamZ - this.camera.position.z) * cameraProfile.lerp;
         }
-        
-        // 相机注视玩家偏上方 (脖子/头部高度)
+
         this.camera.lookAt(
             this.mesh.position.x,
-            this.mesh.position.y + 1.2,
+            this.mesh.position.y + cameraProfile.lookAtHeight,
             this.mesh.position.z
         );
     }

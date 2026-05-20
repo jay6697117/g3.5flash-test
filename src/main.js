@@ -216,7 +216,10 @@ function renderGameToText() {
             x: round(engine.camera.position.x),
             y: round(engine.camera.position.y),
             z: round(engine.camera.position.z),
-            radius: round(player.cameraRadius),
+            mode: player.activeCameraMode,
+            radius: round(player.activeCameraRadius),
+            pitch: round(player.activeCameraPitch),
+            lookAtHeight: round(player.activeLookAtHeight),
         },
         activeTrigger: currentActiveTrigger ? {
             id: currentActiveTrigger.id,

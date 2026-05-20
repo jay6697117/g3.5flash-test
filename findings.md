@@ -119,3 +119,9 @@
 - 代码定位结果：`src/main.js` 渲染 `#action-prompt` 并监听 `input.keys.interact`，`src/ui/UIManager.js` 的 `triggerInteraction()`/`openNpcDialogue()` 是交谈入口，`src/style.css` 的移动端 media query 控制提示位置。
 - 实现后桌面仍显示“靠近 [... ]，按 E 交谈”；移动端 390x844 显示“靠近 [...]”和可点击按钮“点击交谈”，按钮 `aria-label` 为“与 Maya 菜市场摊主 交谈”。
 - 验证结果：`npm run build` 通过；桌面按 `KeyE` 可打开 Maya 对话；移动端点击 `.mobile-interact-button` 后 `dialogue.isOpen=true`、`npcId=mayaVendor`，并且 `documentElement.scrollWidth=390` 无横向溢出。
+
+## Extension 8 Mobile Follow Camera Findings
+- 用户反馈移动端行走时角色经常被高大建筑挡住；本轮目标是移动端更高俯拍的跟随相机，优先解决可见性，不改变桌面端视觉构图。
+- 预计最小风险方案是在现有 `Player.updateCamera()` 参数层做移动端特化，而不是引入第二套相机控制器。
+- 相机定位结果：`src/entities/Player.js` 构造函数中当前参数是 `cameraYaw=-0.72`、`cameraPitch=0.34`、`cameraRadius=16.4`；`updateCamera()` 每帧用这些参数算相机偏移并 `lookAt` 玩家头顶。移动端可在这里选择更高 pitch、更大 radius、稍高 lookAt。
+- 移动端检测已有先例：`src/core/Engine.js` 使用 `matchMedia('(max-width: 768px), (pointer: coarse)')` 调整 DPR/阴影。相机也应使用同一类 viewport/coarse pointer 判断，保持桌面端不变。

@@ -214,3 +214,17 @@ Original prompt: 我想写一个3D模拟小镇，模拟真实世界的小镇，�
 | 32. Interaction code and mobile UX audit | complete | agent team 已定位 `src/main.js`、`src/ui/UIManager.js`、`src/style.css` 中的交谈提示、键盘 E 和对话链路。 |
 | 33. Mobile talk button implementation | complete | 已在 action prompt 中增加移动端“点击交谈/互动”按钮，桌面端继续显示键帽 E。 |
 | 34. Desktop and mobile verification | complete | `npm run build` 通过；桌面 KeyE 与移动端触控按钮都能打开 Maya 对话；移动 390x844 无横向溢出。 |
+
+## Current Goal Extension 8
+为移动端增加跟随相机俯拍视角，解决角色行走时经常被高大建筑遮挡的问题：
+- 移动端使用更高、更俯视的跟随相机，让玩家行走时角色和周围道路更容易看清。
+- 桌面端继续保留当前低角度开场构图，不破坏现有视觉方向。
+- 俯拍视角必须复用现有 `Player` 相机跟随逻辑，不新增复杂相机系统。
+- 验证需要覆盖移动端摇杆移动、相机跟随参数、布局无横向溢出，以及桌面相机仍正常。
+
+## Extension Phases 8
+| Phase | Status | Notes |
+| --- | --- | --- |
+| 35. Camera/input audit and mobile viewpoint design | complete | 已确认相机集中在 `Player.updateCamera()`，移动端使用更高 pitch/radius 的俯拍跟随，桌面保持原参数。 |
+| 36. Mobile follow-camera implementation | complete | `Player` 已加入 `mobile-overhead-follow` 相机 profile，文本状态输出当前相机模式和参数。 |
+| 37. Build and browser movement verification | pending | 构建并验证桌面/移动相机、移动摇杆行走和无溢出。 |
