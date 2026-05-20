@@ -15,9 +15,9 @@ export class Player {
         this.isMoving = false;
         
         // 相机控制状态
-        this.cameraYaw = -0.82; // 水平角度
-        this.cameraPitch = 0.72; // 垂直弧度
-        this.cameraRadius = 24.0; // 离玩家距离
+        this.cameraYaw = -0.74; // Horizontal angle
+        this.cameraPitch = 0.63; // Vertical radians
+        this.cameraRadius = 27.0; // Camera distance from player
         this.isMouseDown = false;
         this.prevMousePosition = { x: 0, y: 0 };
         
@@ -153,12 +153,14 @@ export class Player {
     update(deltaTime, input, speedMultiplier = 1.0) {
         let moveX = 0;
         let moveZ = 0;
-        
+        const keyboardActive = input.keys.forward || input.keys.backward || input.keys.left || input.keys.right;
+        const joystickActive = input.joystick?.active && input.joystick.intensity > 0.02;
+
         // 1. 根据相机朝向计算移动轴向
         // 相机的水平朝向向量
         const camDirX = Math.sin(this.cameraYaw);
         const camDirZ = Math.cos(this.cameraYaw);
-        
+
         if (input.keys.forward) {
             moveX -= camDirX;
             moveZ -= camDirZ;
@@ -175,18 +177,23 @@ export class Player {
             moveX += camDirZ;
             moveZ -= camDirX;
         }
-        
+        if (joystickActive) {
+            moveX += input.joystick.y * camDirX + input.joystick.x * camDirZ;
+            moveZ += input.joystick.y * camDirZ - input.joystick.x * camDirX;
+        }
+
         // 2. 归一化移动向量，防止对角线移速过快
         const length = Math.sqrt(moveX * moveX + moveZ * moveZ);
-        if (length > 0) {
+        const inputStrength = keyboardActive ? 1 : Math.min(1, length);
+        if (length > 0.01) {
             moveX /= length;
             moveZ /= length;
-            
+
             this.isMoving = true;
-            
+
             // 计算目标旋转角（面向行进方向），平滑转向
             const targetRotation = Math.atan2(moveX, moveZ);
-            
+
             // 处理旋转角平滑过渡 (Slerp-like for 1D angle)
             let diff = targetRotation - this.mesh.rotation.y;
             // 规范化差值在 [-PI, PI] 之间
@@ -195,10 +202,10 @@ export class Player {
         } else {
             this.isMoving = false;
         }
-        
+
         // 3. 执行物理碰撞检测并移动 (X 和 Z 轴分别检测，实现贴墙平滑滑动)
         if (this.isMoving) {
-            const currentSpeed = this.speed * speedMultiplier * deltaTime;
+            const currentSpeed = this.speed * speedMultiplier * inputStrength * deltaTime;
             const stepX = moveX * currentSpeed;
             const stepZ = moveZ * currentSpeed;
             

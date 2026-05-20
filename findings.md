@@ -54,3 +54,39 @@
 - `output/concept-ui-dialogue-pass3/report.json` 为全量回归证据：26 项检查通过，桌面/移动 `visualAssets.loaded=50`、`failed=0`，console errors `0`，page/request failures `0`。
 - `output/concept-ui-dialogue-final/report.json` 为最后视觉微调后的 smoke 证据：15 项检查通过，桌面/移动默认与对话态都无溢出、无可见 HUD 重叠。
 - 概念图对照结论：UI 层级已明显接近 `ui-style-board.png`，具备左侧居民板、任务板、底部背包板、右上资源/菜单、中心 NPC 交互和出租车按钮；3D 场景仍是低模 MVP，不是 `town-art-direction.png` 那种高密度成品级建模与材质。
+
+## Extension 3 Implementation Evidence
+- Blender 管线已从 15 个 GLB 扩展到 19 个 GLB，新增咖啡露台、市场装饰、水岸亭子和住宅庭院；`file` 检查均为 glTF binary model version 2。
+- 新增资产已通过 `src/content/assetManifest.js` 统一接入，`Town.buildGltfScenePass()` 将它们布置在默认镜头可见的街角、市场、住宅和湖岸位置。
+- 默认相机从更陡的俯视调整为更低的斜俯视，提升建筑立面、水岸亭和远景层次的可见性。
+- `output/asset-density-regression/report.json` 证明新增资产后核心玩法仍通过：NPC 对话、住宅、超市、菜市场、学校、农田生命周期、出租车、桌面/移动布局均通过。
+- 最新 runtime 视觉资产摘要为 `loaded=58`、`failed=0`、`runtimeGroups=58`；相比上一轮 `loaded=50`，实际运行时资产密度提升 8 个 placement。
+
+## Extension 3 Mobile Control Findings
+- 移动端无法走动的根因是输入层只有键盘状态：`src/core/Input.js` 只监听 WASD/方向键，`src/entities/Player.js` 只消费这些布尔值。
+- 最小风险方案是给 `Input` 增加 pointer-based 浮动摇杆状态，再让 `Player.update()` 把摇杆向量叠加到现有相机相对移动向量。
+- HUD 容器 `#game-hud` 本身是 `pointer-events: none`，但内部按钮/面板是 `pointer-events: auto`；摇杆触发必须过滤按钮、背包、顶部栏、任务板、对话面板、弹窗和出租车过渡遮罩。
+- 390x844 验证显示摇杆在左半屏空白区域出现并移动角色，释放后 `input.joystick.active=false`；背包和出租车按钮保持可点击且无布局重叠。
+
+## Extension 4 Performance Audit Initial Findings
+- 当前已知最大性能信号：Vite 构建一直存在主 JS chunk 超过 500 kB 的 warning；这是 Deno Deploy 后首屏解析/编译成本和弱网下载成本的主要候选风险。
+- 当前已知正面信号：GLTFLoader 已经是单独懒加载 chunk，运行时 GLB 资产曾验证 `visualAssets.loaded=50`、`failed=0`，说明资产管线功能正确。
+- 本轮需要同时看本地代码结构、dist 产物、线上 URL 网络请求/控制台、移动端运行表现、Deno Deploy 静态缓存策略，最后输出不牺牲画面和交互体验的优化路线。
+- `package.json` 只有 `three` 运行依赖和 `vite` 开发依赖，脚本为 `dev/build/preview`；仓库中未发现 `vite.config.*`、`deno.json` 或 `deno.jsonc`，说明当前主要依赖 Vite 默认构建和 Deno Deploy 默认静态交付行为。
+- 当前 `dist/assets/index-C_4w7fNW.js` 约 565KB，`GLTFLoader` 独立 chunk 约 44KB，CSS 约 19KB；模型源文件和构建后 GLB 单个最大约 190KB，整体不是超大资产，但请求数量较多。
+- `src/main.js` 的 `animate()` 无条件 `requestAnimationFrame`，每帧执行 `stepGame()` 和 `engine.render()`；`stepGame()` 已把 delta 限制在 50ms，能降低后台恢复后的物理跳变，但仍会在静止状态持续消耗 CPU/GPU。
+- `src/core/Engine.js` 使用 `antialias: true`、`setPixelRatio(Math.min(devicePixelRatio, 2))`、`PCFSoftShadowMap`；画质较好，但移动端高 DPR 和软阴影是潜在掉帧风险。
+- `src/render/loaders/AssetLoader.js` 已缓存每个 key 的 GLB Promise 并 clone 场景，避免重复下载；但 clone 后遍历所有 mesh 并默认开启 cast/receive shadow，会放大渲染成本。
+- `src/entities/Town.js` 的 `buildGltfScenePass()` 对主要模型使用 `Promise.all` 并行加载，随后 `populateGltfProps()` 继续放置树、长椅、花箱、镇民和云；体验上能尽快补齐画面，但 Deno Deploy 首屏会同时触发多 GLB 请求。
+- `src/content/assetManifest.js` 共声明 19 个 GLB 模型 key；运行时通过复用/clone 扩展到约 50 个可见资产。最大单体模型约 190KB，优化重点不是删除画面资产，而是缓存、压缩、预加载优先级和阴影/像素比自适应。
+- 线上根 HTML 当前引用 `/assets/index-BCJRmduO.js` 与 `/assets/index-pAsdCGmH.css`，而本地 `dist` 已生成新的 `/assets/index-C_4w7fNW.js` 与 `/assets/index-Bfa6Z-6P.css`；说明线上部署仍是上一版或边缘缓存尚未刷新。
+- 线上 GET 复查：根 HTML、JS、CSS 均返回 200，`server: deno/deployd`，`cache-control: s-maxage=31536000`，`age≈1387s`；HEAD 对 asset 返回 405，不能用 HEAD 单独判断资源失败。
+- 当前线上 HTML 长缓存是部署更新体验风险：如果 index 和 hashed assets 缓存策略不区分，用户可能在更新窗口拿到旧入口或跨版本资源，导致“别人看到旧版本/资源加载异常”的问题。
+- Context7 查询 Deno Deploy 当前文档：静态应用可在 `deno.jsonc` 配置 `deploy.runtime.type="static"`、`cwd="./dist"`、`spa=true`；内容 hash 的稳定资产适合 `Cache-Control: public, s-maxage=31536000, immutable`，并可配合 `Deno-Cache-Id` 做内容寻址缓存。
+- agent-browser 桌面线上探测：`?autostart=1` 可进入游戏，`render_game_to_text()` 存在，`visualAssets.loaded=58`、`failed=0`；导航完成约 1881ms，资源数 22，主 JS decoded 约 575KB/encoded 约 139KB，是首屏最大单体成本。
+- agent-browser 移动 390x844、DPR 3 探测：页面可用，5 秒 rAF 粗测平均帧间隔约 18.21ms，约 55 FPS，P95 约 25ms，长帧 2 次，HUD overflow 为空；说明线上不是必然卡死，但移动端高 DPR + 阴影仍有掉帧余量不足风险。
+- DevTools 线上网络面板：23 个请求全部 200，无 console messages；请求链为 HTML → 主 JS → GLTFLoader → 19 个 GLB，网络依赖洞察给出的最大关键路径约 2043ms。
+- DevTools trace：LCP 约 790ms，TTFB 约 226ms，元素渲染延迟约 563ms，CLS 0.01；首屏 Web 指标良好，但 LCP 元素只是 DOM 文本，不代表 WebGL 场景完全加载完成。
+- DevTools cache 洞察认为 JS/CSS 浏览器 TTL 为 0，因为线上响应只有 `s-maxage=31536000`，没有浏览器端 `max-age`/`immutable`；这会影响普通浏览器重复访问缓存收益。
+- 本地最新 `dist/assets`：22 个文件合计约 1.64MB；JS 2 个原始约 624KB、gzip 估算约 164KB；CSS 原始约 19.5KB；19 个 GLB 原始约 998KB、gzip 估算约 82KB。GLB 由 Blender 低模几何生成，文本/JSON式内容可高度压缩。
+- 线上压缩响应头抽样显示 JS、GLB 都有 `content-encoding: br`，GLB MIME 为 `model/gltf-binary`；压缩和 MIME 本身没有明显错误。

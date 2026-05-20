@@ -90,3 +90,31 @@ Original prompt: 我想写一个3D模拟小镇，模拟真实世界的小镇，�
 - Final `npm run build` passed after the polish pass. Remaining warning: main JS chunk is above Vite's 500 kB warning threshold.
 - Final visual smoke generated `output/concept-ui-dialogue-final/report.json`; result `pass=true`, checks `15`, console errors `0`, request/page failures `0`, WebGL screenshot warnings `4`.
 - Final screenshots are saved in `output/concept-ui-dialogue-final/`: `desktop-default.png`, `desktop-dialogue.png`, `mobile-default.png`, and `mobile-dialogue.png`.
+- Started Extension 3 after comparing final UI/dialogue screenshots with `town-art-direction.png`; remaining gap is mainly scene density, nearby shopfront detail, and visible waterfront composition.
+- Added four Blender asset creators to `scripts/generate_town_glb_assets.py`: `create_cafe_terrace`, `create_market_decor`, `create_lakeside_gazebo`, and `create_cottage_yard`.
+- Ran Blender 5.0.1 headless export; generated 19 GLB source assets under `assets/models/`.
+- Checked new GLBs with `file`; `cafe-terrace.glb`, `market-decor.glb`, `lakeside-gazebo.glb`, and `cottage-yard.glb` are all glTF binary model version 2 files.
+- Added the new GLBs to `src/content/assetManifest.js` and placed them in `Town.buildGltfScenePass()` around the default market street view, home yard, and distant lake.
+- Updated the default player camera to a lower oblique view (`yaw=-0.74`, `pitch=0.63`, `radius=27`) so building fronts and waterfront silhouettes read closer to the concept image.
+- `npm run build` passed after the density pass; dist now contains 19 GLB assets. Remaining warning: main JS chunk is above Vite's 500 kB warning threshold.
+- Visual smoke `output/asset-density-pass4/report.json` passed with 11 checks; runtime placement count increased to `visualAssets.loaded=58`, `failed=0`.
+- Camera pass `output/asset-density-camera-pass/report.json` passed with 5 checks and produced the latest desktop composition screenshot.
+- First full regression retry failed because the ad-hoc script omitted the `browser` initialization; second retry timed out because the new GLB set needs roughly 20 seconds to load in headless Chromium. Both were script issues, not app failures.
+- Full density regression rerun with a 60-second asset-load timeout passed: `output/asset-density-regression/report.json`, result `pass=true`, checks `17`, console errors `0`, request/page failures `0`, desktop/mobile `loaded=58`, `failed=0`.
+- New goal extension started: mobile players need a way to move because desktop has WASD/arrow keys but mobile has no movement control.
+- Added a floating mobile joystick DOM layer in `index.html` and matching CSS in `src/style.css`.
+- Added pointer-based joystick state to `src/core/Input.js`, restricted to touch/pen input on the left side of the screen and blocked while modals/dialogues/overlays are active.
+- Updated `src/entities/Player.js` so joystick movement maps into the same camera-relative movement vector as WASD/arrow keys.
+- Added joystick state to `window.render_game_to_text()` output in `src/main.js` for browser verification.
+- Ran `npm run build`; build passed with the existing large chunk warning.
+- Browser desktop verification: simulated KeyW hold moved the player about 6.11 world units, confirming WASD/arrow movement still works.
+- Browser mobile verification at 390x844: simulated touch joystick moved the player about 4.02 world units; during drag `joystick.active=true`, after release `joystick.active=false`.
+- Mobile layout verification: scroll width equals viewport width, visible HUD overflow count is 0, visible HUD overlap count is 0, and joystick does not activate while taxi modal is open.
+- Saved mobile joystick screenshots under `output/mobile-joystick/`, including active joystick state `screenshot-1779263421544.png`.
+- New performance-audit goal started: use an agent team to analyze current project optimization points, especially deployed behavior on Deno Deploy at `https://g35flash-test.jay6697117.deno.net/`.
+- First planning catchup attempt failed because `CLAUDE_PLUGIN_ROOT` was empty; retried with the explicit skill path and got no unsynced catchup output.
+- Created deno-performance-audit team and split work into code/asset audit, deployed browser probe, Deno Deploy delivery review, and synthesis tasks.
+- Verified deployed desktop page with agent-browser: game starts, `visualAssets.loaded=58`, `failed=0`, no obvious startup breakage, navigation about 1.88s.
+- Verified deployed mobile viewport 390x844 DPR 3: approximate rAF frame pacing over 5s was ~55 FPS, P95 frame interval ~25ms, 2 long frames, no visible HUD overflow.
+- Ran Chrome DevTools trace on the deployed URL: LCP about 790ms, CLS 0.01, no console messages, all 23 network requests succeeded.
+- Confirmed deployment headers show `s-maxage=31536000` and Brotli compression; browser cache TTL is still seen as 0 by DevTools because `max-age`/`immutable` is absent for browser cache.

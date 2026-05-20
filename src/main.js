@@ -158,6 +158,14 @@ function renderGameToText() {
             label: getActiveTriggerLabel(currentActiveTrigger),
             npcId: currentActiveTrigger.npcId ?? null,
         } : null,
+        input: {
+            joystick: {
+                active: input.joystick.active,
+                x: round(input.joystick.x),
+                y: round(input.joystick.y),
+                intensity: round(input.joystick.intensity),
+            },
+        },
         dialogue: uiManager.getDialogueState(),
         visualAssets: {
             loaded: town.loadedAssetCount,

@@ -1,0 +1,306 @@
+{
+  "pass": true,
+  "checks": [
+    {
+      "name": "desktop game loaded extended asset set",
+      "ok": true,
+      "detail": {
+        "loaded": 58,
+        "failed": 0,
+        "runtimeGroups": 58
+      }
+    },
+    {
+      "name": "desktop default no overflow",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "desktop default no visible HUD overlap",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "NPC dialogue opens after density pass",
+      "ok": true,
+      "detail": {
+        "isOpen": true,
+        "npcId": "mayaVendor",
+        "topicId": null,
+        "line": "今天的菜刚摆上摊，胡萝卜和卷心菜都很新鲜。你要是有收成，也可以拿去菜市场换金币。"
+      }
+    },
+    {
+      "name": "home interaction still works",
+      "ok": true,
+      "detail": {
+        "activeTask": "🏡 在家里美美睡了一大觉，饱食度与体力恢复到了 100%！"
+      }
+    },
+    {
+      "name": "supermarket modal still opens",
+      "ok": true,
+      "detail": {}
+    },
+    {
+      "name": "market modal still opens",
+      "ok": true,
+      "detail": {}
+    },
+    {
+      "name": "school modal still opens",
+      "ok": true,
+      "detail": {}
+    },
+    {
+      "name": "farm modal still opens",
+      "ok": true,
+      "detail": {}
+    },
+    {
+      "name": "farm lifecycle still works",
+      "ok": true,
+      "detail": {
+        "plot": {
+          "index": 0,
+          "state": "EMPTY",
+          "seedType": null,
+          "growTime": 0
+        },
+        "carrot": 1
+      }
+    },
+    {
+      "name": "taxi modal still opens",
+      "ok": true,
+      "detail": {}
+    },
+    {
+      "name": "taxi accepts destination after density pass",
+      "ok": true,
+      "detail": {
+        "state": "FETCHING",
+        "destination": "farm",
+        "x": 21.25,
+        "z": 0
+      }
+    },
+    {
+      "name": "mobile game loaded extended asset set",
+      "ok": true,
+      "detail": {
+        "loaded": 58,
+        "failed": 0,
+        "runtimeGroups": 58
+      }
+    },
+    {
+      "name": "mobile default no overflow",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "mobile default no visible HUD overlap",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "no console errors",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "no page/request failures",
+      "ok": true,
+      "detail": []
+    }
+  ],
+  "consoleErrors": [],
+  "consoleWarnings": [
+    {
+      "type": "warning",
+      "text": "[.WebGL-0x13c004d6600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+      "location": {
+        "url": "http://127.0.0.1:5198/?autostart=1",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    },
+    {
+      "type": "warning",
+      "text": "[.WebGL-0x13c004d6600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+      "location": {
+        "url": "http://127.0.0.1:5198/?autostart=1",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    },
+    {
+      "type": "warning",
+      "text": "[.WebGL-0x13c004d6600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+      "location": {
+        "url": "http://127.0.0.1:5198/?autostart=1",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    },
+    {
+      "type": "warning",
+      "text": "[.WebGL-0x13c004d6600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)",
+      "location": {
+        "url": "http://127.0.0.1:5198/?autostart=1",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    }
+  ],
+  "failures": [],
+  "desktopLayout": {
+    "overflow": [],
+    "overlaps": [],
+    "visible": [
+      {
+        "selector": ".hud-header",
+        "index": 0,
+        "rect": {
+          "x": 753.265625,
+          "y": 16,
+          "right": 1192,
+          "bottom": 62,
+          "width": 438.734375,
+          "height": 46
+        }
+      },
+      {
+        "selector": ".town-menu-button",
+        "index": 0,
+        "rect": {
+          "x": 1206,
+          "y": 16,
+          "right": 1256,
+          "bottom": 62,
+          "width": 50,
+          "height": 46
+        }
+      },
+      {
+        "selector": ".resident-card",
+        "index": 0,
+        "rect": {
+          "x": 18,
+          "y": 16,
+          "right": 334,
+          "bottom": 172,
+          "width": 316,
+          "height": 156
+        }
+      },
+      {
+        "selector": "#task-panel",
+        "index": 0,
+        "rect": {
+          "x": 18,
+          "y": 190,
+          "right": 378,
+          "bottom": 258,
+          "width": 360,
+          "height": 68
+        }
+      },
+      {
+        "selector": "#inventory-hud",
+        "index": 0,
+        "rect": {
+          "x": 24,
+          "y": 447,
+          "right": 480,
+          "bottom": 696,
+          "width": 456,
+          "height": 249
+        }
+      },
+      {
+        "selector": "#btn-call-taxi",
+        "index": 0,
+        "rect": {
+          "x": 1196,
+          "y": 636,
+          "right": 1256,
+          "bottom": 696,
+          "width": 60,
+          "height": 60
+        }
+      }
+    ],
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "mobileLayout": {
+    "overflow": [],
+    "overlaps": [],
+    "visible": [
+      {
+        "selector": ".hud-header",
+        "index": 0,
+        "rect": {
+          "x": 10,
+          "y": 10,
+          "right": 380,
+          "bottom": 86,
+          "width": 370,
+          "height": 76
+        }
+      },
+      {
+        "selector": "#task-panel",
+        "index": 0,
+        "rect": {
+          "x": 10,
+          "y": 92,
+          "right": 380,
+          "bottom": 150.375,
+          "width": 370,
+          "height": 58.375
+        }
+      },
+      {
+        "selector": "#inventory-hud",
+        "index": 0,
+        "rect": {
+          "x": 10,
+          "y": 787,
+          "right": 278,
+          "bottom": 832,
+          "width": 268,
+          "height": 45
+        }
+      },
+      {
+        "selector": "#btn-call-taxi",
+        "index": 0,
+        "rect": {
+          "x": 312,
+          "y": 764,
+          "right": 376,
+          "bottom": 828,
+          "width": 64,
+          "height": 64
+        }
+      }
+    ],
+    "viewport": {
+      "width": 390,
+      "height": 844
+    }
+  }
+}

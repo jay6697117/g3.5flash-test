@@ -46,6 +46,7 @@ button:focus-visible {
     height: 100%;
     z-index: 1;
     display: block;
+    touch-action: none;
 }
 
 /* ==========================================================================
@@ -82,6 +83,7 @@ button:focus-visible {
     z-index: 10;
     pointer-events: none; /* 让鼠标事件能够穿透 HUD 点击 3D 场景 */
     padding: 18px;
+    touch-action: none;
 }
 
 #game-hud::before {
@@ -342,6 +344,50 @@ button:focus-visible {
     box-shadow: 0 2px 0 #a7781e;
 }
 
+.mobile-joystick {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 128px;
+    height: 128px;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 120;
+    transition: opacity 0.12s ease;
+}
+
+.mobile-joystick.active {
+    opacity: 1;
+}
+
+.mobile-joystick-base,
+.mobile-joystick-knob {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.mobile-joystick-base {
+    width: 128px;
+    height: 128px;
+    background: radial-gradient(circle, rgba(255, 209, 102, 0.18), rgba(20, 45, 31, 0.58));
+    border: 2px solid rgba(255, 209, 102, 0.54);
+    box-shadow: 0 16px 34px rgba(5, 16, 10, 0.35), inset 0 0 0 8px rgba(255, 248, 223, 0.06);
+}
+
+.mobile-joystick-knob {
+    width: 58px;
+    height: 58px;
+    background: radial-gradient(circle at 35% 28%, #fff3b4, #ffd166 44%, #c98a2c 100%);
+    border: 2px solid rgba(255, 248, 223, 0.74);
+    box-shadow: 0 10px 22px rgba(5, 16, 10, 0.44), inset 0 2px 0 rgba(255, 255, 255, 0.3);
+}
+
+.dialogue-open .mobile-joystick,
+.modal-overlay:not(.hidden) ~ #game-hud .mobile-joystick,
 .dialogue-open .action-prompt,
 .dialogue-open .npc-talk-cue {
     display: none !important;

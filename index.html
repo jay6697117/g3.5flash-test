@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>3D 模拟小镇 - 奇幻之旅</title>
-    <link rel="icon" href="data:,">
+    <link rel="icon" href="/favicon.ico">
     <link rel="stylesheet" href="./src/style.css">
 </head>
 <body>
@@ -72,6 +72,11 @@
         <!-- 屏幕中间动作提示（例如：按 E 种植） -->
         <div id="action-prompt" class="action-prompt hidden">
             按 <kbd>E</kbd> 进行互动
+        </div>
+
+        <div id="movement-joystick" class="mobile-joystick" aria-hidden="true">
+            <div class="mobile-joystick-base"></div>
+            <div id="movement-joystick-knob" class="mobile-joystick-knob"></div>
         </div>
 
         <div id="npc-talk-cue" class="npc-talk-cue hidden" aria-live="polite">
@@ -240,6 +245,7 @@
                 <h3>🎮 操作说明</h3>
                 <ul>
                     <li><span class="key-cap">W</span><span class="key-cap">A</span><span class="key-cap">S</span><span class="key-cap">D</span> 或 <span class="key-cap">↑</span><span class="key-cap">↓</span><span class="key-cap">←</span><span class="key-cap">→</span> 键移动角色。</li>
+                    <li>移动端按住屏幕左半边空白处，会出现虚拟摇杆控制角色移动。</li>
                     <li>按住<strong>鼠标右键并拖动</strong>旋转镜头视角。</li>
                     <li>靠近建筑物或农田时，按 <kbd class="key-cap">E</kbd> 键或点击屏幕提示进行互动。</li>
                     <li>随时点击右下角的 🚕 按钮打车，呼叫出租车接送。</li>

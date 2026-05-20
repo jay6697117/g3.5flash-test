@@ -1,0 +1,164 @@
+{
+  "pass": true,
+  "checks": [
+    {
+      "name": "desktop loads extended assets after camera pass",
+      "ok": true,
+      "detail": {
+        "loaded": 58,
+        "failed": 0,
+        "runtimeGroups": 58
+      }
+    },
+    {
+      "name": "desktop no overflow",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "desktop no visible HUD overlap",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "no console errors",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "no page/request failures",
+      "ok": true,
+      "detail": []
+    }
+  ],
+  "consoleErrors": [],
+  "consoleWarnings": [
+    {
+      "type": "warning",
+      "text": "[.WebGL-0x124004c6c00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+      "location": {
+        "url": "http://127.0.0.1:5198/?autostart=1",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    },
+    {
+      "type": "warning",
+      "text": "[.WebGL-0x124004c6c00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+      "location": {
+        "url": "http://127.0.0.1:5198/?autostart=1",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    },
+    {
+      "type": "warning",
+      "text": "[.WebGL-0x124004c6c00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+      "location": {
+        "url": "http://127.0.0.1:5198/?autostart=1",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    },
+    {
+      "type": "warning",
+      "text": "[.WebGL-0x124004c6c00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)",
+      "location": {
+        "url": "http://127.0.0.1:5198/?autostart=1",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    }
+  ],
+  "failures": [],
+  "desktopLayout": {
+    "visible": [
+      {
+        "selector": ".hud-header",
+        "index": 0,
+        "rect": {
+          "x": 753.265625,
+          "y": 16,
+          "right": 1192,
+          "bottom": 62,
+          "width": 438.734375,
+          "height": 46
+        }
+      },
+      {
+        "selector": ".town-menu-button",
+        "index": 0,
+        "rect": {
+          "x": 1206,
+          "y": 16,
+          "right": 1256,
+          "bottom": 62,
+          "width": 50,
+          "height": 46
+        }
+      },
+      {
+        "selector": ".resident-card",
+        "index": 0,
+        "rect": {
+          "x": 18,
+          "y": 16,
+          "right": 334,
+          "bottom": 172,
+          "width": 316,
+          "height": 156
+        }
+      },
+      {
+        "selector": "#task-panel",
+        "index": 0,
+        "rect": {
+          "x": 18,
+          "y": 190,
+          "right": 378,
+          "bottom": 258,
+          "width": 360,
+          "height": 68
+        }
+      },
+      {
+        "selector": "#inventory-hud",
+        "index": 0,
+        "rect": {
+          "x": 24,
+          "y": 447,
+          "right": 480,
+          "bottom": 696,
+          "width": 456,
+          "height": 249
+        }
+      },
+      {
+        "selector": "#btn-call-taxi",
+        "index": 0,
+        "rect": {
+          "x": 1196,
+          "y": 636,
+          "right": 1256,
+          "bottom": 696,
+          "width": 60,
+          "height": 60
+        }
+      }
+    ],
+    "overflow": [],
+    "overlaps": [],
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    }
+  }
+}
