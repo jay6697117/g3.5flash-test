@@ -31,7 +31,7 @@ export class Taxi {
         this.loadDetailedMesh();
         
         // 2. 初始位置：放置在主干道上
-        this.mesh.position.set(-3.5, 0.05, -24); 
+        this.mesh.position.set(-1.5, 0.05, -18.2);
     }
     
     buildMesh() {

@@ -1,0 +1,308 @@
+{
+  "pass": true,
+  "checks": [
+    {
+      "name": "runtime GLB assets loaded",
+      "pass": true,
+      "details": {
+        "loaded": 64,
+        "failed": 0,
+        "runtimeGroups": 64
+      }
+    },
+    {
+      "name": "NPC trigger discoverable",
+      "pass": true,
+      "details": {
+        "activeTrigger": {
+          "id": "npc_maya_vendor",
+          "type": "npc",
+          "label": "Maya 菜市场摊主",
+          "npcId": "mayaVendor"
+        }
+      }
+    },
+    {
+      "name": "NPC dialogue opens",
+      "pass": true,
+      "details": {
+        "isOpen": true,
+        "npcId": "mayaVendor",
+        "topicId": null,
+        "line": "今天的菜刚摆上摊，胡萝卜和卷心菜都很新鲜。你要是有收成，也可以拿去菜市场换金币。"
+      }
+    },
+    {
+      "name": "NPC topic updates dialogue",
+      "pass": true,
+      "details": {
+        "isOpen": true,
+        "npcId": "mayaVendor",
+        "topicId": "market_tip",
+        "line": "成熟作物最好在傍晚前卖掉。胡萝卜来钱快，南瓜更值钱，但要多一点耐心。"
+      }
+    },
+    {
+      "name": "home trigger reachable",
+      "pass": true,
+      "details": {
+        "activeTrigger": {
+          "id": "home",
+          "type": "home",
+          "label": "我的家",
+          "npcId": null
+        }
+      }
+    },
+    {
+      "name": "home rest task updates",
+      "pass": true,
+      "details": {
+        "task": "🏡 在家里美美睡了一大觉，饱食度与体力恢复到了 100%！",
+        "satiety": 100
+      }
+    },
+    {
+      "name": "supermarket trigger reachable",
+      "pass": true,
+      "details": {
+        "activeTrigger": {
+          "id": "supermarket",
+          "type": "supermarket",
+          "label": "罗森超市",
+          "npcId": null
+        }
+      }
+    },
+    {
+      "name": "supermarket purchase changes coins",
+      "pass": true,
+      "details": {
+        "before": 100,
+        "after": 95
+      }
+    },
+    {
+      "name": "market trigger reachable",
+      "pass": true,
+      "details": {
+        "activeTrigger": {
+          "id": "market",
+          "type": "market",
+          "label": "菜市场回收站",
+          "npcId": null
+        }
+      }
+    },
+    {
+      "name": "market modal opens",
+      "pass": true,
+      "details": {}
+    },
+    {
+      "name": "school trigger reachable",
+      "pass": true,
+      "details": {
+        "activeTrigger": {
+          "id": "school",
+          "type": "school",
+          "label": "学校前门",
+          "npcId": null
+        }
+      }
+    },
+    {
+      "name": "school quiz starts",
+      "pass": true,
+      "details": {}
+    },
+    {
+      "name": "farm plot trigger reachable",
+      "pass": true,
+      "details": {
+        "activeTrigger": {
+          "id": "farm_plot_0",
+          "type": "farm_plot",
+          "label": "农田地块 #1 (闲置，按 E 播种)",
+          "npcId": null
+        }
+      }
+    },
+    {
+      "name": "farm seed planted",
+      "pass": true,
+      "details": {
+        "index": 0,
+        "state": "PLANTED",
+        "seedType": "carrot_seed",
+        "growTime": 15
+      }
+    },
+    {
+      "name": "farm crop watered",
+      "pass": true,
+      "details": {
+        "index": 0,
+        "state": "GROWING",
+        "seedType": "carrot_seed",
+        "growTime": 14.85
+      }
+    },
+    {
+      "name": "farm crop matures",
+      "pass": true,
+      "details": {
+        "index": 0,
+        "state": "MATURE",
+        "seedType": "carrot_seed",
+        "growTime": 0
+      }
+    },
+    {
+      "name": "farm crop harvested",
+      "pass": true,
+      "details": {
+        "farm": {
+          "index": 0,
+          "state": "EMPTY",
+          "seedType": null,
+          "growTime": 0
+        },
+        "inventory": {
+          "carrot_seed": 3,
+          "cabbage_seed": 2,
+          "pumpkin_seed": 1,
+          "carrot": 1,
+          "cabbage": 0,
+          "pumpkin": 0,
+          "bread": 1,
+          "soda": 1
+        }
+      }
+    },
+    {
+      "name": "taxi order starts",
+      "pass": true,
+      "details": {
+        "taxi": {
+          "state": "FETCHING",
+          "destination": "supermarket",
+          "x": -42,
+          "z": 35.25
+        },
+        "coinsBeforeTaxi": 95,
+        "coins": 95
+      }
+    },
+    {
+      "name": "no console errors",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "no page errors",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "no request failures",
+      "pass": true,
+      "details": []
+    }
+  ],
+  "errors": [],
+  "consoleErrors": [],
+  "pageErrors": [],
+  "requestFailures": [],
+  "finalState": {
+    "mode": "playing",
+    "coordinateSystem": "Three.js world coordinates, X east-west, Z north-south, Y up.",
+    "player": {
+      "x": -46.5,
+      "y": 0,
+      "z": 29.5,
+      "visible": true
+    },
+    "camera": {
+      "x": -61.21,
+      "y": 15.91,
+      "z": 45.61,
+      "radius": 27
+    },
+    "activeTrigger": {
+      "id": "farm_plot_0",
+      "type": "farm_plot",
+      "label": "农田地块 #1 (闲置，按 E 播种)",
+      "npcId": null
+    },
+    "input": {
+      "joystick": {
+        "active": false,
+        "x": 0,
+        "y": 0,
+        "intensity": 0
+      }
+    },
+    "dialogue": {
+      "isOpen": false,
+      "npcId": null,
+      "topicId": null,
+      "line": ""
+    },
+    "visualAssets": {
+      "loaded": 64,
+      "failed": 0,
+      "runtimeGroups": 64
+    },
+    "state": {
+      "day": 1,
+      "hour": 10.17,
+      "coins": 95,
+      "satiety": 94,
+      "knowledge": 0,
+      "activeTask": "🚕 已呼叫滴滴出行！出租车正在向您驶来，请在原地等待。"
+    },
+    "taxi": {
+      "state": "FETCHING",
+      "destination": "supermarket",
+      "x": -42,
+      "z": 40.5
+    },
+    "farm": [
+      {
+        "index": 0,
+        "state": "EMPTY",
+        "seedType": null,
+        "growTime": 0
+      },
+      {
+        "index": 1,
+        "state": "EMPTY",
+        "seedType": null,
+        "growTime": 0
+      },
+      {
+        "index": 2,
+        "state": "EMPTY",
+        "seedType": null,
+        "growTime": 0
+      },
+      {
+        "index": 3,
+        "state": "EMPTY",
+        "seedType": null,
+        "growTime": 0
+      }
+    ],
+    "inventory": {
+      "carrot_seed": 3,
+      "cabbage_seed": 2,
+      "pumpkin_seed": 1,
+      "carrot": 1,
+      "cabbage": 0,
+      "pumpkin": 0,
+      "bread": 1,
+      "soda": 1
+    }
+  }
+}

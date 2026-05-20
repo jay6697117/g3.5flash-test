@@ -118,3 +118,13 @@ Original prompt: 我想写一个3D模拟小镇，模拟真实世界的小镇，�
 - Verified deployed mobile viewport 390x844 DPR 3: approximate rAF frame pacing over 5s was ~55 FPS, P95 frame interval ~25ms, 2 long frames, no visible HUD overflow.
 - Ran Chrome DevTools trace on the deployed URL: LCP about 790ms, CLS 0.01, no console messages, all 23 network requests succeeded.
 - Confirmed deployment headers show `s-maxage=31536000` and Brotli compression; browser cache TTL is still seen as 0 by DevTools because `max-age`/`immutable` is absent for browser cache.
+- New facade-density pass started after comparing the latest scene to both concept images; remaining 3D gap is opening composition, close facade scale, and stronger NPC/taxi street focus.
+- Added `create_main_street_row`, `create_street_detail_kit`, and `create_foreground_garden` to `scripts/generate_town_glb_assets.py`.
+- Ran Blender 5.0.1 headless export; generated 22 GLB source assets under `assets/models/`.
+- Checked `main-street-row.glb`, `street-detail-kit.glb`, and `foreground-garden.glb` with `file`; all are glTF binary model version 2 files.
+- Added the new GLB keys to `src/content/assetManifest.js` and placed them in `Town.buildGltfScenePass()` around the default market-street view.
+- Ran `npm run build`; build passed. Dist now includes 22 GLB assets and retains the existing Vite 500 kB main chunk warning.
+- Desktop visual verification wrote `output/street-facade-pass5/desktop-default.png`; runtime state was `visualAssets.loaded=64`, `failed=0`.
+- Initial combined mobile screenshot run reached `loaded=64`, `failed=0` but timed out inside Playwright full-page screenshot; reran with a viewport screenshot and DPR 2.
+- Mobile visual verification wrote `output/street-facade-pass5/mobile-default.png` and `mobile-report.json`; result `pass=true`, no overflow, no overlaps, console/page/request errors `0`.
+- Gameplay regression wrote `output/street-facade-regression/report.json`; result `pass=true`, checks `21`, console/page/request errors `0`.

@@ -90,3 +90,10 @@
 - DevTools cache 洞察认为 JS/CSS 浏览器 TTL 为 0，因为线上响应只有 `s-maxage=31536000`，没有浏览器端 `max-age`/`immutable`；这会影响普通浏览器重复访问缓存收益。
 - 本地最新 `dist/assets`：22 个文件合计约 1.64MB；JS 2 个原始约 624KB、gzip 估算约 164KB；CSS 原始约 19.5KB；19 个 GLB 原始约 998KB、gzip 估算约 82KB。GLB 由 Blender 低模几何生成，文本/JSON式内容可高度压缩。
 - 线上压缩响应头抽样显示 JS、GLB 都有 `content-encoding: br`，GLB MIME 为 `model/gltf-binary`；压缩和 MIME 本身没有明显错误。
+
+## Extension 5 Visual And Runtime Findings
+- 本轮 Blender 管线已从 19 个 GLB 扩展到 22 个 GLB，新增 `main-street-row.glb`、`street-detail-kit.glb`、`foreground-garden.glb`，`file` 校验均为 glTF binary model version 2。
+- `src/content/assetManifest.js` 已集中接入三个新 key；`Town.buildGltfScenePass()` 增加 6 个 runtime placement，默认运行态从 `loaded=58` 提升到 `loaded=64`，`failed=0`。
+- `output/street-facade-pass5/desktop-default.png` 与 `mobile-default.png` 证明新增街道细节已可见：更多花箱、路灯、摊位、人物和街角构件进入默认画面。
+- `output/street-facade-regression/report.json` 为玩法回归证据：21 项检查通过，覆盖 NPC 对话、住宅休息、超市购买、菜市场弹窗、学校测验入口、农田播种/浇水/成熟/收割、出租车订单。
+- 概念图对照结论：UI 与 `ui-style-board.png` 的色彩、面板层级和移动端低干扰布局已接近；3D 与 `town-art-direction.png` 的差距继续集中在默认镜头偏高、近景建筑立面不够占画面、出租车/人物/商铺的中心叙事焦点仍不够强。

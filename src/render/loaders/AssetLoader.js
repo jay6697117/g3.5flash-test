@@ -29,14 +29,16 @@ export class AssetLoader {
         return this.cache.get(key);
     }
 
-    async clone(key) {
+    async clone(key, options = {}) {
         const gltf = await this.load(key);
         const model = gltf.scene.clone(true);
+        const castShadow = options.castShadow ?? true;
+        const receiveShadow = options.receiveShadow ?? true;
 
         model.traverse((object) => {
             if (!object.isMesh) return;
-            object.castShadow = true;
-            object.receiveShadow = true;
+            object.castShadow = castShadow;
+            object.receiveShadow = receiveShadow;
         });
 
         return model;

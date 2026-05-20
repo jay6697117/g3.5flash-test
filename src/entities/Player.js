@@ -15,9 +15,9 @@ export class Player {
         this.isMoving = false;
         
         // 相机控制状态
-        this.cameraYaw = -0.74; // Horizontal angle
-        this.cameraPitch = 0.63; // Vertical radians
-        this.cameraRadius = 27.0; // Camera distance from player
+        this.cameraYaw = -0.78;
+        this.cameraPitch = 0.5;
+        this.cameraRadius = 21.5;
         this.isMouseDown = false;
         this.prevMousePosition = { x: 0, y: 0 };
         
@@ -30,7 +30,7 @@ export class Player {
     
     buildMesh() {
         this.mesh = new THREE.Group();
-        this.mesh.position.set(-6, 0, -12);
+        this.mesh.position.set(-7.4, 0, -10.6);
         
         // 材质库
         const bodyMat = new THREE.MeshStandardMaterial({ color: 0x3d7cc9, roughness: 0.5 }); // 蓝色夹克

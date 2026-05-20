@@ -23,14 +23,24 @@ const farmSystem = new FarmSystem(engine.scene, gameState, town);
 
 // 3. 初始化 UI 控制器
 const uiManager = new UIManager(gameState, farmSystem, player, taxi);
+town.emitAssetLoadingProgress?.();
 
 // 4. 时钟与昼夜缓冲变量
 const clock = new THREE.Clock();
 let prevIsNight = null;
+let dayNightUpdateElapsed = 0;
+const DAY_NIGHT_UPDATE_INTERVAL = 0.2;
 
 // 交互按键去抖触发记录
 let wasInteractPressed = false;
 let currentActiveTrigger = null;
+const actionPrompt = document.getElementById('action-prompt');
+const promptCache = {
+    visible: false,
+    id: null,
+    label: '',
+    verb: '',
+};
 
 function formatFarmTriggerLabel(trigger) {
     const plot = farmSystem.plots[trigger.plotIndex];
@@ -75,16 +85,18 @@ function stepGame(deltaTime) {
 
     // Advance simulation state.
     gameState.tick(cappedDeltaTime);
-    
-    // Sync world lighting with the game clock.
-    engine.updateDayNightCycle(gameState.hour);
-    
-    const isNight = engine.isNight;
-    if (isNight !== prevIsNight) {
-        prevIsNight = isNight;
-        town.updateLights(isNight);
+
+    dayNightUpdateElapsed += cappedDeltaTime;
+    const nextIsNight = gameState.hour >= 19 || gameState.hour < 6;
+    if (prevIsNight === null || nextIsNight !== prevIsNight || dayNightUpdateElapsed >= DAY_NIGHT_UPDATE_INTERVAL) {
+        dayNightUpdateElapsed = 0;
+        engine.updateDayNightCycle(gameState.hour);
+        if (nextIsNight !== prevIsNight) {
+            prevIsNight = nextIsNight;
+            town.updateLights(nextIsNight);
+        }
     }
-    
+
     taxi.update(cappedDeltaTime);
     
     farmSystem.update(cappedDeltaTime);
@@ -102,21 +114,37 @@ function stepGame(deltaTime) {
     const activeTrigger = physics.checkTriggers(px, pz);
     currentActiveTrigger = activeTrigger;
     
-    const prompt = document.getElementById('action-prompt');
-    
     if (activeTrigger) {
-        prompt.classList.remove('hidden');
-        renderActionPrompt(prompt, getActiveTriggerLabel(activeTrigger), getInteractionVerb(activeTrigger));
-        uiManager.setActiveWorldCue(activeTrigger);
-        
+        const label = getActiveTriggerLabel(activeTrigger);
+        const verb = getInteractionVerb(activeTrigger);
+        const promptId = activeTrigger.id ?? `${activeTrigger.type}:${label}`;
+        const promptChanged = !promptCache.visible
+            || promptCache.id !== promptId
+            || promptCache.label !== label
+            || promptCache.verb !== verb;
+
+        if (promptChanged) {
+            actionPrompt.classList.remove('hidden');
+            renderActionPrompt(actionPrompt, label, verb);
+            uiManager.setActiveWorldCue(activeTrigger);
+            promptCache.visible = true;
+            promptCache.id = promptId;
+            promptCache.label = label;
+            promptCache.verb = verb;
+        }
+
         if (input.keys.interact && !wasInteractPressed) {
             uiManager.triggerInteraction(activeTrigger);
             input.resetInteract();
         }
-    } else {
-        prompt.classList.add('hidden');
+    } else if (promptCache.visible) {
+        actionPrompt.classList.add('hidden');
         uiManager.setActiveWorldCue(null);
         uiManager.activeTrigger = null;
+        promptCache.visible = false;
+        promptCache.id = null;
+        promptCache.label = '';
+        promptCache.verb = '';
     }
     
     wasInteractPressed = input.keys.interact;
@@ -170,6 +198,7 @@ function renderGameToText() {
         visualAssets: {
             loaded: town.loadedAssetCount,
             failed: town.failedAssetCount,
+            total: town.totalAssetCount,
             runtimeGroups: town.runtimeAssetGroups.length,
         },
         state: {

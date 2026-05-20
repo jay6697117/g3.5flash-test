@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>3D 模拟小镇 - 奇幻之旅</title>
     <link rel="icon" href="/favicon.ico">
-  <script type="module" crossorigin src="/assets/index-C_4w7fNW.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-Bfa6Z-6P.css">
+  <script type="module" crossorigin src="/assets/index-BJ_7n9wx.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/vendor-three-3MjekYD3.js">
+  <link rel="stylesheet" crossorigin href="/assets/index-B68Fljnk.css">
 </head>
 <body>
     <!-- Three.js 渲染画布 -->
@@ -68,6 +69,11 @@
         <div class="task-hud glass-panel" id="task-panel">
             <span class="task-title">🎯 当前任务:</span>
             <span id="task-display" class="task-content">在小镇里转转，或者去农田种菜吧！</span>
+        </div>
+
+        <div id="asset-loading-toast" class="asset-loading-toast glass-panel hidden" role="status" aria-live="polite" aria-atomic="true">
+            <span class="asset-loading-spinner" aria-hidden="true"></span>
+            <span id="asset-loading-text">正在加载小镇资源 0/0</span>
         </div>
 
         <!-- 屏幕中间动作提示（例如：按 E 种植） -->

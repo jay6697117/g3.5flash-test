@@ -58,7 +58,9 @@ export class UIManager {
         this.dialogueRole = document.getElementById('dialogue-role');
         this.dialogueLine = document.getElementById('dialogue-line');
         this.dialogueOptions = document.getElementById('dialogue-options');
-        
+        this.assetLoadingToast = document.getElementById('asset-loading-toast');
+        this.assetLoadingText = document.getElementById('asset-loading-text');
+
         // 绑定状态广播监听
         window.addEventListener('state-change', (e) => this.renderHUD(e.detail.type, e.detail.state));
         window.addEventListener('farm-plot-updated', (e) => {
@@ -66,7 +68,8 @@ export class UIManager {
                 this.updateFarmModal(e.detail.plotIndex);
             }
         });
-        
+        window.addEventListener('asset-loading-progress', (e) => this.updateAssetLoadingProgress(e.detail));
+
         // 初始化绑定 DOM 事件
         this.initEvents();
         if (new URLSearchParams(window.location.search).get('autostart') === '1') {
@@ -237,6 +240,38 @@ export class UIManager {
         if (type === 'all' || type === 'inventory') {
             this.updateInventoryHUD(state.inventory);
         }
+    }
+
+    updateAssetLoadingProgress(detail = {}) {
+        if (!this.assetLoadingToast || !this.assetLoadingText) return;
+
+        const toCount = (value) => {
+            const number = Number(value);
+            return Number.isFinite(number) ? Math.max(0, Math.round(number)) : 0;
+        };
+        const loaded = toCount(detail.loaded);
+        const total = toCount(detail.total);
+        const failed = toCount(detail.failed);
+        const displayLoaded = total > 0 ? Math.min(loaded, total) : loaded;
+        const isComplete = total > 0 && loaded >= total;
+
+        if ((total <= 0 || isComplete) && failed === 0) {
+            this.assetLoadingToast.classList.add('hidden');
+            this.assetLoadingToast.classList.remove('is-failed');
+            return;
+        }
+
+        this.assetLoadingToast.classList.remove('hidden');
+        this.assetLoadingToast.classList.toggle('is-failed', failed > 0);
+
+        if (failed > 0 && isComplete) {
+            this.assetLoadingText.textContent = `小镇资源加载完成，失败 ${failed} 个`;
+            return;
+        }
+
+        this.assetLoadingText.textContent = failed > 0
+            ? `正在加载小镇资源 ${displayLoaded}/${total}，失败 ${failed} 个`
+            : `正在加载小镇资源 ${displayLoaded}/${total}`;
     }
 
     createTextElement(tagName, className, text) {

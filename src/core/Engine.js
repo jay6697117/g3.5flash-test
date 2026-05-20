@@ -26,7 +26,7 @@ export class Engine {
             alpha: false
         });
         this.renderer.setSize(window.innerWidth, window.innerHeight);
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        this.applyPixelRatio();
         this.renderer.outputColorSpace = THREE.SRGBColorSpace;
         this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
         this.renderer.toneMappingExposure = 1.08;
@@ -68,8 +68,9 @@ export class Engine {
         this.dirLight.castShadow = true;
         
         // 阴影参数调优，确保低多边形阴影清晰且不崩坏
-        this.dirLight.shadow.mapSize.width = 2048;
-        this.dirLight.shadow.mapSize.height = 2048;
+        const shadowMapSize = this.getShadowMapSize();
+        this.dirLight.shadow.mapSize.width = shadowMapSize;
+        this.dirLight.shadow.mapSize.height = shadowMapSize;
         this.dirLight.shadow.camera.near = 0.5;
         this.dirLight.shadow.camera.far = 150;
         
@@ -155,12 +156,33 @@ export class Engine {
         this.isNight = (hour >= 19 || hour < 6);
     }
     
+    isMobileViewport() {
+        return window.matchMedia('(max-width: 768px), (pointer: coarse)').matches;
+    }
+
+    getMaxPixelRatio() {
+        return this.isMobileViewport() ? 1.5 : 2;
+    }
+
+    getShadowMapSize() {
+        return this.isMobileViewport() ? 1024 : 2048;
+    }
+
+    applyPixelRatio() {
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, this.getMaxPixelRatio()));
+    }
+
     onWindowResize() {
         this.camera.aspect = window.innerWidth / window.innerHeight;
         this.camera.updateProjectionMatrix();
+        this.applyPixelRatio();
         this.renderer.setSize(window.innerWidth, window.innerHeight);
+        const shadowMapSize = this.getShadowMapSize();
+        if (this.dirLight.shadow.mapSize.width !== shadowMapSize) {
+            this.dirLight.shadow.mapSize.set(shadowMapSize, shadowMapSize);
+        }
     }
-    
+
     render() {
         if (this.contextLost) return;
         this.renderer.render(this.scene, this.camera);

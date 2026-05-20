@@ -152,6 +152,7 @@ def base_materials():
         "dark_wood": mat("Dark Wood", (0.24, 0.13, 0.07, 1)),
         "glass": mat("Glass Blue", (0.42, 0.72, 0.88, 0.72), roughness=0.2, metallic=0.0),
         "road": mat("Soft Asphalt", (0.20, 0.21, 0.22, 1)),
+        "black_metal": mat("Black Metal", (0.07, 0.08, 0.08, 1), roughness=0.46, metallic=0.55),
         "stone": mat("Warm Stone", (0.64, 0.59, 0.50, 1)),
         "green": mat("Leaf Green", (0.20, 0.45, 0.18, 1)),
         "green_light": mat("Leaf Light", (0.44, 0.66, 0.26, 1)),
@@ -379,6 +380,100 @@ def create_cottage_yard():
     export_asset("cottage-yard.glb")
 
 
+def create_main_street_row():
+    reset_scene()
+    m = base_materials()
+    cube("MainStreet_Sidewalk", (0, -2.95, 0.08), (16.8, 1.9, 0.16), m["stone"])
+
+    modules = [
+        ("Bakery", -5.4, 4.6, 4.5, m["cream"], m["roof_red"], m["gold"]),
+        ("Clinic", 0.0, 4.9, 5.2, m["white"], m["roof_blue"], m["green_light"]),
+        ("Bookshop", 5.45, 4.7, 4.8, m["brick"], m["roof_red"], m["blue"]),
+    ]
+
+    for name, x, width, height, wall_mat, roof_mat, accent_mat in modules:
+        cube(f"MainStreet_{name}_Wall", (x, 0, height / 2), (width, 4.4, height), wall_mat)
+        cube(f"MainStreet_{name}_Cornice", (x, -2.34, height + 0.18), (width + 0.45, 0.22, 0.35), accent_mat)
+        if name == "Clinic":
+            cube(f"MainStreet_{name}_FlatRoof", (x, 0, height + 0.48), (width + 0.55, 4.85, 0.62), roof_mat)
+        else:
+            roof = gable_roof(f"MainStreet_{name}_GableRoof", width + 0.7, 4.9, 1.35, height, roof_mat)
+            roof.location.x = x
+
+        cube(f"MainStreet_{name}_Door", (x, -2.32, 1.18), (1.02, 0.16, 2.18), m["dark_wood"])
+        for i, wx in enumerate((-width * 0.28, width * 0.28)):
+            cube(f"MainStreet_{name}_Window_{i}", (x + wx, -2.38, 2.65), (1.02, 0.13, 1.05), m["glass"])
+            cube(f"MainStreet_{name}_Window_Frame_{i}", (x + wx, -2.45, 2.65), (1.24, 0.08, 1.22), m["white"])
+            cube(f"MainStreet_{name}_Upper_Window_{i}", (x + wx, -2.38, height - 1.05), (0.92, 0.13, 0.86), m["glass"])
+            cube(f"MainStreet_{name}_Upper_Frame_{i}", (x + wx, -2.45, height - 1.05), (1.12, 0.08, 1.04), m["white"])
+
+        cube(f"MainStreet_{name}_Sign", (x, -2.52, height - 0.38), (width * 0.72, 0.16, 0.55), accent_mat)
+        awning(f"MainStreet_{name}_Awning", x, -2.72, 3.28, width * 0.82, m["stripe"], accent_mat)
+
+        for px in (-width * 0.36, width * 0.36):
+            cube(f"MainStreet_{name}_Planter_{px}", (x + px, -3.58, 0.36), (0.74, 0.42, 0.48), m["stone"])
+            sphere(f"MainStreet_{name}_Flower_A_{px}", (x + px - 0.16, -3.58, 0.74), 0.13, m["red"], segments=8)
+            sphere(f"MainStreet_{name}_Flower_B_{px}", (x + px + 0.16, -3.58, 0.74), 0.13, m["gold"], segments=8)
+
+    for x in (-7.9, -2.7, 2.7, 7.9):
+        cylinder(f"MainStreet_Lamp_Post_{x}", (x, -3.72, 1.7), 0.06, 3.4, m["black_metal"], vertices=8)
+        sphere(f"MainStreet_Lamp_Globe_{x}", (x, -3.72, 3.5), 0.28, m["cloud"], segments=10)
+
+    export_asset("main-street-row.glb")
+
+
+def create_street_detail_kit():
+    reset_scene()
+    m = base_materials()
+    cube("StreetKit_Curb", (0, 0, 0.08), (7.4, 0.42, 0.16), m["stone"])
+    cube("StreetKit_Pavement", (0, 0.92, 0.06), (7.4, 1.4, 0.12), m["stone"])
+
+    for x in (-3.0, 3.0):
+        cylinder(f"StreetKit_Bollard_{x}", (x, -0.35, 0.45), 0.12, 0.9, m["black_metal"], vertices=8)
+        cube(f"StreetKit_Bollard_Band_{x}", (x, -0.35, 0.72), (0.26, 0.26, 0.08), m["gold"])
+
+    cylinder("StreetKit_Lamp_Post", (-1.95, 0.64, 1.85), 0.07, 3.7, m["black_metal"], vertices=8)
+    cube("StreetKit_Lamp_Arm", (-1.55, 0.64, 3.54), (0.9, 0.08, 0.08), m["black_metal"])
+    sphere("StreetKit_Lamp_Globe", (-1.02, 0.64, 3.42), 0.28, m["cloud"], segments=10)
+
+    cylinder("StreetKit_Sign_Post", (1.25, 0.62, 1.0), 0.06, 2.0, m["wood"], vertices=8)
+    cube("StreetKit_Sign_Board", (1.25, 0.62, 2.0), (1.5, 0.14, 0.68), m["gold"])
+    cone("StreetKit_Sign_Arrow", (1.78, 0.64, 2.02), 0.2, 0, 0.42, m["green_light"], vertices=3, rotation=(0, math.radians(90), -math.pi / 2))
+
+    cube("StreetKit_Newsstand_Base", (2.68, 0.86, 0.58), (0.9, 0.65, 1.0), m["blue"])
+    cube("StreetKit_Newsstand_Face", (2.68, 0.48, 1.02), (0.72, 0.1, 0.48), m["glass"])
+    cube("StreetKit_Newsstand_Roof", (2.68, 0.86, 1.25), (1.05, 0.78, 0.16), m["roof_red"])
+
+    for i, x in enumerate((-0.6, 0.05, 0.7)):
+        cube(f"StreetKit_Crate_{i}", (x, 0.72, 0.34), (0.55, 0.52, 0.48), m["wood"])
+        sphere(f"StreetKit_Crate_Produce_{i}", (x, 0.72, 0.7), 0.13, m["red" if i % 2 == 0 else "green_light"], segments=8)
+
+    export_asset("street-detail-kit.glb")
+
+
+def create_foreground_garden():
+    reset_scene()
+    m = base_materials()
+    cube("Foreground_Garden_Bed", (0, 0, 0.08), (9.2, 3.1, 0.16), m["green_light"])
+    cube("Foreground_Path", (0, -1.05, 0.12), (8.8, 0.82, 0.12), m["stone"])
+
+    for x in (-4.35, -3.25, -2.15, 2.15, 3.25, 4.35):
+        cube(f"Foreground_Fence_Post_{x}", (x, 1.58, 0.52), (0.12, 0.12, 1.04), m["white"])
+    cube("Foreground_Fence_Rail_Top", (0, 1.58, 0.74), (8.9, 0.12, 0.12), m["white"])
+    cube("Foreground_Fence_Rail_Bottom", (0, 1.58, 0.38), (8.9, 0.12, 0.1), m["white"])
+
+    for i, x in enumerate((-3.5, -2.4, -1.2, 0.0, 1.2, 2.4, 3.5)):
+        sphere(f"Foreground_Shrub_{i}", (x, 0.45 + (i % 2) * 0.28, 0.62), 0.46, m["green" if i % 2 else "green_light"], segments=8)
+        sphere(f"Foreground_Flower_{i}_A", (x - 0.16, 0.18 + (i % 2) * 0.28, 1.03), 0.1, m["gold"], segments=8)
+        sphere(f"Foreground_Flower_{i}_B", (x + 0.18, 0.18 + (i % 2) * 0.28, 0.98), 0.1, m["red"], segments=8)
+
+    for x in (-3.7, 3.7):
+        cylinder(f"Foreground_SmallTree_Trunk_{x}", (x, -0.55, 0.78), 0.12, 1.56, m["wood"], vertices=7)
+        sphere(f"Foreground_SmallTree_Crown_{x}", (x, -0.55, 1.82), 0.72, m["green"], segments=8)
+
+    export_asset("foreground-garden.glb")
+
+
 def create_townsperson():
     reset_scene()
     m = base_materials()
@@ -504,6 +599,9 @@ def main():
         create_market_decor,
         create_lakeside_gazebo,
         create_cottage_yard,
+        create_main_street_row,
+        create_street_detail_kit,
+        create_foreground_garden,
         create_townsperson,
         create_farm_barn,
         create_taxi,

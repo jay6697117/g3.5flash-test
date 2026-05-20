@@ -17,6 +17,7 @@ export class Town {
         this.runtimeAssetGroups = [];
         this.loadedAssetCount = 0;
         this.failedAssetCount = 0;
+        this.totalAssetCount = 0;
         this.assetLoader = new AssetLoader();
         
         // 初始化材料库，采用暖色和柔和低饱和度的色彩，确保高级感
@@ -282,45 +283,62 @@ export class Town {
     }
 
     async buildGltfScenePass() {
-        const mainModels = [
+        const criticalModels = [
             ['cottageHouse', { position: [-25, 0, -25], scale: 1.05, rotationY: 0, fallbackKey: 'home' }],
             ['supermarketStore', { position: [25, 0, -25], scale: 1.05, rotationY: Math.PI, fallbackKey: 'supermarket' }],
             ['schoolClocktower', { position: [25, 0, 25], scale: 1.0, rotationY: Math.PI, fallbackKey: 'school' }],
             ['marketStall', { position: [-28, 0, 25], scale: 0.92, rotationY: Math.PI, fallbackKey: 'market' }],
             ['marketStall', { position: [-22, 0, 25], scale: 0.92, rotationY: Math.PI, fallbackKey: null }],
             ['farmBarn', { position: [13.5, 0, 12.5], scale: 0.88, rotationY: -Math.PI / 3, fallbackKey: null }],
-            ['waterTower', { position: [-42, 0, -35], scale: 1.35, rotationY: Math.PI / 8, fallbackKey: null }],
-            ['mountainLakeSlice', { position: [0, -0.45, -105], scale: 1.28, rotationY: 0, fallbackKey: null }],
-            ['cottageHouse', { position: [-43, 0, -20], scale: 0.68, rotationY: Math.PI / 2, collider: [5.0, 4.2, '街区住宅'] }],
-            ['cottageHouse', { position: [-42, 0, 12], scale: 0.62, rotationY: Math.PI / 2, collider: [4.8, 4.0, '街区住宅'] }],
-            ['cottageHouse', { position: [42, 0, -18], scale: 0.64, rotationY: -Math.PI / 2, collider: [4.8, 4.0, '街区住宅'] }],
-            ['cottageHouse', { position: [43, 0, 13], scale: 0.7, rotationY: -Math.PI / 2, collider: [5.0, 4.2, '街区住宅'] }],
-            ['supermarketStore', { position: [44, 0, -43], scale: 0.56, rotationY: Math.PI / 2, collider: [5.8, 4.2, '街角商铺'] }],
-            ['marketStall', { position: [-37, 0, 25], scale: 0.62, rotationY: Math.PI / 2, collider: [3.2, 2.2, '路边摊位'] }],
-            ['marketStall', { position: [-14, 0, 25], scale: 0.62, rotationY: -Math.PI / 2, collider: [3.2, 2.2, '路边摊位'] }],
             ['marketStall', { position: [-12, 0, -12], scale: 0.54, rotationY: Math.PI, collider: [3.0, 2.0, '中心摊位'] }],
             ['marketStall', { position: [0, 0, -12], scale: 0.54, rotationY: Math.PI, collider: [3.0, 2.0, '中心摊位'] }],
             ['marketStall', { position: [12, 0, -12], scale: 0.54, rotationY: Math.PI, collider: [3.0, 2.0, '中心摊位'] }],
             ['cornerCafe', { position: [18, 0, -16], scale: 0.54, rotationY: Math.PI, collider: [4.8, 3.4, '街角咖啡店'] }],
             ['cornerCafe', { position: [-17, 0, -18], scale: 0.5, rotationY: Math.PI / 2, collider: [3.8, 4.6, '街角咖啡店'] }],
-            ['cornerCafe', { position: [16, 0, 13], scale: 0.48, rotationY: -Math.PI / 2, collider: [3.8, 4.4, '街角咖啡店'] }],
-            ['cafeTerrace', { position: [-18, 0, -9.2], scale: 0.78, rotationY: Math.PI / 2, collider: [4.6, 3.0, '街角露台'] }],
-            ['cafeTerrace', { position: [18.5, 0, -9.4], scale: 0.66, rotationY: -Math.PI / 2, collider: [3.8, 2.6, '露天座位'] }],
-            ['marketDecor', { position: [-10.8, 0, -12.4], scale: 0.58, rotationY: Math.PI, collider: [4.0, 1.4, '市场货架'] }],
-            ['marketDecor', { position: [9.2, 0, -12.2], scale: 0.58, rotationY: Math.PI, collider: [4.0, 1.4, '市场货架'] }],
-            ['cottageYard', { position: [-25, 0, -18.1], scale: 0.92, rotationY: 0, fallbackKey: null }],
-            ['cottageYard', { position: [42, 0, -11.5], scale: 0.62, rotationY: -Math.PI / 2, fallbackKey: null }],
-            ['lakesideGazebo', { position: [38, 0.02, -79], scale: 1.35, rotationY: Math.PI / 8, fallbackKey: null }],
-            ['lakesideGazebo', { position: [-38, 0.02, -78], scale: 1.05, rotationY: -Math.PI / 7, fallbackKey: null }],
+            ['cafeTerrace', { position: [-18, 0, -9.2], scale: 0.78, rotationY: Math.PI / 2, collider: [4.6, 3.0, '街角露台'], castShadow: false }],
+            ['cafeTerrace', { position: [18.5, 0, -9.4], scale: 0.66, rotationY: -Math.PI / 2, collider: [3.8, 2.6, '露天座位'], castShadow: false }],
+            ['marketDecor', { position: [-10.8, 0, -12.4], scale: 0.58, rotationY: Math.PI, collider: [4.0, 1.4, '市场货架'], castShadow: false }],
+            ['marketDecor', { position: [9.2, 0, -12.2], scale: 0.58, rotationY: Math.PI, collider: [4.0, 1.4, '市场货架'], castShadow: false }],
+            ['mainStreetRow', { position: [-24.5, 0, -4.8], scale: 0.42, rotationY: Math.PI / 2, castShadow: false }],
+            ['streetDetailKit', { position: [-2.4, 0, -8.2], scale: 0.78, rotationY: Math.PI, castShadow: false }],
+            ['foregroundGarden', { position: [-16.5, 0, -2.2], scale: 0.86, rotationY: Math.PI / 10, castShadow: false }],
         ];
+        const deferredModels = [
+            ['waterTower', { position: [-42, 0, -35], scale: 1.35, rotationY: Math.PI / 8, fallbackKey: null }],
+            ['mountainLakeSlice', { position: [0, -0.45, -105], scale: 1.28, rotationY: 0, fallbackKey: null, castShadow: false, receiveShadow: false }],
+            ['cottageHouse', { position: [-43, 0, -20], scale: 0.68, rotationY: Math.PI / 2, collider: [5.0, 4.2, '街区住宅'] }],
+            ['cottageHouse', { position: [-42, 0, 12], scale: 0.62, rotationY: Math.PI / 2, collider: [4.8, 4.0, '街区住宅'] }],
+            ['cottageHouse', { position: [42, 0, -18], scale: 0.64, rotationY: -Math.PI / 2, collider: [4.8, 4.0, '街区住宅'] }],
+            ['cottageHouse', { position: [43, 0, 13], scale: 0.7, rotationY: -Math.PI / 2, collider: [5.0, 4.2, '街区住宅'] }],
+            ['supermarketStore', { position: [44, 0, -43], scale: 0.56, rotationY: Math.PI / 2, collider: [5.8, 4.2, '街角商铺'] }],
+            ['marketStall', { position: [-37, 0, 25], scale: 0.62, rotationY: Math.PI / 2, collider: [3.2, 2.2, '路边摊位'], castShadow: false }],
+            ['marketStall', { position: [-14, 0, 25], scale: 0.62, rotationY: -Math.PI / 2, collider: [3.2, 2.2, '路边摊位'], castShadow: false }],
+            ['cornerCafe', { position: [16, 0, 13], scale: 0.48, rotationY: -Math.PI / 2, collider: [3.8, 4.4, '街角咖啡店'] }],
+            ['cottageYard', { position: [-25, 0, -18.1], scale: 0.92, rotationY: 0, fallbackKey: null, castShadow: false }],
+            ['cottageYard', { position: [42, 0, -11.5], scale: 0.62, rotationY: -Math.PI / 2, fallbackKey: null, castShadow: false }],
+            ['lakesideGazebo', { position: [38, 0.02, -79], scale: 1.35, rotationY: Math.PI / 8, fallbackKey: null, castShadow: false }],
+            ['lakesideGazebo', { position: [-38, 0.02, -78], scale: 1.05, rotationY: -Math.PI / 7, fallbackKey: null, castShadow: false }],
+            ['mainStreetRow', { position: [-34, 0, -7.8], scale: 0.68, rotationY: Math.PI / 2, collider: [4.1, 9.8, '主街店铺'] }],
+            ['mainStreetRow', { position: [34.5, 0, -7.1], scale: 0.62, rotationY: -Math.PI / 2, collider: [3.8, 9.0, '主街店铺'] }],
+            ['streetDetailKit', { position: [14.6, 0, -6.4], scale: 0.64, rotationY: -Math.PI / 2, castShadow: false }],
+            ['foregroundGarden', { position: [23.5, 0, 3.6], scale: 0.7, rotationY: -Math.PI / 7, castShadow: false }],
+        ];
+        const propModels = this.getGltfPropPlacements();
 
-        await Promise.all(mainModels.map(([key, config]) => this.placeModel(key, config)));
-        this.populateGltfProps();
+        this.totalAssetCount = criticalModels.length + deferredModels.length + propModels.length;
+        this.emitAssetLoadingProgress();
+        await Promise.all(criticalModels.map(([key, config]) => this.placeModel(key, config)));
+        this.queueModelBatch(deferredModels, 4);
+        this.queueModelBatch(propModels, 6);
+        this.registerNpcTriggers();
     }
 
     async placeModel(key, config) {
         try {
-            const model = await this.assetLoader.clone(key);
+            const model = await this.assetLoader.clone(key, {
+                castShadow: config.castShadow,
+                receiveShadow: config.receiveShadow,
+            });
             const [x, y, z] = config.position;
             model.position.set(x, y, z);
             if (Array.isArray(config.scale)) {
@@ -342,51 +360,92 @@ export class Town {
                 this.physics.addCollider({ x, z, width, depth, label });
             }
 
+            this.emitAssetLoadingProgress();
             return model;
         } catch (error) {
             this.failedAssetCount += 1;
+            this.emitAssetLoadingProgress();
             console.warn(`Failed to load model asset "${key}".`, error);
             return null;
         }
     }
 
-    populateGltfProps() {
-        const placements = [
-            ['treeOak', [-31, 0, -34], 1.1, 0],
-            ['treeOak', [-18, 0, -34], 0.9, Math.PI / 6],
-            ['treePine', [33, 0, -34], 1.0, Math.PI / 8],
-            ['treeOak', [18, 0, -34], 0.95, -Math.PI / 5],
-            ['treePine', [-36, 0, 33], 1.05, Math.PI / 5],
-            ['treeOak', [-14, 0, 34], 0.9, -Math.PI / 9],
-            ['treeOak', [16, 0, 36], 1.0, Math.PI / 7],
-            ['treePine', [37, 0, 32], 1.1, -Math.PI / 7],
-            ['bench', [-17, 0, -7], 1.0, Math.PI / 2],
-            ['bench', [17, 0, -7], 1.0, Math.PI / 2],
-            ['bench', [-17, 0, 7], 1.0, Math.PI / 2],
-            ['bench', [17, 0, 7], 1.0, Math.PI / 2],
-            ['planter', [-12, 0, -4], 1.0, 0],
-            ['planter', [12, 0, -4], 1.0, Math.PI / 5],
-            ['planter', [-12, 0, 4], 1.0, -Math.PI / 5],
-            ['planter', [12, 0, 4], 1.0, Math.PI / 9],
-            ['planter', [-7, 0, -15], 0.86, Math.PI / 9],
-            ['planter', [7, 0, -15], 0.86, -Math.PI / 9],
-            ['bench', [-7, 0, -7], 0.9, Math.PI / 2],
-            ['bench', [7, 0, -7], 0.9, Math.PI / 2],
-            ['townsperson', [-8.5, 0, -9.5], 0.9, Math.PI / 5],
-            ['townsperson', [-2.4, 0, -9.2], 0.86, -Math.PI / 9],
-            ['townsperson', [5.8, 0, -10.2], 0.88, -Math.PI / 5],
-            ['townsperson', [10.8, 0, -8.8], 0.84, Math.PI / 3],
-            ['townsperson', [-20.5, 0, -11.5], 0.82, Math.PI / 2],
-            ['townsperson', [17.5, 0, -7.8], 0.82, -Math.PI / 2],
-            ['cloudPuff', [-26, 15, -42], 2.2, Math.PI / 10],
-            ['cloudPuff', [18, 17, -48], 1.8, -Math.PI / 8],
-            ['cloudPuff', [38, 14, 20], 1.5, Math.PI / 5],
+    queueModelBatch(models, batchSize) {
+        const pending = [...models];
+        const loadNextBatch = () => {
+            pending.splice(0, batchSize).forEach(([key, config]) => {
+                void this.placeModel(key, config);
+            });
+            if (pending.length > 0) {
+                this.scheduleAssetWork(loadNextBatch);
+            }
+        };
+
+        if (pending.length > 0) {
+            this.scheduleAssetWork(loadNextBatch);
+        }
+    }
+
+    scheduleAssetWork(callback) {
+        if (typeof window !== 'undefined' && typeof window.requestIdleCallback === 'function') {
+            window.requestIdleCallback(callback, { timeout: 700 });
+            return;
+        }
+        window.setTimeout(callback, 80);
+    }
+
+    emitAssetLoadingProgress() {
+        if (typeof window === 'undefined') return;
+        window.dispatchEvent(new CustomEvent('asset-loading-progress', {
+            detail: {
+                loaded: this.loadedAssetCount,
+                failed: this.failedAssetCount,
+                total: this.totalAssetCount,
+                runtimeGroups: this.runtimeAssetGroups.length,
+            },
+        }));
+    }
+
+    getGltfPropPlacements() {
+        return [
+            ['treeOak', { position: [-31, 0, -34], scale: 1.1, rotationY: 0 }],
+            ['treeOak', { position: [-18, 0, -34], scale: 0.9, rotationY: Math.PI / 6 }],
+            ['treePine', { position: [33, 0, -34], scale: 1.0, rotationY: Math.PI / 8 }],
+            ['treeOak', { position: [18, 0, -34], scale: 0.95, rotationY: -Math.PI / 5 }],
+            ['treePine', { position: [-36, 0, 33], scale: 1.05, rotationY: Math.PI / 5 }],
+            ['treeOak', { position: [-14, 0, 34], scale: 0.9, rotationY: -Math.PI / 9 }],
+            ['treeOak', { position: [16, 0, 36], scale: 1.0, rotationY: Math.PI / 7 }],
+            ['treePine', { position: [37, 0, 32], scale: 1.1, rotationY: -Math.PI / 7 }],
+            ['bench', { position: [-17, 0, -7], scale: 1.0, rotationY: Math.PI / 2, castShadow: false }],
+            ['bench', { position: [17, 0, -7], scale: 1.0, rotationY: Math.PI / 2, castShadow: false }],
+            ['bench', { position: [-17, 0, 7], scale: 1.0, rotationY: Math.PI / 2, castShadow: false }],
+            ['bench', { position: [17, 0, 7], scale: 1.0, rotationY: Math.PI / 2, castShadow: false }],
+            ['planter', { position: [-12, 0, -4], scale: 1.0, rotationY: 0, castShadow: false }],
+            ['planter', { position: [12, 0, -4], scale: 1.0, rotationY: Math.PI / 5, castShadow: false }],
+            ['planter', { position: [-12, 0, 4], scale: 1.0, rotationY: -Math.PI / 5, castShadow: false }],
+            ['planter', { position: [12, 0, 4], scale: 1.0, rotationY: Math.PI / 9, castShadow: false }],
+            ['planter', { position: [-7, 0, -15], scale: 0.86, rotationY: Math.PI / 9, castShadow: false }],
+            ['planter', { position: [7, 0, -15], scale: 0.86, rotationY: -Math.PI / 9, castShadow: false }],
+            ['bench', { position: [-7, 0, -7], scale: 0.9, rotationY: Math.PI / 2, castShadow: false }],
+            ['bench', { position: [7, 0, -7], scale: 0.9, rotationY: Math.PI / 2, castShadow: false }],
+            ['townsperson', { position: [-8.5, 0, -9.5], scale: 0.9, rotationY: Math.PI / 5, castShadow: false }],
+            ['townsperson', { position: [-2.4, 0, -9.2], scale: 0.86, rotationY: -Math.PI / 9, castShadow: false }],
+            ['townsperson', { position: [5.8, 0, -10.2], scale: 0.88, rotationY: -Math.PI / 5, castShadow: false }],
+            ['townsperson', { position: [10.8, 0, -8.8], scale: 0.84, rotationY: Math.PI / 3, castShadow: false }],
+            ['townsperson', { position: [-20.5, 0, -11.5], scale: 0.82, rotationY: Math.PI / 2, castShadow: false }],
+            ['townsperson', { position: [17.5, 0, -7.8], scale: 0.82, rotationY: -Math.PI / 2, castShadow: false }],
+            ['cloudPuff', { position: [-26, 15, -42], scale: 2.2, rotationY: Math.PI / 10, castShadow: false, receiveShadow: false }],
+            ['cloudPuff', { position: [18, 17, -48], scale: 1.8, rotationY: -Math.PI / 8, castShadow: false, receiveShadow: false }],
+            ['cloudPuff', { position: [38, 14, 20], scale: 1.5, rotationY: Math.PI / 5, castShadow: false, receiveShadow: false }],
         ];
+    }
 
-        placements.forEach(([key, position, scale, rotationY]) => {
-            this.placeModel(key, { position, scale, rotationY });
-        });
+    populateGltfProps() {
+        this.queueModelBatch(this.getGltfPropPlacements(), 6);
+        this.registerNpcTriggers();
+    }
 
+    registerNpcTriggers() {
         NPC_TRIGGERS.forEach((trigger) => {
             this.physics.addTrigger({
                 ...trigger,

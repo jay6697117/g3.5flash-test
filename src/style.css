@@ -312,6 +312,49 @@ button:focus-visible {
     font-weight: 400;
 }
 
+.asset-loading-toast {
+    pointer-events: none;
+    position: absolute;
+    top: 96px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 140;
+    width: min(340px, calc(100vw - 36px));
+    min-height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px 16px;
+    border-radius: 999px;
+    color: var(--town-ink);
+    font-size: 13px;
+    font-weight: 800;
+    text-align: center;
+    line-height: 1.35;
+}
+
+.asset-loading-spinner {
+    width: 15px;
+    height: 15px;
+    flex: 0 0 auto;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 248, 223, 0.28);
+    border-top-color: var(--town-gold-strong);
+    animation: assetLoadingSpin 0.8s linear infinite;
+}
+
+.asset-loading-toast.is-failed {
+    border-color: rgba(230, 118, 97, 0.68);
+    background:
+        linear-gradient(145deg, rgba(230, 118, 97, 0.14), rgba(255, 255, 255, 0)),
+        var(--town-panel-strong);
+}
+
+.asset-loading-toast.is-failed .asset-loading-spinner {
+    border-top-color: var(--town-danger);
+}
+
 /* 屏幕中间动作提示 */
 .action-prompt {
     position: absolute;
@@ -1148,6 +1191,10 @@ button:focus-visible {
     50% { transform: translateY(-12px) rotate(4deg); }
 }
 
+@keyframes assetLoadingSpin {
+    to { transform: rotate(360deg); }
+}
+
 /* 隐藏显示辅助类 */
 .hidden {
     display: none !important;
@@ -1248,6 +1295,14 @@ button:focus-visible {
 
     .task-content {
         font-size: 13px;
+    }
+
+    .asset-loading-toast {
+        top: 156px;
+        width: min(320px, calc(100vw - 36px));
+        min-height: 40px;
+        padding: 9px 12px;
+        font-size: 12px;
     }
 
     .action-prompt {

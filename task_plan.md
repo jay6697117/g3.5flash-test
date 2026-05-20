@@ -154,6 +154,21 @@ Original prompt: 我想写一个3D模拟小镇，模拟真实世界的小镇，�
 - 当前线上响应已 Brotli 压缩，GLB MIME 为 `model/gltf-binary`；但 browser cache TTL 被 DevTools 识别为 0，因为只有 `s-maxage`，缺少面向浏览器的 `max-age`/`immutable`。
 - 本地最新 dist 约 1.64MB：JS 原始约 624KB/gzip 估算约 164KB，19 个 GLB 原始约 998KB/gzip 估算约 82KB。
 
+## Current Goal Extension 5
+继续对照 `assets/concepts/town-art-direction.png` 与 `assets/concepts/ui-style-board.png` 缩小 3D 默认观感差距。本轮重点从“资产数量”推进到“开场构图”：
+- 新增连续主街店铺立面、路边细节套件和前景花园 GLB，让默认视角更像概念图中的完整街区。
+- 保持 GLB 统一由 Blender 脚本生成，运行时仍通过 `assetManifest` 和 `AssetLoader` 接入。
+- 验证新增资产不会破坏 NPC 对话、住宅、超市、菜市场、学校、农田和出租车。
+- 下一步把默认出生点和相机从高俯视沙盘进一步调整到低一些、近一些的街道视角，让玩家一进游戏就能看到人物交互焦点和近景店铺。
+
+## Extension Phases 5
+| Phase | Status | Notes |
+| --- | --- | --- |
+| 25. Main-street GLB facade assets | complete | 已新增 `main-street-row`、`street-detail-kit`、`foreground-garden`，总 GLB 源文件增至 22 个。 |
+| 26. Runtime placement and layout verification | complete | 已接入 manifest 并布置 6 个新增 placement；桌面/移动均加载 `64` 个 runtime groups，`failed=0`。 |
+| 27. Gameplay regression after facade pass | complete | 21 项回归通过，覆盖 NPC、住宅、超市、菜市场、学校、农田和出租车。 |
+| 28. Opening composition pass | in_progress | 视觉复核显示默认镜头仍偏高俯视，需要继续调整开场玩家位置、相机距离和近景店铺可见性。 |
+
 ## Extension 4 Errors Encountered
 | Error | Attempt | Resolution |
 | --- | --- | --- |
